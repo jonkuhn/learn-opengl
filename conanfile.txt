@@ -1,5 +1,5 @@
 [requires]
-glfw/3.3.2
+glfw/3.3.2-3327050c@jkuhn/patched
 
 [generators]
 cmake

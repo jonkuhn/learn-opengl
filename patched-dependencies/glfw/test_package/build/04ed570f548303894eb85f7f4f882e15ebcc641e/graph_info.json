@@ -1,0 +1,18 @@
+{
+ "options": [
+  [
+   "glfw:fPIC",
+   "True"
+  ],
+  [
+   "glfw:shared",
+   "False"
+  ]
+ ],
+ "root": {
+  "name": null,
+  "version": null,
+  "user": "jkuhn",
+  "channel": "patched"
+ }
+}
