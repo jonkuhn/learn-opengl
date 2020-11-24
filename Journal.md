@@ -1,6 +1,17 @@
 # Journal
 The intent of this document is to document how my mental model of OpenGL programming evolves as I go through the tutorial (https://learnopengl.com) and eventually experiment on my own.
 
+## Nov 25, 2020
+Finished writing up wrapper classes for OpenGL shaders and shader programs.  I converted the code from the tutorial to use RAII and to have cleaner error handling (such as querying for the info log size and then using std::vector to make a buffer for it.)
+
+I decided to start building up namespaces how I would if this project grows.  The Graphics namespace will hold all graphics code.  At the top level would be abstractions that are independent of OpenGL.  The OpenGL folder will have OpenGL-specific code.  I decided to have namespaces follow folder structure.
+
+I set up CMake to build the Graphics folder as a static library.  I briefly tried playing with making it a shared library, but I had some RPATH troubles on Mac that I didn't feel like solving just now.  It doesn't even need to be any kind of library for the current state of things here anyway.  I think one of the advantages of making it a shared library would be to limit the visibility of some types inside (assuming Mac and Linux support visibility settings similar to Windows declspec stuff).  I think I remember that there are some settings like that.  This page may be useful if I do that:  https://atomheartother.github.io/c++/2018/07/12/CPPDynLib.html.  I suppose that the visibility can mostly be achieved by separate public header files as well.  With either method you need to give calling code header files anyway and without a bunch of extra work like pImpl pattern, you need to include the private sections of classes in there anyway.  So definitely not worth it especially for a project where I am just playing around.
+
+However, I clearly enjoy playing with the idea of this growing into something larger (whether it does or not) and thinking about the tools and techniques I would use to set up a larger C++ project.
+
+Next I will probably play with integration and unit testing of Shader and ShaderProgram to get a unit testing framework set up.  I am trying to decide if full unit testing makes sense by using some technique like linking to spy OpenGL functions or injecting the OpenGL implementation via a template argument so it can be swapped for testing.  Integration testing can cover most things a lot better since these are very thin classes.  The only thing I can think of that isn't covered by integration testing would be testing that the delete functions are called by the destructors.  If I use the template approach it will mean the implementation of these classes would need included wherever it is used (due to how templates work), so I'll have to think about that.  I suppose I could do normal constructor injection via an interface like I would in a business software project.  I am not sure how much the overhead would matter.  It definitely wouldn't matter in the I/O-bound projects I am used to, and probably wouldn't matter much here.  Probably best to avoid premature optimization.
+
 ## Nov 22, 2020
 After reading up through the "Textures" section of the tutorial I have a better understanding of things and answers to some of my questions.  I also read the opening lines of the next section "Transformations".  Then after writing most of the points below I skimmed the rest of the "Getting Started" section and a bit of the "Lighting" section.
 - "Uniforms" can be used to pass information from the main program to the shaders

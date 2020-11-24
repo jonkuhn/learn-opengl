@@ -1,2 +1,12 @@
-add_executable(learn-opengl main.cpp)
-target_link_libraries(learn-opengl ${CONAN_LIBS})
+add_subdirectory(Graphics)
+add_executable(learn-opengl)
+target_sources(learn-opengl
+    PRIVATE
+        main.cpp
+)
+if(MSVC)
+  target_compile_options(learn-opengl PRIVATE /W4 /WX)
+else()
+  target_compile_options(learn-opengl PRIVATE -Wall -Wextra -pedantic -Werror)
+endif()
+target_link_libraries(learn-opengl Graphics ${CONAN_LIBS})
