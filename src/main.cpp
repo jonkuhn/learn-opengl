@@ -76,11 +76,13 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return 1;
     } 
+    
+    LibraryWrapper glLib;
 
     ShaderProgram shaderProgram(
         {
-            Shader(Shader::Type::Vertex, vertexShaderSource),
-            Shader(Shader::Type::Fragment, fragmentShaderSource),
+            Shader(glLib, Shader::Type::Vertex, vertexShaderSource),
+            Shader(glLib, Shader::Type::Fragment, fragmentShaderSource),
         }
     );
 

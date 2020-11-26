@@ -1,8 +1,11 @@
 add_subdirectory(Graphics)
+if(BUILD_TESTING)
+  add_subdirectory(GraphicsUnitTests)
+endif()
 add_executable(learn-opengl)
 target_sources(learn-opengl
-    PRIVATE
-        main.cpp
+  PRIVATE
+    main.cpp
 )
 if(MSVC)
   target_compile_options(learn-opengl PRIVATE /W4 /WX)

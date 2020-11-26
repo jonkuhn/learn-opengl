@@ -1,7 +1,7 @@
 #pragma once
 #include <istream>
 
-#include <glad/glad.h>
+#include "LibraryWrapper.h"
 
 namespace Graphics::OpenGL
 {
@@ -14,13 +14,14 @@ namespace Graphics::OpenGL
             Fragment
         };
 
-        Shader(Type type, std::istream& sourceStream);
-        Shader(Type type, const std::string& source);
+        Shader(ILibraryWrapper& lib, Type type, std::istream& sourceStream);
+        Shader(ILibraryWrapper& lib, Type type, const std::string& source);
         ~Shader();
 
         GLuint Handle();
 
     private:
+        ILibraryWrapper& _lib;
         GLuint _handle;
     };
 }
