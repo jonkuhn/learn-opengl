@@ -1,6 +1,7 @@
 add_subdirectory(Graphics)
 if(BUILD_TESTING)
   add_subdirectory(GraphicsUnitTests)
+  add_subdirectory(GraphicsIntegrationTests)
 endif()
 add_executable(learn-opengl)
 target_sources(learn-opengl

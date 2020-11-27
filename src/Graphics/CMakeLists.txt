@@ -8,6 +8,7 @@ target_sources(Graphics
   PRIVATE
     OpenGL/ILibraryWrapper.h
     OpenGL/LibraryWrapper.h
+    OpenGL/LibraryWrapper.cpp
     OpenGL/Shader.h
     OpenGL/Shader.cpp
     OpenGL/ShaderProgram.h

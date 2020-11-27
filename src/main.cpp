@@ -37,46 +37,9 @@ void processInput(GLFWwindow *window)
         glfwSetWindowShouldClose(window, true);
 }
 
-void framebuffer_size_callback(GLFWwindow*, int width, int height)
-{
-    // Make sure the viewport matches the new window dimensions
-    // NOTE: width and height will be significantly larger than specified
-    // on high resolution displays.
-    glViewport(0, 0, width, height);
-}
-
 int main()
 {
-    if (glfwInit() != GLFW_TRUE)
-    {
-        std::cout << "Error: Failed to initialize glfw." << std::endl;
-        return 1;
-    }
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-#ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-
-    auto window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-    if (window == NULL)
-    {
-        std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return 1;
-    }
-    glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        return 1;
-    } 
-    
+    auto window = InitializeGlfwAndGlad(SCR_WIDTH, SCR_HEIGHT);
     LibraryWrapper glLib;
 
     ShaderProgram shaderProgram(
