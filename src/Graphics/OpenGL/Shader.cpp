@@ -1,8 +1,8 @@
+#include "Shader.h"
+
 #include <string>
 #include <sstream>
 #include <vector>
-
-#include "./Shader.h"
 
 using namespace Graphics::OpenGL;
 
@@ -32,34 +32,34 @@ namespace
     }
 }
 
-Shader::Shader(ILibraryWrapper& lib, Type type, std::istream& sourceCodeStream)
-    : Shader(lib, type, readAllToString(sourceCodeStream))
+Shader::Shader(IOpenGLWrapper& gl, Type type, std::istream& sourceCodeStream)
+    : Shader(gl, type, readAllToString(sourceCodeStream))
 {
 
 }
 
-Shader::Shader(ILibraryWrapper& lib, Type type, const std::string& source)
-    : _lib(lib)
+Shader::Shader(IOpenGLWrapper& gl, Type type, const std::string& source)
+    : _gl(gl)
 {
     const char* sourceCstr = source.c_str();
 
-    _handle = _lib.CreateShader(typeToShaderEnum(type));
+    _handle = _gl.CreateShader(typeToShaderEnum(type));
     if (!_handle)
     {
         throw new std::runtime_error("glCreateShader failed");
     }
 
-    _lib.ShaderSource(_handle, 1, &sourceCstr, nullptr);
-    _lib.CompileShader(_handle);
+    _gl.ShaderSource(_handle, 1, &sourceCstr, nullptr);
+    _gl.CompileShader(_handle);
 
     int success;
-    _lib.GetShaderiv(_handle, GL_COMPILE_STATUS, &success);
+    _gl.GetShaderiv(_handle, GL_COMPILE_STATUS, &success);
     if (!success)
     {
         GLint infoLogLength;
-        _lib.GetShaderiv(_handle, GL_INFO_LOG_LENGTH, &infoLogLength);
+        _gl.GetShaderiv(_handle, GL_INFO_LOG_LENGTH, &infoLogLength);
         std::vector<char> infoLog(infoLogLength);
-        _lib.GetShaderInfoLog(_handle, infoLog.size(), NULL, infoLog.data());
+        _gl.GetShaderInfoLog(_handle, infoLog.size(), NULL, infoLog.data());
         std::stringstream ss;
         ss << "Shader Compilation Failed: " << infoLog.data() << "" << std::endl
             << "Shader Source:" << std::endl
@@ -70,7 +70,7 @@ Shader::Shader(ILibraryWrapper& lib, Type type, const std::string& source)
 
 Shader::~Shader()
 {
-    _lib.DeleteShader(_handle);
+    _gl.DeleteShader(_handle);
 }
 
 GLuint Shader::Handle()

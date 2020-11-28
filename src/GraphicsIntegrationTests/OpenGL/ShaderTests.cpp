@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 
 #include "Graphics/OpenGL/Shader.h"
+#include "Graphics/OpenGL/OpenGLWrapper.h"
 
 using namespace testing;
 using namespace Graphics::OpenGL;
@@ -37,7 +38,7 @@ namespace
 
 TEST(ShaderTests, CreateVertexShaderSuccess)
 {
-    LibraryWrapper glLib;
+    OpenGLWrapper glLib;
 
     EXPECT_NO_THROW(
         Shader shader(
@@ -50,7 +51,7 @@ TEST(ShaderTests, CreateVertexShaderSuccess)
 
 TEST(ShaderTests, CreateFragmentShaderSuccess)
 {
-    LibraryWrapper glLib;
+    OpenGLWrapper glLib;
 
     EXPECT_NO_THROW(
         Shader shader(
@@ -63,7 +64,7 @@ TEST(ShaderTests, CreateFragmentShaderSuccess)
 
 TEST(ShaderTests, CreateVertexShaderThrows)
 {
-    LibraryWrapper glLib;
+    OpenGLWrapper glLib;
 
     EXPECT_THROW(
         Shader shader(
@@ -76,7 +77,7 @@ TEST(ShaderTests, CreateVertexShaderThrows)
 
 TEST(ShaderTests, CreateFragmentShaderThrows)
 {
-    LibraryWrapper glLib;
+    OpenGLWrapper glLib;
 
     EXPECT_THROW(
         Shader shader(

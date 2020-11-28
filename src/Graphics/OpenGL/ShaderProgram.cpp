@@ -1,8 +1,9 @@
+#include "ShaderProgram.h"
+
 #include <string>
 #include <sstream>
 #include <vector>
 
-#include "./ShaderProgram.h"
 
 using namespace Graphics::OpenGL;
 

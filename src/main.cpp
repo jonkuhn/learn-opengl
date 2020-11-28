@@ -2,10 +2,9 @@
 #include <vector>
 #include <string>
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include "./Graphics/OpenGL/ShaderProgram.h"
+#include "Graphics/OpenGL/GlfwWrapper.h"
+#include "Graphics/OpenGL/OpenGLWrapper.h"
+#include "Graphics/OpenGL/ShaderProgram.h"
 
 using namespace Graphics::OpenGL;
 
@@ -39,8 +38,9 @@ void processInput(GLFWwindow *window)
 
 int main()
 {
-    auto window = InitializeGlfwAndGlad(SCR_WIDTH, SCR_HEIGHT);
-    LibraryWrapper glLib;
+    GlfwWrapper glfw;
+    auto window = InitializeGlfwAndGlad(glfw, SCR_WIDTH, SCR_HEIGHT);
+    OpenGLWrapper glLib;
 
     ShaderProgram shaderProgram(
         {

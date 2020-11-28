@@ -3,7 +3,7 @@
 
 namespace Graphics::OpenGL
 {
-    class ILibraryWrapper
+    class IOpenGLWrapper
     {
     public:
         virtual GLuint CreateShader(GLenum shaderType) = 0;

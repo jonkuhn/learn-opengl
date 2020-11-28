@@ -7,7 +7,7 @@ endif()
 target_sources(GraphicsUnitTests
   PRIVATE
     main_test.cpp
-    OpenGL/MockLibraryWrapper.h
+    OpenGL/MockOpenGLWrapper.h
     OpenGL/ShaderTests.cpp
 )
 target_include_directories(GraphicsUnitTests PRIVATE

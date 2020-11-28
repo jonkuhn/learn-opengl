@@ -1,43 +1,12 @@
 #pragma once
-#include "./ILibraryWrapper.h"
+#include "IOpenGLWrapper.h"
 
 #include <mutex>
 #include <sstream>
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-namespace
-{
-    std::string GetGlfwExceptionMessage(const std::string& prefix)
-    {
-        const char* description = nullptr;
-        int code = glfwGetError(&description);
-        std::stringstream ss;
-        ss << prefix
-            << " Code: " << code
-            << " Description: " << std::string(description);
-
-        return ss.str();
-    }
-}
-
-class GlfwException : public std::runtime_error
-{
-public:
-    GlfwException(const std::string& prefix)
-        : std::runtime_error(GetGlfwExceptionMessage(prefix))
-    {
-
-    }
-};
-
-// TODO: make window class
-GLFWwindow* InitializeGlfwAndGlad(int winWidth, int winHeight);
-
 namespace Graphics::OpenGL
 {
-    class LibraryWrapper : public ILibraryWrapper
+    class OpenGLWrapper : public IOpenGLWrapper
     {
     public:
         GLuint CreateShader(GLenum shaderType) override

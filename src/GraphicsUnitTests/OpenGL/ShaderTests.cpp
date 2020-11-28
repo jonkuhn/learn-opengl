@@ -3,7 +3,7 @@
 
 #include <gtest/gtest.h>
 
-#include "MockLibraryWrapper.h"
+#include "MockOpenGLWrapper.h"
 #include "Graphics/OpenGL/Shader.h"
 
 using namespace testing;
@@ -29,7 +29,7 @@ protected:
         EXPECT_CALL(_mockLib, GetShaderiv(_, GL_COMPILE_STATUS, _)).WillRepeatedly(SetArgPointee<2>(true));
     }
 
-    NiceMock<MockLibraryWrapper> _mockLib;
+    NiceMock<MockOpenGLWrapper> _mockLib;
     const GLuint _testHandle = 456;
     const std::string _testSource;
 };

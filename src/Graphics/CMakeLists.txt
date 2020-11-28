@@ -6,9 +6,11 @@ else()
 endif()
 target_sources(Graphics
   PRIVATE
-    OpenGL/ILibraryWrapper.h
-    OpenGL/LibraryWrapper.h
-    OpenGL/LibraryWrapper.cpp
+    OpenGL/IGlfwWrapper.h
+    OpenGL/GlfwWrapper.h
+    OpenGL/GlfwWrapper.cpp
+    OpenGL/IOpenGLWrapper.h
+    OpenGL/OpenGLWrapper.h
     OpenGL/Shader.h
     OpenGL/Shader.cpp
     OpenGL/ShaderProgram.h

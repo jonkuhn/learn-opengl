@@ -1,11 +1,11 @@
 #pragma once
 #include <gmock/gmock.h>
 
-#include "Graphics/OpenGL/ILibraryWrapper.h"
+#include "Graphics/OpenGL/IOpenGLWrapper.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
-class MockLibraryWrapper : public Graphics::OpenGL::ILibraryWrapper {
+class MockOpenGLWrapper : public Graphics::OpenGL::IOpenGLWrapper {
 public:
     MOCK_METHOD(GLuint, CreateShader, (GLenum type), (override));
     MOCK_METHOD(void, ShaderSource, (GLuint shader, GLsizei count, const GLchar** string, const GLint* length), (override));
