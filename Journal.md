@@ -1,6 +1,9 @@
 # Journal
 The intent of this document is to document how my mental model of OpenGL programming evolves as I go through the tutorial (https://learnopengl.com) and eventually experiment on my own.
 
+## Nov 27, 2020
+I created the GLFW/GLAD wrapper and moved the not-yet-organized initialization code there for now.  Next up is probably to write unit and integration tests for ShaderProgram, then to build the Window class.
+
 ## Nov 26, 2020
 Wrote Shader integration tests and in doing so I learned about glad depending on a glfw window being set to the current context.  My understanding is that this is due to GLFEW tying the context to the window.  The GLFW documentation mentiones that the only way to do off-screen rendering with it is through hidden windows.  Perhaps there are other ways to do offscreen rendering.  However, I don't really care about offscreen rendering anyway.
 
