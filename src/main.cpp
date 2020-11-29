@@ -4,6 +4,7 @@
 
 #include "Graphics/OpenGL/GlfwWrapper.h"
 #include "Graphics/OpenGL/OpenGLWrapper.h"
+#include "Graphics/OpenGL/Shader.h"
 #include "Graphics/OpenGL/ShaderProgram.h"
 
 using namespace Graphics::OpenGL;
@@ -40,14 +41,11 @@ int main()
 {
     GlfwWrapper glfw;
     auto window = InitializeGlfwAndGlad(glfw, SCR_WIDTH, SCR_HEIGHT);
-    OpenGLWrapper glLib;
+    OpenGLWrapper gl;
 
-    ShaderProgram shaderProgram(
-        {
-            Shader(glLib, Shader::Type::Vertex, vertexShaderSource),
-            Shader(glLib, Shader::Type::Fragment, fragmentShaderSource),
-        }
-    );
+    Shader vertexShader(gl, Shader::Type::Vertex, vertexShaderSource);
+    Shader fragmentShader(gl, Shader::Type::Fragment, fragmentShaderSource);
+    ShaderProgram shaderProgram(gl, {&vertexShader, &fragmentShader});
 
 // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------

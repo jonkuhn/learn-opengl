@@ -11,6 +11,7 @@ target_sources(Graphics
     OpenGL/GlfwWrapper.cpp
     OpenGL/IOpenGLWrapper.h
     OpenGL/OpenGLWrapper.h
+    OpenGL/IShader.h
     OpenGL/Shader.h
     OpenGL/Shader.cpp
     OpenGL/ShaderProgram.h

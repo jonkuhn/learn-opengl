@@ -46,7 +46,9 @@ Shader::Shader(IOpenGLWrapper& gl, Type type, const std::string& source)
     _handle = _gl.CreateShader(typeToShaderEnum(type));
     if (!_handle)
     {
-        throw new std::runtime_error("glCreateShader failed");
+        std::stringstream ss;
+        ss << "glCreateShader failed with error: " << _gl.GetError();
+        throw std::runtime_error(ss.str().c_str());
     }
 
     _gl.ShaderSource(_handle, 1, &sourceCstr, nullptr);

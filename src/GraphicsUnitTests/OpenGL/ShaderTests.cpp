@@ -3,8 +3,9 @@
 
 #include <gtest/gtest.h>
 
-#include "MockOpenGLWrapper.h"
 #include "Graphics/OpenGL/Shader.h"
+#include "TestHelpers.h"
+#include "MockOpenGLWrapper.h"
 
 using namespace testing;
 using namespace Graphics::OpenGL;
@@ -33,13 +34,6 @@ protected:
     const GLuint _testHandle = 456;
     const std::string _testSource;
 };
-
-MATCHER_P(DoublePtrStrEq, expectedStr, "") { return expectedStr == std::string(*arg); }
-
-ACTION_TEMPLATE(FillArgPointeeBuffer, HAS_1_TEMPLATE_PARAMS(unsigned, argIndex), AND_2_VALUE_PARAMS(srcBuffer, srcSize))
-{
-    std::memcpy(std::get<argIndex>(args), srcBuffer, srcSize);
-}
 
 TEST_F(ShaderTests, Constructor_MakesCallsToCreateAndCompileShader)
 {
@@ -72,6 +66,28 @@ TEST_F(ShaderTests, ConstructFromStream_PassesSourceCorrectly)
 
     std::stringstream sourceStream(_testSource);
     Shader shader(_mockLib, Shader::Type::Vertex, sourceStream);
+}
+
+TEST_F(ShaderTests, Constructor_GivenCreateFails_ThrowsRuntimeErrorWithErrorCode)
+{
+    GLenum testError = 5555;
+    EXPECT_CALL(_mockLib, CreateShader(_)).WillOnce(Return(0));
+    EXPECT_CALL(_mockLib, GetError()).WillOnce(Return(testError));
+    EXPECT_THROW(
+        try
+        {
+            Shader shader(_mockLib, Shader::Type::Vertex, _testSource);
+        }
+        catch(const std::runtime_error& e)
+        {
+            // Just assert that it contains the info log.  Currently it
+            // also contains the source code, but that may change.
+            std::stringstream ss;
+            ss << testError;
+            EXPECT_THAT(e.what(), HasSubstr(ss.str()));
+            throw;
+        },
+        std::runtime_error);
 }
 
 TEST_F(ShaderTests, Constructor_GivenCompilationFails_ThrowsRuntimeErrorWithInfoLog)

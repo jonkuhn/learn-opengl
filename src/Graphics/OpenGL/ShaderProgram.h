@@ -2,19 +2,21 @@
 
 #include <initializer_list>
 
-#include "Shader.h"
+#include "IShader.h"
+#include "IOpenGLWrapper.h"
 
 namespace Graphics::OpenGL
 {
     class ShaderProgram
     {
     public:
-        ShaderProgram(std::initializer_list<Shader> shaders);
+        ShaderProgram(IOpenGLWrapper& gl, std::initializer_list<IShader*> shaders);
         ~ShaderProgram();
 
         GLuint Handle();
 
     private:
+        IOpenGLWrapper& _gl;
         GLuint _handle;
     };
 }

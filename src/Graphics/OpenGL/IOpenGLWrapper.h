@@ -6,11 +6,20 @@ namespace Graphics::OpenGL
     class IOpenGLWrapper
     {
     public:
+        virtual GLenum GetError() = 0;
+
         virtual GLuint CreateShader(GLenum shaderType) = 0;
         virtual void ShaderSource(GLuint shader, GLsizei count, const GLchar** string, const GLint* length) = 0;
         virtual void CompileShader(GLuint shader) = 0;
         virtual void GetShaderiv(GLuint shader, GLenum pname, GLint* params) = 0;
         virtual void GetShaderInfoLog(GLuint shader, GLsizei maxLength, GLsizei* length, GLchar* infoLog) = 0;
         virtual void DeleteShader(GLuint shader) = 0;
+
+        virtual GLuint CreateProgram() = 0;
+        virtual void AttachShader(GLuint program, GLuint shader) = 0;
+        virtual void LinkProgram(GLuint program) = 0;
+        virtual void GetProgramiv(GLuint program, GLenum pname, GLint *params) = 0;
+        virtual void GetProgramInfoLog(GLuint program, GLsizei maxLength, GLsizei* length, GLchar* infoLog) = 0;
+        virtual void DeleteProgram(GLuint program) = 0;
     };
 }

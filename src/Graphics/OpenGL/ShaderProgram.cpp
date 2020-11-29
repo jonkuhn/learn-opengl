@@ -7,34 +7,46 @@
 
 using namespace Graphics::OpenGL;
 
-ShaderProgram::ShaderProgram(std::initializer_list<Shader> shaders)
+ShaderProgram::ShaderProgram(IOpenGLWrapper& gl, std::initializer_list<IShader*> shaders)
+    : _gl(gl)
 {
-    _handle = glCreateProgram();
+    if (shaders.size() == 0)
+    {
+        throw std::invalid_argument("No shaders passed to ShaderProgram.");
+    }
+
+    _handle = _gl.CreateProgram();
+    if (!_handle)
+    {
+        std::stringstream ss;
+        ss << "glCreateProgram failed with error: " << _gl.GetError();
+        throw std::runtime_error(ss.str().c_str());
+    }
 
     for(auto shader : shaders)
     {
-        glAttachShader(_handle, shader.Handle());
+        _gl.AttachShader(_handle, shader->Handle());
     }
 
-    glLinkProgram(_handle);
+    _gl.LinkProgram(_handle);
 
     // check for linking errors
     GLint success;
-    glGetProgramiv(_handle, GL_LINK_STATUS, &success);
+    _gl.GetProgramiv(_handle, GL_LINK_STATUS, &success);
     if (!success) {
         GLint infoLogLength;
-        glGetProgramiv(_handle, GL_INFO_LOG_LENGTH, &infoLogLength);
+        _gl.GetProgramiv(_handle, GL_INFO_LOG_LENGTH, &infoLogLength);
         std::vector<char> infoLog(infoLogLength);
-        glGetProgramInfoLog(_handle, infoLog.size(), NULL, infoLog.data());
+        _gl.GetProgramInfoLog(_handle, infoLog.size(), NULL, infoLog.data());
         std::stringstream ss;
-        ss << "Shader Linking Failed: " << infoLog.data() << "" << std::endl;
+        ss << "Shader Program Linking Failed: " << infoLog.data() << "" << std::endl;
         throw std::runtime_error(ss.str().c_str());
     }
 }
 
 ShaderProgram::~ShaderProgram()
 {
-    glDeleteProgram(_handle);
+    _gl.DeleteProgram(_handle);
 }
 
 GLuint ShaderProgram::Handle()

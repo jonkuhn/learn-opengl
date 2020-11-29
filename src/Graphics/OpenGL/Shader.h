@@ -1,11 +1,12 @@
 #pragma once
 #include <istream>
 
+#include "IShader.h"
 #include "IOpenGLWrapper.h"
 
 namespace Graphics::OpenGL
 {
-    class Shader
+    class Shader : public IShader
     {
     public:
         enum class Type
@@ -18,7 +19,7 @@ namespace Graphics::OpenGL
         Shader(IOpenGLWrapper& gl, Type type, const std::string& source);
         ~Shader();
 
-        GLuint Handle();
+        GLuint Handle() override;
 
     private:
         IOpenGLWrapper& _gl;
