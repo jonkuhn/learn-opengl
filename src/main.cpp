@@ -6,6 +6,7 @@
 #include "Graphics/OpenGL/OpenGLWrapper.h"
 #include "Graphics/OpenGL/Shader.h"
 #include "Graphics/OpenGL/ShaderProgram.h"
+#include "Graphics/OpenGL/Window.h"
 
 using namespace Graphics::OpenGL;
 

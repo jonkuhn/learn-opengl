@@ -1,20 +1,9 @@
 #pragma once
 
-#include <stdexcept>
-
 #include "IGlfwWrapper.h"
 
 namespace Graphics::OpenGL
 {
-    class GlfwException : public std::runtime_error
-    {
-    public:
-        GlfwException(IGlfwWrapper& glfw, const std::string& prefix);
-    };
-
-    // TODO: make window class
-    GLFWwindow* InitializeGlfwAndGlad(IGlfwWrapper& glfw, int winWidth, int winHeight);
-
     class GlfwWrapper : public IGlfwWrapper
     {
     public:

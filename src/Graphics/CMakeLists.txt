@@ -6,9 +6,10 @@ else()
 endif()
 target_sources(Graphics
   PRIVATE
+    OpenGL/GlfwException.h
+    OpenGL/GlfwException.cpp
     OpenGL/IGlfwWrapper.h
     OpenGL/GlfwWrapper.h
-    OpenGL/GlfwWrapper.cpp
     OpenGL/IOpenGLWrapper.h
     OpenGL/OpenGLWrapper.h
     OpenGL/IShader.h
@@ -16,5 +17,7 @@ target_sources(Graphics
     OpenGL/Shader.cpp
     OpenGL/ShaderProgram.h
     OpenGL/ShaderProgram.cpp
+    OpenGL/Window.h
+    OpenGL/Window.cpp
 )
 target_link_libraries(Graphics ${CONAN_LIBS})
