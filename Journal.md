@@ -1,6 +1,9 @@
 # Journal
 The intent of this document is to document how my mental model of OpenGL programming evolves as I go through the tutorial (https://learnopengl.com) and eventually experiment on my own.
 
+## Nov 28, 2020
+Wrote unit and integration tests for ShaderProgram.  Next up is likely to build the Window class, unless I want to put that cleanup off to dig into OpenGL a bit more.  I've read ahead in the tutorial as mentioned previously, but I want to build a good foundation using SOLID design prinicples and unit testing so that issues will be easy to find as things get more complex.  In any case it was a good refresher on how to do these things in C++.
+
 ## Nov 27, 2020
 I created the GLFW/GLAD wrapper and moved the not-yet-organized initialization code there for now.  Next up is probably to write unit and integration tests for ShaderProgram, then to build the Window class.
 

@@ -7,7 +7,10 @@ endif()
 target_sources(GraphicsIntegrationTests
   PRIVATE
     main_test.cpp
+    OpenGL/TestHelpers.h
+    OpenGL/TestHelpers.cpp
     OpenGL/ShaderTests.cpp
+    OpenGL/ShaderProgramTests.cpp
 )
 target_include_directories(GraphicsIntegrationTests PRIVATE
   ../

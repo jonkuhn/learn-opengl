@@ -5,44 +5,18 @@
 
 #include "Graphics/OpenGL/Shader.h"
 #include "Graphics/OpenGL/OpenGLWrapper.h"
+#include "TestHelpers.h"
 
 using namespace testing;
 using namespace Graphics::OpenGL;
 
-namespace
-{
-    std::string GetValidVertexShaderCode()
-    {
-        return R"##RAW##(
-            #version 330 core
-            layout (location = 0) in vec3 aPos;
-            void main()
-            {
-               gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
-            }
-            )##RAW##";
-    }
-
-    std::string GetValidFragmentShaderCode()
-    {
-        return R"##RAW##(
-            #version 330 core
-            out vec4 FragColor;
-            void main()
-            {
-               FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
-            }
-            )##RAW##";
-    }
-}
-
 TEST(ShaderTests, CreateVertexShaderSuccess)
 {
-    OpenGLWrapper glLib;
+    OpenGLWrapper gl;
 
     EXPECT_NO_THROW(
         Shader shader(
-            glLib,
+            gl,
             Shader::Type::Vertex,
             GetValidVertexShaderCode());
         EXPECT_NE(shader.Handle(), (GLuint)0);
@@ -51,11 +25,11 @@ TEST(ShaderTests, CreateVertexShaderSuccess)
 
 TEST(ShaderTests, CreateFragmentShaderSuccess)
 {
-    OpenGLWrapper glLib;
+    OpenGLWrapper gl;
 
     EXPECT_NO_THROW(
         Shader shader(
-            glLib,
+            gl,
             Shader::Type::Fragment,
             GetValidFragmentShaderCode());
         EXPECT_NE(shader.Handle(), (GLuint)0);
@@ -64,11 +38,11 @@ TEST(ShaderTests, CreateFragmentShaderSuccess)
 
 TEST(ShaderTests, CreateVertexShaderThrows)
 {
-    OpenGLWrapper glLib;
+    OpenGLWrapper gl;
 
     EXPECT_THROW(
         Shader shader(
-            glLib,
+            gl,
             Shader::Type::Vertex,
             "this is not valid code"),
         std::runtime_error
@@ -77,11 +51,11 @@ TEST(ShaderTests, CreateVertexShaderThrows)
 
 TEST(ShaderTests, CreateFragmentShaderThrows)
 {
-    OpenGLWrapper glLib;
+    OpenGLWrapper gl;
 
     EXPECT_THROW(
         Shader shader(
-            glLib,
+            gl,
             Shader::Type::Fragment,
             "this is not valid code"),
         std::runtime_error
