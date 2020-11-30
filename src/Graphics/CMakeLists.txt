@@ -10,6 +10,7 @@ target_sources(Graphics
     OpenGL/GlfwException.cpp
     OpenGL/IGlfwWrapper.h
     OpenGL/GlfwWrapper.h
+    OpenGL/GlfwWrapper.cpp
     OpenGL/IOpenGLWrapper.h
     OpenGL/OpenGLWrapper.h
     OpenGL/IShader.h

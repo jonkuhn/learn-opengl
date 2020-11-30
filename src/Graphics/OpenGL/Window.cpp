@@ -26,11 +26,6 @@ namespace
 Window::Window(IGlfwWrapper& glfw, int winWidth, int winHeight)
     : _glfw(glfw)
 {
-    if (_glfw.Init() != GLFW_TRUE)
-    {
-        throw GlfwException(glfw, "Failed to initialize GLFW.");
-    }
-
     _glfw.WindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     _glfw.WindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     _glfw.WindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -42,7 +37,6 @@ Window::Window(IGlfwWrapper& glfw, int winWidth, int winHeight)
     _handle = _glfw.CreateWindow(winWidth, winHeight, "LearnOpenGL", NULL, NULL);
     if (_handle == NULL)
     {
-        glfw.Terminate();
         throw GlfwException(glfw, "Failed to create GLFW window.");
     }
     _glfw.MakeContextCurrent(_handle);
@@ -50,7 +44,7 @@ Window::Window(IGlfwWrapper& glfw, int winWidth, int winHeight)
 
     if (!_glfw.LoadGLLoader())
     {
-        throw std::runtime_error("Failed to initialize GLAD");
+        throw std::runtime_error("Failed to initialize OpenGL using GLFW and GLAD");
     } 
 }
 

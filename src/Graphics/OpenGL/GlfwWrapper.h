@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "IGlfwWrapper.h"
 
 namespace Graphics::OpenGL
@@ -7,15 +9,7 @@ namespace Graphics::OpenGL
     class GlfwWrapper : public IGlfwWrapper
     {
     public:
-        int Init() override
-        {
-            return glfwInit();
-        }
-
-        void Terminate() override
-        {
-            glfwTerminate();
-        }
+        GlfwWrapper();
 
         void WindowHint(int hint, int value) override
         {
@@ -81,5 +75,9 @@ namespace Graphics::OpenGL
         {
             return glfwWindowShouldClose(window);
         }
+
+    private:
+        class GlfwInit;
+        static std::unique_ptr<GlfwInit> s_glfwInit;
     };
 }
