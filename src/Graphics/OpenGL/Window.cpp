@@ -23,7 +23,7 @@ namespace
     }
 }
 
-Window::Window(IGlfwWrapper& glfw, int winWidth, int winHeight)
+Window::Window(IGlfwWrapper& glfw, int winWidth, int winHeight, const std::string& title)
     : _glfw(glfw)
 {
     _glfw.WindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -34,7 +34,7 @@ Window::Window(IGlfwWrapper& glfw, int winWidth, int winHeight)
     _glfw.WindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    _handle = _glfw.CreateWindow(winWidth, winHeight, "LearnOpenGL", NULL, NULL);
+    _handle = _glfw.CreateWindow(winWidth, winHeight, title.c_str(), NULL, NULL);
     if (_handle == NULL)
     {
         throw GlfwException(glfw, "Failed to create GLFW window.");

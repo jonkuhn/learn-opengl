@@ -41,7 +41,7 @@ void processInput(Window& window)
 int main()
 {
     GlfwWrapper glfw;
-    Window window(glfw, SCR_WIDTH, SCR_HEIGHT);
+    Window window(glfw, SCR_WIDTH, SCR_HEIGHT, "Learn OpenGL");
     OpenGLWrapper gl;
 
     Shader vertexShader(gl, Shader::Type::Vertex, vertexShaderSource);

@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+
 #include "IGlfwWrapper.h"
 
 namespace Graphics::OpenGL
@@ -6,7 +8,7 @@ namespace Graphics::OpenGL
     class Window
     {
     public:
-        Window(IGlfwWrapper& glfw, int winWidth, int winHeight);
+        Window(IGlfwWrapper& glfw, int winWidth, int winHeight, const std::string& title);
         ~Window();
         Window(const Window&) = delete;
 
