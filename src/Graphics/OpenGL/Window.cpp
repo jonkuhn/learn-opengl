@@ -1,26 +1,9 @@
-
 #include "Window.h"
-
 #include "GlfwException.h"
 
 using namespace Graphics::OpenGL;
 
-namespace 
-{
-    void frameBufferSizeCallback(GLFWwindow* window, int width, int height)
-    {
-        // Make sure the right context is current, even though
-        // currently this class is limited to one instance at a
-        // time. (see comment in constructor)
-        glfwMakeContextCurrent(window);
-
-        // Make sure the viewport matches the new window dimensions
-        glViewport(0, 0, width, height);
-    }
-}
-
-
-bool Window::_instanceExists = false;
+Window* Window::s_singleInstance = nullptr;
 
 Window::Window(IGlfwWrapper& glfw, int winWidth, int winHeight, const std::string& title)
     : _glfw(glfw)
@@ -28,7 +11,7 @@ Window::Window(IGlfwWrapper& glfw, int winWidth, int winHeight, const std::strin
     // Many of the GLFW calls below must only be called from the main
     // thread anyway, so there is not much sense in making this check
     // thread safe.
-    if (_instanceExists == true)
+    if (s_singleInstance != nullptr)
     {
         // To allow for multiple windows we would need to be able to
         // make sure _glfw.MakeContextCurrent is called for the appropriate
@@ -52,19 +35,19 @@ Window::Window(IGlfwWrapper& glfw, int winWidth, int winHeight, const std::strin
         throw GlfwException(glfw, "Failed to create GLFW window.");
     }
     _glfw.MakeContextCurrent(_handle);
-    _glfw.SetFramebufferSizeCallback(_handle, frameBufferSizeCallback);
+    _glfw.SetFramebufferSizeCallback(_handle, FrameBufferSizeCallbackDispatch);
 
-    if (!_glfw.LoadGLLoader())
+    if (!_glfw.LoadGl())
     {
         throw std::runtime_error("Failed to initialize OpenGL using GLFW and GLAD");
     } 
-    _instanceExists = true;
+    s_singleInstance = this;
 }
 
 Window::~Window()
 {
     _glfw.DestroyWindow(_handle);
-    _instanceExists = false;
+    s_singleInstance = nullptr;
 }
 
 void Window::Close()
@@ -82,4 +65,25 @@ bool Window::Update()
     _glfw.SwapBuffers(_handle);
     _glfw.PollEvents();
     return !_glfw.WindowShouldClose(_handle);
+}
+
+void Window::FrameBufferSizeCallbackDispatch(GLFWwindow* window, int width, int height)
+{
+    // For now keep dispatch simple since we are only allowing
+    // one instance of Window at a time.  If we ever want multiple
+    // instances we should instead use glfwSetWindowUserPointer/glfwGetWindowUserPointer
+    // but that will also make it so this static function depends on GLFW
+    // which we wanted to be able to replace for testing.
+    s_singleInstance->FrameBufferSizeCallback(window, width, height);
+}
+
+void Window::FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
+{
+    // Make sure the right context is current, even though
+    // currently this class is limited to one instance at a
+    // time. (see comment in constructor)
+    _glfw.MakeContextCurrent(window);
+
+    // Make sure the viewport matches the new window dimensions
+    _glfw.SetGlViewport(0, 0, width, height);
 }

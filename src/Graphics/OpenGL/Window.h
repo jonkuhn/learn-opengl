@@ -21,7 +21,9 @@ namespace Graphics::OpenGL
         // if it needs to close.
         bool Update();
     private:
-        static bool _instanceExists;
+        static Window* s_singleInstance;
+        static void FrameBufferSizeCallbackDispatch(GLFWwindow* window, int width, int height);
+        void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
 
         IGlfwWrapper& _glfw;
         GLFWwindow* _handle;

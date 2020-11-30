@@ -46,11 +46,6 @@ namespace Graphics::OpenGL
             return glfwGetError(description);
         }
 
-        int LoadGLLoader() override
-        {
-            return gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-        }
-
         void SwapBuffers(GLFWwindow* window) override
         {
             glfwSwapBuffers(window);
@@ -75,6 +70,17 @@ namespace Graphics::OpenGL
         {
             return glfwWindowShouldClose(window);
         }
+
+        int LoadGl() override
+        {
+            return gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+        }
+
+        void SetGlViewport(GLint x, GLint y, GLsizei width, GLsizei height) override
+        {
+            return glViewport(x, y, width, height);
+        }
+
 
     private:
         class GlfwInit;
