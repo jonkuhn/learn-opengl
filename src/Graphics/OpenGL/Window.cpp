@@ -9,23 +9,35 @@ namespace
 {
     void frameBufferSizeCallback(GLFWwindow* window, int width, int height)
     {
-        // Not sure if it is worth dealing with possibility of more than one
-        // window.  probably not.
-        auto contextToRestore = glfwGetCurrentContext();
-
-        // Make sure the correct context is current
+        // Make sure the right context is current, even though
+        // currently this class is limited to one instance at a
+        // time. (see comment in constructor)
         glfwMakeContextCurrent(window);
 
         // Make sure the viewport matches the new window dimensions
         glViewport(0, 0, width, height);
-        
-        glfwMakeContextCurrent(contextToRestore);
     }
 }
+
+
+bool Window::_instanceExists = false;
 
 Window::Window(IGlfwWrapper& glfw, int winWidth, int winHeight, const std::string& title)
     : _glfw(glfw)
 {
+    // Many of the GLFW calls below must only be called from the main
+    // thread anyway, so there is not much sense in making this check
+    // thread safe.
+    if (_instanceExists == true)
+    {
+        // To allow for multiple windows we would need to be able to
+        // make sure _glfw.MakeContextCurrent is called for the appropriate
+        // window before making OpenGL calls for that window.
+        throw std::logic_error(
+            "To simplify context management, the Window class currently "
+            "only supports one instance at a time.");
+    }
+
     _glfw.WindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     _glfw.WindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     _glfw.WindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -46,11 +58,13 @@ Window::Window(IGlfwWrapper& glfw, int winWidth, int winHeight, const std::strin
     {
         throw std::runtime_error("Failed to initialize OpenGL using GLFW and GLAD");
     } 
+    _instanceExists = true;
 }
 
 Window::~Window()
 {
     _glfw.DestroyWindow(_handle);
+    _instanceExists = false;
 }
 
 void Window::Close()

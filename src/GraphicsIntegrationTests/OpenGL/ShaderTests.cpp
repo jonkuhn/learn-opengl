@@ -4,58 +4,68 @@
 #include <gtest/gtest.h>
 
 #include "Graphics/OpenGL/Shader.h"
+#include "Graphics/OpenGL/GlfwWrapper.h"
+#include "Graphics/OpenGL/Window.h"
 #include "Graphics/OpenGL/OpenGLWrapper.h"
 #include "TestHelpers.h"
 
 using namespace testing;
 using namespace Graphics::OpenGL;
 
-TEST(ShaderTests, CreateVertexShaderSuccess)
+class ShaderTests : public Test
 {
-    OpenGLWrapper gl;
+public:
+    ShaderTests()
+        : _gl(),
+          _glfw(),
+          _window(_glfw, 800, 600, "DummyIntegrationTestWindow")
+    {
 
+    }
+protected:
+    OpenGLWrapper _gl;
+    GlfwWrapper _glfw;
+    Window _window;
+};
+
+TEST_F(ShaderTests, CreateVertexShaderSuccess)
+{
     EXPECT_NO_THROW(
         Shader shader(
-            gl,
+            _gl,
             Shader::Type::Vertex,
             GetValidVertexShaderCode());
         EXPECT_NE(shader.Handle(), (GLuint)0);
     );
 }
 
-TEST(ShaderTests, CreateFragmentShaderSuccess)
+TEST_F(ShaderTests, CreateFragmentShaderSuccess)
 {
-    OpenGLWrapper gl;
-
     EXPECT_NO_THROW(
         Shader shader(
-            gl,
+            _gl,
             Shader::Type::Fragment,
             GetValidFragmentShaderCode());
         EXPECT_NE(shader.Handle(), (GLuint)0);
     );
 }
 
-TEST(ShaderTests, CreateVertexShaderThrows)
+TEST_F(ShaderTests, CreateVertexShaderThrows)
 {
-    OpenGLWrapper gl;
-
     EXPECT_THROW(
         Shader shader(
-            gl,
+            _gl,
             Shader::Type::Vertex,
             "this is not valid code"),
         std::runtime_error
     );
 }
 
-TEST(ShaderTests, CreateFragmentShaderThrows)
+TEST_F(ShaderTests, CreateFragmentShaderThrows)
 {
-    OpenGLWrapper gl;
-
     EXPECT_THROW(
         Shader shader(
-            gl,
+            _gl,
             Shader::Type::Fragment,
             "this is not valid code"),
         std::runtime_error

@@ -21,6 +21,8 @@ namespace Graphics::OpenGL
         // if it needs to close.
         bool Update();
     private:
+        static bool _instanceExists;
+
         IGlfwWrapper& _glfw;
         GLFWwindow* _handle;
     };

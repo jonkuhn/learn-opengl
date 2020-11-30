@@ -89,7 +89,7 @@ int main()
     // uncomment this call to draw in wireframe polygons.
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    while (!window.Update())
+    while (window.Update())
     {
         processInput(window);
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
