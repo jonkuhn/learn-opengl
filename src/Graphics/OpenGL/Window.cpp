@@ -67,5 +67,5 @@ bool Window::Update()
 {
     _glfw.SwapBuffers(_handle);
     _glfw.PollEvents();
-    return _glfw.WindowShouldClose(_handle);
+    return !_glfw.WindowShouldClose(_handle);
 }
