@@ -32,16 +32,16 @@ void main()
 }
 )##RAW##";
 
-void processInput(GLFWwindow *window)
+void processInput(Window& window)
 {
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
+    if(window.GetKey(GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        window.Close();
 }
 
 int main()
 {
     GlfwWrapper glfw;
-    auto window = InitializeGlfwAndGlad(glfw, SCR_WIDTH, SCR_HEIGHT);
+    Window window(glfw, SCR_WIDTH, SCR_HEIGHT);
     OpenGLWrapper gl;
 
     Shader vertexShader(gl, Shader::Type::Vertex, vertexShaderSource);
@@ -89,7 +89,7 @@ int main()
     // uncomment this call to draw in wireframe polygons.
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    while (!glfwWindowShouldClose(window))
+    while (!window.Update())
     {
         processInput(window);
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -101,11 +101,6 @@ int main()
         //glDrawArrays(GL_TRIANGLES, 0, 6);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0); // no need to unbind it every time 
- 
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
-        glfwSwapBuffers(window);
-        glfwPollEvents();
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:

@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
 
   // TODO: remove this
   Graphics::OpenGL::GlfwWrapper glfw;
-  InitializeGlfwAndGlad(glfw, 800, 600);
+  Graphics::OpenGL::Window window(glfw, 800, 600);
 
   return RUN_ALL_TESTS();
 }

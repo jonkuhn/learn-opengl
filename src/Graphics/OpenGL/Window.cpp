@@ -3,6 +3,8 @@
 
 #include "GlfwException.h"
 
+using namespace Graphics::OpenGL;
+
 namespace 
 {
     void frameBufferSizeCallback(GLFWwindow* window, int width, int height)
@@ -21,39 +23,55 @@ namespace
     }
 }
 
-GLFWwindow* Graphics::OpenGL::InitializeGlfwAndGlad(IGlfwWrapper& glfw, int winWidth, int winHeight)
+Window::Window(IGlfwWrapper& glfw, int winWidth, int winHeight)
+    : _glfw(glfw)
 {
-    // TODO:
-    // - Create a window class (in separate files)
-    // - Create a GLFW library wrapper (to make window class unit testable)
-    // - Maybe Create a GLAD library wrapper (the GLAD loader is likely called by the window class too)
-    // - Then, likey this OpenGLWrapper (maybe renamed with OpenGL in its name) depends on a window
-    if (glfw.Init() != GLFW_TRUE)
+    if (_glfw.Init() != GLFW_TRUE)
     {
         throw GlfwException(glfw, "Failed to initialize GLFW.");
     }
 
-    glfw.WindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfw.WindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfw.WindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    _glfw.WindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    _glfw.WindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    _glfw.WindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 #ifdef __APPLE__
-    glfw.WindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    _glfw.WindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    auto window = glfw.CreateWindow(winWidth, winHeight, "LearnOpenGL", NULL, NULL);
-    if (window == NULL)
+    _handle = _glfw.CreateWindow(winWidth, winHeight, "LearnOpenGL", NULL, NULL);
+    if (_handle == NULL)
     {
         glfw.Terminate();
         throw GlfwException(glfw, "Failed to create GLFW window.");
     }
-    glfw.MakeContextCurrent(window);
-    glfw.SetFramebufferSizeCallback(window, frameBufferSizeCallback);
+    _glfw.MakeContextCurrent(_handle);
+    _glfw.SetFramebufferSizeCallback(_handle, frameBufferSizeCallback);
 
-    if (!glfw.LoadGLLoader())
+    if (!_glfw.LoadGLLoader())
     {
         throw std::runtime_error("Failed to initialize GLAD");
     } 
+}
 
-    return window;
+Window::~Window()
+{
+    _glfw.DestroyWindow(_handle);
+}
+
+void Window::Close()
+{
+    _glfw.SetWindowShouldClose(_handle, true);
+}
+
+int Window::GetKey(int key)
+{
+    return _glfw.GetKey(_handle, key);
+}
+
+bool Window::Update()
+{
+    _glfw.SwapBuffers(_handle);
+    _glfw.PollEvents();
+    return _glfw.WindowShouldClose(_handle);
 }

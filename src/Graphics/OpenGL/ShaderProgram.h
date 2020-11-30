@@ -12,6 +12,7 @@ namespace Graphics::OpenGL
     public:
         ShaderProgram(IOpenGLWrapper& gl, std::initializer_list<IShader*> shaders);
         ~ShaderProgram();
+        ShaderProgram(const ShaderProgram&) = delete;
 
         GLuint Handle();
 

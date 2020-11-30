@@ -18,6 +18,7 @@ namespace Graphics::OpenGL
         Shader(IOpenGLWrapper& gl, Type type, std::istream& sourceStream);
         Shader(IOpenGLWrapper& gl, Type type, const std::string& source);
         ~Shader();
+        Shader(const Shader&) = delete;
 
         GLuint Handle() override;
 
