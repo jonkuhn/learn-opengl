@@ -29,8 +29,8 @@ Window::Window(IGlfwWrapper& glfw, int winWidth, int winHeight, const std::strin
     _glfw.WindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    _handle = _glfw.CreateWindow(winWidth, winHeight, title.c_str(), NULL, NULL);
-    if (_handle == NULL)
+    _handle = _glfw.CreateWindow(winWidth, winHeight, title.c_str(), nullptr, nullptr);
+    if (_handle == nullptr)
     {
         throw GlfwException(glfw, "Failed to create GLFW window.");
     }

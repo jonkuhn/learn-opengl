@@ -13,8 +13,12 @@ namespace
         int code = glfw.GetError(&description);
         std::stringstream ss;
         ss << prefix
-            << " Code: " << code
-            << " Description: " << std::string(description);
+            << " Code: " << code;
+        
+        if (description != nullptr)
+        {
+            ss << " Description: " << std::string(description);
+        }
 
         return ss.str();
     }

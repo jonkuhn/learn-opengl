@@ -8,10 +8,12 @@ target_sources(GraphicsUnitTests
   PRIVATE
     main_test.cpp
     OpenGL/TestHelpers.h
+    OpenGL/MockGlfwWrapper.h
     OpenGL/MockOpenGLWrapper.h
     OpenGL/MockShader.h
-    OpenGL/ShaderTests.cpp
     OpenGL/ShaderProgramTests.cpp
+    OpenGL/ShaderTests.cpp
+    OpenGL/WindowTests.cpp
 )
 target_include_directories(GraphicsUnitTests PRIVATE
   ../

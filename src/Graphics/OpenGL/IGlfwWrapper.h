@@ -11,7 +11,7 @@ namespace Graphics::OpenGL
         virtual GLFWwindow* CreateWindow(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share) = 0;
         virtual void DestroyWindow(GLFWwindow* window) = 0;
         virtual void MakeContextCurrent(GLFWwindow* window) = 0;
-        virtual GLFWwindow* GetCurrentContext(void) = 0;
+        virtual GLFWwindow* GetCurrentContext() = 0;
         virtual GLFWframebuffersizefun SetFramebufferSizeCallback(GLFWwindow* window, GLFWframebuffersizefun callback) = 0;
         virtual int GetError(const char** description) = 0;
         virtual void SwapBuffers(GLFWwindow* window) = 0;
