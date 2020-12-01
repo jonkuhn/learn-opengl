@@ -1,6 +1,17 @@
 # Journal
 The intent of this document is to document how my mental model of OpenGL programming evolves as I go through the tutorial (https://learnopengl.com) and eventually experiment on my own.
 
+## Nov 30, 2020
+Wrote unit and integration tests for Window.  Currently they don't cover the framebuffer resize callback.  I am thinking that would be best to cover with an integration test that calls glfwSetWindowSize and then (after an update call) does a glGet call for the viewport.  This would require adding SetWindowSize to IGlfwWrapper and Window.  Probably not necessary for moving on, but I may do it.
+
+Next I can move on to wrapping the VBO, VAO and EBO OpenGL objects.
+
+I think a good initial higher level goal may be to have a higher level (non-OpenGL specific) 2D sprite class that is injected with some interface that happens to be implemented by OpenGL.
+
+the other higher level goal would be to follow the tutorial more exactly and build up proper C++ classes around everything necessary to make each of the future things work.  However, with just a sprite class I can play around with a lot of 2D graphics and game ideas.  Not that I have any great game design ideas.
+
+I guess it just depends on what I feel like doing and learning about the most.
+
 ## Nov 28, 2020
 Wrote unit and integration tests for ShaderProgram.  Next up is likely to build the Window class, unless I want to put that cleanup off to dig into OpenGL a bit more.  I've read ahead in the tutorial as mentioned previously, but I want to build a good foundation using SOLID design prinicples and unit testing so that issues will be easy to find as things get more complex.  In any case it was a good refresher on how to do these things in C++.
 
