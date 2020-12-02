@@ -1,6 +1,9 @@
 # Journal
 The intent of this document is to document how my mental model of OpenGL programming evolves as I go through the tutorial (https://learnopengl.com) and eventually experiment on my own.
 
+## Dec 2, 2020
+I added a simple unit test for the framebuffer size callback by capturing the function pointer passed to SetFrameBuffersSizeCallback using gMock's SaveArg.
+
 ## Nov 30, 2020
 Wrote unit and integration tests for Window.  Currently they don't cover the framebuffer resize callback.  I am thinking that would be best to cover with an integration test that calls glfwSetWindowSize and then (after an update call) does a glGet call for the viewport.  This would require adding SetWindowSize to IGlfwWrapper and Window.  Probably not necessary for moving on, but I may do it.
 

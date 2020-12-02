@@ -156,3 +156,24 @@ TEST_F(WindowTests, Update_GivenWindowShouldClose_ReturnsFalse)
     EXPECT_CALL(_mockGlfw, WindowShouldClose(_testHandle)).WillOnce(Return(true));
     EXPECT_FALSE(window.Update());
 }
+
+TEST_F(WindowTests, FramebufferCallback_MakesExpectedCalls)
+{
+    SetupMockCreateToAlwaysSucceed();
+    SetupMockLoadGlToAlwaysSucceed();
+
+    // Use mock GLFW to capture the callback
+    GLFWframebuffersizefun savedCallback = nullptr;
+    EXPECT_CALL(_mockGlfw, SetFramebufferSizeCallback(_, _))
+        .WillOnce(DoAll(SaveArg<1>(&savedCallback), Return(nullptr)));
+    Window window(_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
+
+    // Setup expectations for what the callback should call
+    int newWidth = _testWinWidth / 2;
+    int newHeight = _testWinHeight / 2;
+    EXPECT_CALL(_mockGlfw, MakeContextCurrent(_testHandle));
+    EXPECT_CALL(_mockGlfw, SetGlViewport(0, 0, newWidth, newHeight));
+
+    // Call the callback
+    savedCallback(_testHandle, newWidth, newHeight);
+}
