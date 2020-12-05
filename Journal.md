@@ -1,6 +1,21 @@
 # Journal
 The intent of this document is to document how my mental model of OpenGL programming evolves as I go through the tutorial (https://learnopengl.com) and eventually experiment on my own.
 
+## Dec 3-4, 2020
+Update:
+
+Now after skimming over some things (the section in the tutorial about rendering sprites and the section on textures), I have a new idea for what to do next.  I think I should build a class to represent a texture.  Next build a class to represent a sprite that takes a texture as a constructor argument.  The sprite class will be able to be drawn in any position/rotation/etc.  Then, it probably makes sense to have some kind of class that represents a "graphical entity", basically different instances of a sprite.  My idea with this is that game code could just know very little about graphics and just update the graphical entities that represent the game objects.
+
+I also think I have an improved understand coordinate systems.  I think for a 2D game like a side scroller world coordinates could be defined that are much larger than the screen and all drawing can be done in terms of world coordinates.  Then, the projection matrix passed as a uniform to the vertex shader can map those to screen coordinates.  As the screen scrolls the projection matrix would change to show a different part of the scene.  I think I will have to get actually playing with the code to check this understanding.
+
+Also I assume sprite animations would be done by altering the texture coordinates via a uniform.
+
+Earlier:
+
+I want to start building classes around vertex array objects, vertex buffer objects and vertex element buffer objects.  My first thought was that it would make sense to have a class for each since they each represent a resource and then to compose those objects to build  higher level functionality.  It seems the vertex array object contains or owns the vertex buffer objects and element buffer.  However it does not seem like the buffers could be created first and then injected into the vertex array object.  Maybe one class to manage all of it would make sense.  Maybe I should even just build a sprite class right on top of the GL calls.
+
+I am also thinking about performance and error checking.  My tendency is to always check return codes, but it seems that may be too expensive at least in "fast path" graphics code.  It seems like it is likely reasonable during setup and loading of resources.  So I am thinking about when I may want to call glGetError.  I have heard things in the past about the cost of virtual function calls.  It is never relevant for most things I do, but I am curious if my abstracting things to make them unit testable will be an issue at some point.  I also don't plan to build something super intensive though.  I think if that ends up being an issue a good thing to try to retain testability would be to use templates to pass the dependency to use rather than constructor injection.  For right now, until I realize it is too expensive I think I will stick to my approach of keeping things unit testable.
+
 ## Dec 2, 2020
 I added a simple unit test for the framebuffer size callback by capturing the function pointer passed to SetFrameBuffersSizeCallback using gMock's SaveArg.
 
