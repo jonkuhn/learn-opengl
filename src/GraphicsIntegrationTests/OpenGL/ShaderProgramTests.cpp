@@ -3,6 +3,7 @@
 
 #include <gtest/gtest.h>
 
+
 #include "Graphics/OpenGL/ShaderProgram.h"
 #include "Graphics/OpenGL/Shader.h"
 #include "Graphics/OpenGL/GlfwWrapper.h"
@@ -21,13 +22,23 @@ public:
           _glfw(),
           _window(_glfw, 800, 600, "DummyIntegrationTestWindow")
     {
-
+        // clear errors
+        _gl.GetError();
     }
 protected:
     OpenGLWrapper _gl;
     GlfwWrapper _glfw;
     Window _window;
+
 };
+
+namespace
+{
+    void AssertNoOpenGLErrors(IOpenGLWrapper& gl)
+    {
+        EXPECT_EQ(gl.GetError(), static_cast<unsigned int>(GL_NO_ERROR));
+    }
+}
 
 TEST_F(ShaderProgramTests, CreateShaderProgramSuccess)
 {
@@ -37,8 +48,48 @@ TEST_F(ShaderProgramTests, CreateShaderProgramSuccess)
     Shader fragmentShader(gl, Shader::Type::Fragment, GetValidFragmentShaderCode());
     EXPECT_NO_THROW(
         ShaderProgram shaderProgram(gl, {&vertexShader, &fragmentShader});
-        EXPECT_NE(shaderProgram.Handle(), (GLuint)0)
+        shaderProgram.Use();
     );
+}
+
+TEST_F(ShaderProgramTests, SetVertexShaderUniforms)
+{
+    OpenGLWrapper gl;
+
+    Shader vertexShader(gl, Shader::Type::Vertex, GetVertexShaderCodeWithUniforms());
+    Shader fragmentShader(gl, Shader::Type::Fragment, GetValidFragmentShaderCode());
+    ShaderProgram shaderProgram(gl, {&vertexShader, &fragmentShader});
+
+    AssertNoOpenGLErrors(gl);
+
+    shaderProgram.Use();
+    AssertNoOpenGLErrors(gl);
+    shaderProgram.SetUniform("testMatrix4", glm::mat4());
+    AssertNoOpenGLErrors(gl);
+    shaderProgram.SetUniform("testSampler", 123);
+    AssertNoOpenGLErrors(gl);
+    shaderProgram.SetUniform("testVector3", glm::vec3());
+    AssertNoOpenGLErrors(gl);
+}
+
+TEST_F(ShaderProgramTests, SetFragmentShaderUniforms)
+{
+    OpenGLWrapper gl;
+
+    Shader vertexShader(gl, Shader::Type::Vertex, GetValidVertexShaderCode());
+    Shader fragmentShader(gl, Shader::Type::Fragment, GetFragmentShaderCodeWithUniforms());
+    ShaderProgram shaderProgram(gl, {&vertexShader, &fragmentShader});
+
+    AssertNoOpenGLErrors(gl);
+
+    shaderProgram.Use();
+    AssertNoOpenGLErrors(gl);
+    shaderProgram.SetUniform("testMatrix4", glm::mat4());
+    AssertNoOpenGLErrors(gl);
+    shaderProgram.SetUniform("testSampler", 123);
+    AssertNoOpenGLErrors(gl);
+    shaderProgram.SetUniform("testVector3", glm::vec3());
+    AssertNoOpenGLErrors(gl);
 }
 
 // In the future maybe write a test that intentionally
