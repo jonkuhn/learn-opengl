@@ -12,7 +12,7 @@
 #include "Graphics/OpenGL/ShaderProgram.h"
 #include "MockOpenGLWrapper.h"
 #include "MockShader.h"
-#include "TestHelpers.h"
+#include "../TestHelpers.h"
 
 using namespace testing;
 using namespace Graphics::OpenGL;
