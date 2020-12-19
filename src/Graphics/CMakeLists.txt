@@ -18,6 +18,8 @@ target_sources(Graphics
     OpenGL/Shader.cpp
     OpenGL/ShaderProgram.h
     OpenGL/ShaderProgram.cpp
+    OpenGL/Texture.h
+    OpenGL/Texture.cpp
     OpenGL/Window.h
     OpenGL/Window.cpp
     IImage.h
