@@ -10,6 +10,7 @@ target_sources(GraphicsIntegrationTests
     ImageTests.cpp
     OpenGL/TestHelpers.h
     OpenGL/TestHelpers.cpp
+    OpenGL/TextureTests.cpp
     OpenGL/ShaderTests.cpp
     OpenGL/ShaderProgramTests.cpp
     OpenGL/WindowTests.cpp
