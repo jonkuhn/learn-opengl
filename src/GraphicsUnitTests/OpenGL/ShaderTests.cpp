@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 
 #include "Graphics/OpenGL/Shader.h"
-#include "TestHelpers.h"
+#include "../TestHelpers.h"
 #include "MockOpenGLWrapper.h"
 
 using namespace testing;

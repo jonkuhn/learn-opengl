@@ -7,6 +7,7 @@ endif()
 target_sources(GraphicsIntegrationTests
   PRIVATE
     main_test.cpp
+    ImageTests.cpp
     OpenGL/TestHelpers.h
     OpenGL/TestHelpers.cpp
     OpenGL/ShaderTests.cpp
@@ -17,3 +18,6 @@ target_include_directories(GraphicsIntegrationTests PRIVATE
   ../
 )
 target_link_libraries(GraphicsIntegrationTests Graphics ${CONAN_LIBS})
+
+file(COPY ./TestFiles/test31x47.png DESTINATION ${CMAKE_BINARY_DIR}/bin/TestFiles)
+file(COPY ./TestFiles/test31x47.jpg DESTINATION ${CMAKE_BINARY_DIR}/bin/TestFiles)

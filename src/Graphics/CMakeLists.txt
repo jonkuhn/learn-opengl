@@ -20,5 +20,9 @@ target_sources(Graphics
     OpenGL/ShaderProgram.cpp
     OpenGL/Window.h
     OpenGL/Window.cpp
+    Image.h
+    Image.cpp
+    ILibPngWrapper.h
+    LibPngWrapper.h
 )
 target_link_libraries(Graphics ${CONAN_LIBS})

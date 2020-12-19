@@ -6,7 +6,7 @@
 #include "Graphics/OpenGL/Window.h"
 #include "Graphics/OpenGL/GlfwException.h"
 #include "MockGlfwWrapper.h"
-#include "TestHelpers.h"
+#include "../TestHelpers.h"
 
 using namespace testing;
 using namespace Graphics::OpenGL;

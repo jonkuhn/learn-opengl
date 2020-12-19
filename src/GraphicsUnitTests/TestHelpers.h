@@ -8,3 +8,8 @@ ACTION_TEMPLATE(FillArgPointeeBuffer, HAS_1_TEMPLATE_PARAMS(unsigned, argIndex),
 {
     std::memcpy(std::get<argIndex>(args), srcBuffer, srcSize);
 }
+
+ACTION_TEMPLATE(SavePointerToArgReferee, HAS_1_TEMPLATE_PARAMS(unsigned, argIndex), AND_1_VALUE_PARAMS(pointer))
+{
+    *pointer = &(std::get<argIndex>(args));
+}
