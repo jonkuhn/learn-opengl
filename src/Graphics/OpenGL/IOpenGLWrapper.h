@@ -21,5 +21,15 @@ namespace Graphics::OpenGL
         virtual void GetProgramiv(GLuint program, GLenum pname, GLint *params) = 0;
         virtual void GetProgramInfoLog(GLuint program, GLsizei maxLength, GLsizei* length, GLchar* infoLog) = 0;
         virtual void DeleteProgram(GLuint program) = 0;
+
+        virtual void GenVertexArrays(GLsizei n, GLuint* arrays) = 0;
+
+        virtual void GenTextures(GLsizei n, GLuint* textures) = 0;
+        virtual void DeleteTextures(GLsizei n, const GLuint* textures) = 0;
+
+        virtual void BindTexture(GLenum target, GLuint texture) = 0;
+        virtual void TexParameteri(GLenum target, GLenum pname, GLint param) = 0;
+        virtual void TexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width,
+            GLsizei height, GLint border, GLenum format, GLenum type, const void * data) = 0;
     };
 }

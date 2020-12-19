@@ -73,5 +73,37 @@ namespace Graphics::OpenGL
         {
             glDeleteProgram(program);
         }
+
+        void GenVertexArrays(GLsizei n, GLuint *arrays) override
+        {
+            glGenVertexArrays(n, arrays);
+        }
+
+        void GenTextures(GLsizei n, GLuint* textures) override
+        {
+            glGenTextures(n, textures);
+        }
+
+        void DeleteTextures(GLsizei n, const GLuint* textures) override
+        {
+            glDeleteTextures(n, textures);
+        }
+
+        void BindTexture(GLenum target, GLuint texture) override
+        {
+            glBindTexture(target, texture);
+        }
+
+        void TexParameteri(GLenum target, GLenum pname, GLint param) override
+        {
+            glTexParameteri(target, pname, param);
+        }
+
+        void TexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width,
+            GLsizei height, GLint border, GLenum format, GLenum type, const void* data) override
+        {
+            glTexImage2D(target, level, internalformat, width, height,
+                border, format, type, data);
+        }
     };
 }
