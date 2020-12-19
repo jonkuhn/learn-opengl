@@ -1,7 +1,13 @@
+#include <memory>
 #include <string>
 #include <sstream>
 
 #include <gtest/gtest.h>
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-volatile"
+#include <glm/gtc/type_ptr.hpp>
+#pragma clang diagnostic pop
 
 #include "Graphics/OpenGL/ShaderProgram.h"
 #include "MockOpenGLWrapper.h"
@@ -27,6 +33,13 @@ protected:
     const GLuint _testProgramHandle = 789;
     MockShader _mockShaderA;
     MockShader _mockShaderB;
+
+    std::unique_ptr<ShaderProgram> CreateTestShaderProgram()
+    {
+        EXPECT_CALL(_mockLib, CreateProgram()).WillOnce(Return(_testProgramHandle));
+        EXPECT_CALL(_mockLib, GetProgramiv(_, GL_LINK_STATUS, _)).WillOnce(SetArgPointee<2>(true));
+        return std::make_unique<ShaderProgram>(_mockLib, std::initializer_list<IShader*>({&_mockShaderA, &_mockShaderB}));
+    }
 };
 
 TEST_F(ShaderProgramTests, Constructor_MakesCallsToCreateAndLinkProgram)
@@ -104,10 +117,48 @@ TEST_F(ShaderProgramTests, Destructor_CallsDeleteProgram)
     }
 }
 
-TEST_F(ShaderProgramTests, Handle_ReturnsProgramHandle)
+TEST_F(ShaderProgramTests, Use_CallsUseProgramWithHandle)
 {
-    EXPECT_CALL(_mockLib, CreateProgram()).WillOnce(Return(_testProgramHandle));
-    EXPECT_CALL(_mockLib, GetProgramiv(_, GL_LINK_STATUS, _)).WillOnce(SetArgPointee<2>(true));
-    ShaderProgram shaderProgram(_mockLib, {&_mockShaderA, &_mockShaderB});
-    EXPECT_EQ(shaderProgram.Handle(), _testProgramHandle);
+    auto shaderProgram = CreateTestShaderProgram();
+    EXPECT_CALL(_mockLib, UseProgram(_testProgramHandle));
+    shaderProgram->Use();
+}
+
+TEST_F(ShaderProgramTests, SetUniformWithInt_CallsUniform1i)
+{
+    auto shaderProgram = CreateTestShaderProgram();
+
+    std::string testUniformName = "testUniformName";
+    int testUniformLocation = 12345;
+    int testUniformValue = 6789;
+    EXPECT_CALL(_mockLib, GetUniformLocation(_testProgramHandle, StrEq(testUniformName.c_str())))
+        .WillOnce(Return(testUniformLocation));
+    EXPECT_CALL(_mockLib, Uniform1i(testUniformLocation, testUniformValue));
+    shaderProgram->SetUniform(testUniformName, testUniformValue);
+}
+
+TEST_F(ShaderProgramTests, SetUniformWithMat4_CallsUniformMatrix4fv)
+{
+    auto shaderProgram = CreateTestShaderProgram();
+
+    std::string testUniformName = "testUniformName";
+    int testUniformLocation = 12345;
+    glm::mat4 testUniformValue(2.0f);
+    EXPECT_CALL(_mockLib, GetUniformLocation(_testProgramHandle, StrEq(testUniformName.c_str())))
+        .WillOnce(Return(testUniformLocation));
+    EXPECT_CALL(_mockLib, UniformMatrix4fv(testUniformLocation, 1, false, glm::value_ptr(testUniformValue)));
+    shaderProgram->SetUniform(testUniformName, testUniformValue);
+}
+
+TEST_F(ShaderProgramTests, SetUniformWithVec3_CallsUniform3fv)
+{
+    auto shaderProgram = CreateTestShaderProgram();
+
+    std::string testUniformName = "testUniformName";
+    int testUniformLocation = 12345;
+    glm::vec3 testUniformValue(2.0f);
+    EXPECT_CALL(_mockLib, GetUniformLocation(_testProgramHandle, StrEq(testUniformName.c_str())))
+        .WillOnce(Return(testUniformLocation));
+    EXPECT_CALL(_mockLib, Uniform3fv(testUniformLocation, 1, glm::value_ptr(testUniformValue)));
+    shaderProgram->SetUniform(testUniformName, testUniformValue);
 }

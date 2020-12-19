@@ -74,6 +74,31 @@ namespace Graphics::OpenGL
             glDeleteProgram(program);
         }
 
+        void UseProgram(GLuint program) override
+        {
+            glUseProgram(program);
+        }
+
+        GLint GetUniformLocation(GLuint program, const GLchar* location) override
+        {
+            return glGetUniformLocation(program, location);
+        }
+
+        void Uniform1i(GLint location, GLint v0) override
+        {
+            glUniform1i(location, v0);
+        }
+
+        void UniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) override
+        {
+            glUniformMatrix4fv(location, count, transpose, value);
+        }
+
+        void Uniform3fv(GLint location, GLsizei count, const GLfloat *value) override
+        {
+            glUniform3fv(location, count, value);
+        }
+
         void GenVertexArrays(GLsizei n, GLuint *arrays) override
         {
             glGenVertexArrays(n, arrays);

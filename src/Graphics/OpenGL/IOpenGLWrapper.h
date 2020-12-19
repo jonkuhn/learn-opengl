@@ -21,6 +21,11 @@ namespace Graphics::OpenGL
         virtual void GetProgramiv(GLuint program, GLenum pname, GLint *params) = 0;
         virtual void GetProgramInfoLog(GLuint program, GLsizei maxLength, GLsizei* length, GLchar* infoLog) = 0;
         virtual void DeleteProgram(GLuint program) = 0;
+        virtual void UseProgram(GLuint program) = 0;
+        virtual GLint GetUniformLocation(GLuint program, const GLchar* location) = 0;
+        virtual void Uniform1i(GLint location, GLint v0) = 0;
+        virtual void UniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) = 0;
+        virtual void Uniform3fv(GLint location, GLsizei count, const GLfloat *value) = 0;
 
         virtual void GenVertexArrays(GLsizei n, GLuint* arrays) = 0;
 
@@ -31,5 +36,6 @@ namespace Graphics::OpenGL
         virtual void TexParameteri(GLenum target, GLenum pname, GLint param) = 0;
         virtual void TexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width,
             GLsizei height, GLint border, GLenum format, GLenum type, const void * data) = 0;
+
     };
 }

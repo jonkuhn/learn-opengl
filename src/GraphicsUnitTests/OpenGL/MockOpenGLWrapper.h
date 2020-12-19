@@ -20,6 +20,11 @@ public:
     MOCK_METHOD(void, GetProgramiv, (GLuint program, GLenum pname, GLint *params), (override));
     MOCK_METHOD(void, GetProgramInfoLog, (GLuint program, GLsizei maxLength, GLsizei* length, GLchar* infoLog), (override));
     MOCK_METHOD(void, DeleteProgram, (GLuint program), (override));
+    MOCK_METHOD(void, UseProgram, (GLuint program), (override));
+    MOCK_METHOD(GLint, GetUniformLocation, (GLuint program, const GLchar* location), (override));
+    MOCK_METHOD(void, Uniform1i, (GLint location, GLint v0), (override));
+    MOCK_METHOD(void, UniformMatrix4fv, (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value), (override));
+    MOCK_METHOD(void, Uniform3fv, (GLint location, GLsizei count, const GLfloat *value), (override));
     MOCK_METHOD(void, GenVertexArrays, (GLsizei n, GLuint *arrays), (override));
     MOCK_METHOD(void, GenTextures, (GLsizei n, GLuint* textures), (override));
     MOCK_METHOD(void, DeleteTextures, (GLsizei n, const GLuint* textures), (override));
