@@ -10,10 +10,11 @@
 #pragma clang diagnostic pop
 
 #include "IShader.h"
-#include "IOpenGLWrapper.h"
 
 namespace Graphics::OpenGL
 {
+    class IOpenGLWrapper;
+
     class ShaderProgram
     {
     public:

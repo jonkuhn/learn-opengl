@@ -4,6 +4,8 @@
 #include <sstream>
 #include <vector>
 
+#include "IOpenGLWrapper.h"
+
 using namespace Graphics::OpenGL;
 
 namespace 

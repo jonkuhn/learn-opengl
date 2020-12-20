@@ -2,10 +2,11 @@
 #include <istream>
 
 #include "IShader.h"
-#include "IOpenGLWrapper.h"
 
 namespace Graphics::OpenGL
 {
+    class IOpenGLWrapper;
+
     class Shader : public IShader
     {
     public:
