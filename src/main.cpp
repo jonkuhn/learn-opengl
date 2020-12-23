@@ -227,13 +227,25 @@ int main()
     shaderProgram.Use();
     shaderProgram.SetUniform("outTexture", 0);
 
-    glm::mat4 projection = glm::ortho(0.0f, 800.0f, 600.0f, 0.0f, -1.0f, 1.0f);
-    glm::vec2 position(200.0f, 200.0f);
-    glm::vec2 size(300.0f, 400.0f);
-    float rotate = 45.0f;
+    glm::vec2 position(0.0f, 0.0f);
+    glm::vec2 size(551.0f, 750.0f);
+    float rotate = 0.0f;
     glm::vec3 color(1.0f, 1.0f, 1.0f);
+    float cameraX = 0;
+    double currentTime = glfwGetTime();
+    double previousTime = currentTime;
+    double frames = 0;
+    double sumOfLoopTimes = 0;
+
     while (window.Update())
     {
+        double start = glfwGetTime();
+
+        previousTime = currentTime;
+        currentTime = glfwGetTime();
+        double deltaTime = currentTime - previousTime;
+        frames += 1;
+
         processInput(window);
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -242,15 +254,16 @@ int main()
         texture.Bind();
 
         shaderProgram.Use();
+
+        cameraX += deltaTime * 50;
+        glm::mat4 projection = glm::ortho(cameraX+0.0f, cameraX+400.0f, 0.0f, 300.0f, -1.0f, 1.0f);
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(position, 0.0f));  
-
         model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f)); 
         model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 0.0f, 1.0f)); 
         model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
-
         model = glm::scale(model, glm::vec3(size, 1.0f)); 
-    
+
         shaderProgram.SetUniform("projection", projection);
         shaderProgram.SetUniform("image", 0);
         shaderProgram.SetUniform("model", model);
@@ -260,7 +273,11 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 6);
         //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0); // no need to unbind it every time 
+
+        sumOfLoopTimes += (glfwGetTime() - start);
     }
+
+    std::cout << "Average loop time: " << sumOfLoopTimes / frames << std::endl;
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
