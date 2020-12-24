@@ -130,5 +130,9 @@ namespace Graphics::OpenGL
             glTexImage2D(target, level, internalformat, width, height,
                 border, format, type, data);
         }
+        virtual void GenerateMipmap(GLenum target) override
+        {
+            glGenerateMipmap(target);
+        }
     };
 }
