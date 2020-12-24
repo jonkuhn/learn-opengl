@@ -32,5 +32,6 @@ public:
     MOCK_METHOD(void, TexParameteri, (GLenum target, GLenum pname, GLint param), (override));
     MOCK_METHOD(void, TexImage2D, (GLenum target, GLint level, GLint internalformat, GLsizei width,
             GLsizei height, GLint border, GLenum format, GLenum type, const void * data), (override));
+    MOCK_METHOD(void, GenerateMipmap, (GLenum target), (override));
 };
 #pragma clang diagnostic pop

@@ -36,6 +36,6 @@ namespace Graphics::OpenGL
         virtual void TexParameteri(GLenum target, GLenum pname, GLint param) = 0;
         virtual void TexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width,
             GLsizei height, GLint border, GLenum format, GLenum type, const void * data) = 0;
-
+        virtual void GenerateMipmap(GLenum target) = 0;
     };
 }
