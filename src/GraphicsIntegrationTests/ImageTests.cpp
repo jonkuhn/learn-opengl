@@ -4,16 +4,16 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "Graphics/Image.h"
+#include "Graphics/PngImage.h"
 #include "Graphics/LibPngWrapper.h"
 
 using namespace testing;
 using namespace Graphics;
 
-class ImageTests : public Test
+class PngImageTests : public Test
 {
 public:
-    ImageTests()
+    PngImageTests()
         : _libpng()
     {
     }
@@ -21,13 +21,13 @@ protected:
     LibPngWrapper _libpng;
 };
 
-TEST_F(ImageTests, LoadPngImage_TopOfImageAtBeginningOfBuffer)
+TEST_F(PngImageTests, LoadPngImage_TopOfImageAtBeginningOfBuffer)
 {
-    Image image(_libpng, "TestFiles/test31x47.png");
+    PngImage image(_libpng, "TestFiles/test31x47.png");
 
     EXPECT_EQ(image.Width(), 31);
     EXPECT_EQ(image.Height(), 47);
-    EXPECT_EQ(image.Format(), Image::PixelFormat::RGBA);
+    EXPECT_EQ(image.Format(), PngImage::PixelFormat::RGBA);
 
     // 3 black rows
     for (int i = 0; i < 3*31*3; i+=4)
@@ -84,12 +84,12 @@ TEST_F(ImageTests, LoadPngImage_TopOfImageAtBeginningOfBuffer)
     }
 }
 
-TEST_F(ImageTests, LoadNonexistantFile_ThrowsRuntimeError)
+TEST_F(PngImageTests, LoadNonexistantFile_ThrowsRuntimeError)
 {
     EXPECT_THROW(
         try
         {
-            Image image(_libpng, "TestFiles/DoesNotExist.file");
+            PngImage image(_libpng, "TestFiles/DoesNotExist.file");
 
         }
         catch (std::runtime_error& e)
@@ -103,12 +103,12 @@ TEST_F(ImageTests, LoadNonexistantFile_ThrowsRuntimeError)
         std::runtime_error);
 }
 
-TEST_F(ImageTests, LoadNonPngImage_ThrowsRuntimeError)
+TEST_F(PngImageTests, LoadNonPngImage_ThrowsRuntimeError)
 {
     EXPECT_THROW(
         try
         {
-            Image image(_libpng, "TestFiles/test31x47.jpg");
+            PngImage image(_libpng, "TestFiles/test31x47.jpg");
         }
         catch (std::runtime_error& e)
         {

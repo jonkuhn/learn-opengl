@@ -1,4 +1,4 @@
-#include "Image.h"
+#include "PngImage.h"
 
 #include <sstream>
 
@@ -6,12 +6,12 @@
 
 using namespace Graphics;
 
-Image::Image(ILibPngWrapper& libPng, const std::string& filename)
+PngImage::PngImage(ILibPngWrapper& libPng, const std::string& filename)
     : _libPng(libPng),
       _data(),
       _width(0),
       _height(0),
-      _pixelFormat(Image::PixelFormat::Invalid)
+      _pixelFormat(PngImage::PixelFormat::Invalid)
 {
     png_image image;
     memset(&image, 0, sizeof image);
@@ -41,4 +41,24 @@ Image::Image(ILibPngWrapper& libPng, const std::string& filename)
 
     // Hardcoded because we request RGBA from libpng above
     _pixelFormat = PixelFormat::RGBA;
+}
+
+const uint8_t* PngImage::Data() const
+{
+    return _data.data();
+}
+
+int PngImage::Width() const
+{
+    return _width;
+}
+
+int PngImage::Height() const
+{
+    return _height;
+}
+
+IImage::PixelFormat PngImage::Format() const
+{
+    return _pixelFormat;
 }

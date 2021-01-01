@@ -20,8 +20,9 @@ target_sources(Graphics
     OpenGL/ShaderProgram.cpp
     OpenGL/Window.h
     OpenGL/Window.cpp
-    Image.h
-    Image.cpp
+    IImage.h
+    PngImage.h
+    PngImage.cpp
     ILibPngWrapper.h
     LibPngWrapper.h
 )
