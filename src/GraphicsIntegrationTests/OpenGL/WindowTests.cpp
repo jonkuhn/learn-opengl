@@ -23,7 +23,7 @@ TEST(WindowTests, CreateUpdateGetKey_DoesNotThrow)
     GlfwWrapper glfw;
 
     EXPECT_NO_THROW(
-        Window window(glfw, testWinWidth, testWinHeight, testWinTitle);
+        GlfwWindow window(glfw, testWinWidth, testWinHeight, testWinTitle);
         window.Update();
         window.GetKey(GLFW_KEY_ESCAPE);
         window.Update();
@@ -34,7 +34,7 @@ TEST(WindowTests, UpdateReturnsTrueUntilCloseIsCalledThenReturnsFalse)
 {
     GlfwWrapper glfw;
 
-    Window window(glfw, testWinWidth, testWinHeight, testWinTitle);
+    GlfwWindow window(glfw, testWinWidth, testWinHeight, testWinTitle);
     EXPECT_TRUE(window.Update());
     EXPECT_TRUE(window.Update());
     window.Close();
@@ -48,12 +48,12 @@ TEST(WindowTests, AllowsMultipleWindowsAndDifferentTimes)
 
     EXPECT_NO_THROW(
         {
-            Window window1(glfw, testWinWidth, testWinHeight, testWinTitle);
+            GlfwWindow window1(glfw, testWinWidth, testWinHeight, testWinTitle);
         });
 
     EXPECT_NO_THROW(
         {
-            Window window2(glfw, testWinWidth, testWinHeight, testWinTitle);
+            GlfwWindow window2(glfw, testWinWidth, testWinHeight, testWinTitle);
         });
 }
 
@@ -61,14 +61,14 @@ TEST(WindowTests, DisallowsMultipleWindowsAtTheSameTime)
 {
     // To simplify management of setting the current context
     // and since the vast majority of OpenGL applications
-    // only need one window, the Window class currently
+    // only need one window, the GlfwWindow class currently
     // only allows one instance at a time.
     GlfwWrapper glfw;
 
     EXPECT_THROW(
         {
-            Window window1(glfw, testWinWidth, testWinHeight, testWinTitle);
-            Window window2(glfw, testWinWidth, testWinHeight, testWinTitle);
+            GlfwWindow window1(glfw, testWinWidth, testWinHeight, testWinTitle);
+            GlfwWindow window2(glfw, testWinWidth, testWinHeight, testWinTitle);
         },
         std::logic_error);
 }

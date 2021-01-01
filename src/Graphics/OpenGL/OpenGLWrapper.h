@@ -6,9 +6,17 @@
 
 namespace Graphics::OpenGL
 {
+    class IOpenGLWindow;
+
     class OpenGLWrapper : public IOpenGLWrapper
     {
     public:
+        OpenGLWrapper(IOpenGLWindow& window)
+            : _window(window)
+        {
+
+        }
+
         GLenum GetError() override
         {
             return glGetError();
@@ -134,5 +142,12 @@ namespace Graphics::OpenGL
         {
             glGenerateMipmap(target);
         }
+
+    private:
+        // Unused, but exists to document dependence on a window to draw in
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wunused-private-field"
+        IOpenGLWindow& _window;
+        #pragma clang diagnostic pop
     };
 }

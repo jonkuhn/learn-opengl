@@ -16,16 +16,16 @@ class ShaderTests : public Test
 {
 public:
     ShaderTests()
-        : _gl(),
-          _glfw(),
-          _window(_glfw, 800, 600, "DummyIntegrationTestWindow")
+        : _glfw(),
+          _window(_glfw, 800, 600, "DummyIntegrationTestWindow"),
+          _gl(_window)
     {
 
     }
 protected:
-    OpenGLWrapper _gl;
     GlfwWrapper _glfw;
-    Window _window;
+    GlfwWindow _window;
+    OpenGLWrapper _gl;
 };
 
 TEST_F(ShaderTests, CreateVertexShaderSuccess)

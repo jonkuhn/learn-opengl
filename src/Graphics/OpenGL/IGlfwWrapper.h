@@ -22,7 +22,7 @@ namespace Graphics::OpenGL
         virtual int LoadGl() = 0;
 
         // Note: this is here instead of in IOpenGLWrapper because the
-        // Window class depends on it and having it here keeps things
+        // GlfwWindow class depends on it and having it here keeps things
         // simpler.
         virtual void SetGlViewport(GLint x, GLint y, GLsizei width, GLsizei height) = 0;
     };
