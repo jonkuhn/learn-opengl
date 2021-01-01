@@ -4,7 +4,7 @@
 
 #include <gtest/gtest.h>
 
-#include "Graphics/Image.h"
+#include "Graphics/PngImage.h"
 #include "MockLibPngWrapper.h"
 #include "TestHelpers.h"
 
@@ -26,10 +26,10 @@ namespace
     }
 }
 
-class ImageTests : public Test
+class PngImageTests : public Test
 {
 public:
-    ImageTests()
+    PngImageTests()
         : _testFilename("test-filename.png"),
           _testErrorMessage("test-error-message")
     {
@@ -45,7 +45,7 @@ protected:
     std::string _testErrorMessage;
 };
 
-TEST_F(ImageTests, Constructor_MakesCallsToLoadPng)
+TEST_F(PngImageTests, Constructor_MakesCallsToLoadPng)
 {
     // These will be pointers to a local variable in the constructor.
     // Therefore, only check them for equality, do not dereference
@@ -61,13 +61,13 @@ TEST_F(ImageTests, Constructor_MakesCallsToLoadPng)
     EXPECT_CALL(_mockLib, png_image_finish_read(_, Eq(nullptr), Ne(nullptr), Eq(0), Eq(nullptr)))
         .WillOnce(DoAll(SaveArg<0>(&capturedImagePtr3), Return(true)));
 
-    Image image(_mockLib, _testFilename);
+    PngImage image(_mockLib, _testFilename);
 
     EXPECT_EQ(capturedImagePtr1, capturedImagePtr2);
     EXPECT_EQ(capturedImagePtr1, capturedImagePtr3);
 }
 
-TEST_F(ImageTests, Constructor_SetsWidthHeightAndPixelFormat)
+TEST_F(PngImageTests, Constructor_SetsWidthHeightAndPixelFormat)
 {
     EXPECT_CALL(_mockLib, png_image_begin_read_from_file(_, StrEq(_testFilename.c_str())))
         .WillOnce(Return(true));
@@ -76,23 +76,23 @@ TEST_F(ImageTests, Constructor_SetsWidthHeightAndPixelFormat)
     EXPECT_CALL(_mockLib, png_image_finish_read(_, Eq(nullptr), Ne(nullptr), Eq(0), Eq(nullptr)))
         .WillOnce(DoAll(SetWidthAndHeightOnPngImageArg<0>(_testWidth, _testHeight), Return(true)));
 
-    Image image(_mockLib, _testFilename);
+    PngImage image(_mockLib, _testFilename);
 
     EXPECT_EQ(image.Width(), _testWidth);
     EXPECT_EQ(image.Height(), _testHeight);
 
     // Currently expect all images to be in RGBA format once loaded
-    EXPECT_EQ(image.Format(), Image::PixelFormat::RGBA);
+    EXPECT_EQ(image.Format(), PngImage::PixelFormat::RGBA);
 }
 
-TEST_F(ImageTests, Constructor_BeginReadFails_ThrowsRuntimeErrorContainingMessage)
+TEST_F(PngImageTests, Constructor_BeginReadFails_ThrowsRuntimeErrorContainingMessage)
 {
     EXPECT_CALL(_mockLib, png_image_begin_read_from_file(_, _))
         .WillOnce(DoAll(SetMessageOnPngImageArg<0>(_testErrorMessage.c_str()), Return(false)));
     EXPECT_THROW(
         try
         {
-            Image image(_mockLib, _testFilename);
+            PngImage image(_mockLib, _testFilename);
         }
         catch(const std::runtime_error& e)
         {
@@ -103,7 +103,7 @@ TEST_F(ImageTests, Constructor_BeginReadFails_ThrowsRuntimeErrorContainingMessag
         std::runtime_error);
 }
 
-TEST_F(ImageTests, Constructor_FinishReadFails_ThrowsRuntimeErrorContainingMessage)
+TEST_F(PngImageTests, Constructor_FinishReadFails_ThrowsRuntimeErrorContainingMessage)
 {
     EXPECT_CALL(_mockLib, png_image_begin_read_from_file(_, _))
         .WillOnce(Return(true));
@@ -112,7 +112,7 @@ TEST_F(ImageTests, Constructor_FinishReadFails_ThrowsRuntimeErrorContainingMessa
     EXPECT_THROW(
         try
         {
-            Image image(_mockLib, _testFilename);
+            PngImage image(_mockLib, _testFilename);
         }
         catch(const std::runtime_error& e)
         {
