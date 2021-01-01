@@ -3,9 +3,9 @@
 
 using namespace Graphics::OpenGL;
 
-Window* Window::s_singleInstance = nullptr;
+GlfwWindow* GlfwWindow::s_singleInstance = nullptr;
 
-Window::Window(IGlfwWrapper& glfw, int winWidth, int winHeight, const std::string& title)
+GlfwWindow::GlfwWindow(IGlfwWrapper& glfw, int winWidth, int winHeight, const std::string& title)
     : _glfw(glfw)
 {
     // Many of the GLFW calls below must only be called from the main
@@ -17,7 +17,7 @@ Window::Window(IGlfwWrapper& glfw, int winWidth, int winHeight, const std::strin
         // make sure _glfw.MakeContextCurrent is called for the appropriate
         // window before making OpenGL calls for that window.
         throw std::logic_error(
-            "To simplify context management, the Window class currently "
+            "To simplify context management, the GlfwWindow class currently "
             "only supports one instance at a time.");
     }
 
@@ -44,40 +44,40 @@ Window::Window(IGlfwWrapper& glfw, int winWidth, int winHeight, const std::strin
     s_singleInstance = this;
 }
 
-Window::~Window()
+GlfwWindow::~GlfwWindow()
 {
     _glfw.DestroyWindow(_handle);
     s_singleInstance = nullptr;
 }
 
-void Window::Close()
+void GlfwWindow::Close()
 {
     _glfw.SetWindowShouldClose(_handle, true);
 }
 
-int Window::GetKey(int key)
+int GlfwWindow::GetKey(int key)
 {
     return _glfw.GetKey(_handle, key);
 }
 
-bool Window::Update()
+bool GlfwWindow::Update()
 {
     _glfw.SwapBuffers(_handle);
     _glfw.PollEvents();
     return !_glfw.WindowShouldClose(_handle);
 }
 
-void Window::FrameBufferSizeCallbackDispatch(GLFWwindow* window, int width, int height)
+void GlfwWindow::FrameBufferSizeCallbackDispatch(GLFWwindow* window, int width, int height)
 {
     // For now keep dispatch simple since we are only allowing
-    // one instance of Window at a time.  If we ever want multiple
+    // one instance of GlfwWindow at a time.  If we ever want multiple
     // instances we should instead use glfwSetWindowUserPointer/glfwGetWindowUserPointer
     // but that will also make it so this static function depends on GLFW
     // which we wanted to be able to replace for testing.
     s_singleInstance->FrameBufferSizeCallback(window, width, height);
 }
 
-void Window::FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
+void GlfwWindow::FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 {
     // Make sure the right context is current, even though
     // currently this class is limited to one instance at a

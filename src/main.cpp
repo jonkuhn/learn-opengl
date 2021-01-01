@@ -32,7 +32,7 @@ void main()
 }
 )##RAW##";
 
-void processInput(Window& window)
+void processInput(GlfwWindow& window)
 {
     if(window.GetKey(GLFW_KEY_ESCAPE) == GLFW_PRESS)
         window.Close();
@@ -41,8 +41,8 @@ void processInput(Window& window)
 int main()
 {
     GlfwWrapper glfw;
-    Window window(glfw, SCR_WIDTH, SCR_HEIGHT, "Learn OpenGL");
-    OpenGLWrapper gl;
+    GlfwWindow window(glfw, SCR_WIDTH, SCR_HEIGHT, "Learn OpenGL");
+    OpenGLWrapper gl(window);
 
     Shader vertexShader(gl, Shader::Type::Vertex, vertexShaderSource);
     Shader fragmentShader(gl, Shader::Type::Fragment, fragmentShaderSource);

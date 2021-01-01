@@ -2,15 +2,16 @@
 #include <string>
 
 #include "IGlfwWrapper.h"
+#include "IOpenGLWindow.h"
 
 namespace Graphics::OpenGL
 {
-    class Window
+    class GlfwWindow : public IOpenGLWindow
     {
     public:
-        Window(IGlfwWrapper& glfw, int winWidth, int winHeight, const std::string& title);
-        ~Window();
-        Window(const Window&) = delete;
+        GlfwWindow(IGlfwWrapper& glfw, int winWidth, int winHeight, const std::string& title);
+        ~GlfwWindow();
+        GlfwWindow(const GlfwWindow&) = delete;
 
         void Close();
 
@@ -21,7 +22,7 @@ namespace Graphics::OpenGL
         // if it needs to close.
         bool Update();
     private:
-        static Window* s_singleInstance;
+        static GlfwWindow* s_singleInstance;
         static void FrameBufferSizeCallbackDispatch(GLFWwindow* window, int width, int height);
         void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
 

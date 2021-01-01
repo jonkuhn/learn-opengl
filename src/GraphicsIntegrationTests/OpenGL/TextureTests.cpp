@@ -24,7 +24,7 @@ public:
         : _libpng(),
           _glfw(),
           _window(_glfw, 800, 600, "DummyIntegrationTestWindow"),
-          _gl()
+          _gl(_window)
     {
         // clear errors
         _gl.GetError();
@@ -32,7 +32,7 @@ public:
 protected:
     LibPngWrapper _libpng;
     GlfwWrapper _glfw;
-    Window _window;
+    GlfwWindow _window;
     OpenGLWrapper _gl;
 };
 
