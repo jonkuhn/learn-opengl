@@ -13,7 +13,9 @@ namespace Graphics::OpenGL
     public:
         GlfwWindow(IGlfwWrapper& glfw, int winWidth, int winHeight, const std::string& title);
         ~GlfwWindow();
+
         GlfwWindow(const GlfwWindow&) = delete;
+        GlfwWindow& operator=(const GlfwWindow&) = delete;
 
         void Close();
 

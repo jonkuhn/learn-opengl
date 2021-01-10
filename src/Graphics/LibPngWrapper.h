@@ -6,6 +6,11 @@ namespace Graphics
     class LibPngWrapper : public ILibPngWrapper
     {
     public:
+        LibPngWrapper() {}
+
+        LibPngWrapper(const LibPngWrapper&) = delete;
+        LibPngWrapper& operator=(const LibPngWrapper&) = delete;
+    
         int png_image_begin_read_from_file(png_image* image, const char *file_name) override
         {
             return ::png_image_begin_read_from_file(image, file_name);

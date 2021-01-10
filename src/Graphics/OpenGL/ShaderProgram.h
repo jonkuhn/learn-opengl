@@ -20,7 +20,9 @@ namespace Graphics::OpenGL
     {
     public:
         ShaderProgram(IOpenGLWrapper& gl, std::initializer_list<IShader*> shaders);
+
         ShaderProgram(const ShaderProgram&) = delete;
+        ShaderProgram& operator=(const ShaderProgram&) = delete;
 
         void Use();
         void SetUniform(const std::string name, int value);

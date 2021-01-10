@@ -14,6 +14,9 @@ namespace Graphics
     public:
         PngImage(ILibPngWrapper& libPng, const std::string& filename);
 
+        PngImage(const PngImage&) = delete;
+        PngImage& operator=(const PngImage&) = delete;
+
         const uint8_t* Data() const;
         int Width() const;
         int Height() const;

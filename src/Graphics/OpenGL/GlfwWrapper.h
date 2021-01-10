@@ -10,6 +10,8 @@ namespace Graphics::OpenGL
     {
     public:
         GlfwWrapper();
+        GlfwWrapper(const GlfwWrapper&) = delete;
+        GlfwWrapper& operator=(const GlfwWrapper&) = delete;
 
         void WindowHint(int hint, int value) override
         {

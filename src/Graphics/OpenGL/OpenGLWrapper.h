@@ -17,6 +17,9 @@ namespace Graphics::OpenGL
 
         }
 
+        OpenGLWrapper(const OpenGLWrapper&) = delete;
+        OpenGLWrapper& operator=(const OpenGLWrapper&) = delete;
+
         GLenum GetError() override
         {
             return glGetError();
