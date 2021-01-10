@@ -39,10 +39,14 @@ namespace Graphics::OpenGL
         {
         public:
             Params(const IImage& image_);
+
             Params& WrapModeS(WrapMode wrapModeS_);
             Params& WrapModeT(WrapMode wrapModeT_);
             Params& MinFilter(MinFilterMode minFilter_);
             Params& MagFilter(MagFilterMode magFilter_);
+
+            Params(const Params&) = delete;
+            Params& operator=(const Params&) = delete;
 
             const IImage& image;
             WrapMode wrapModeS;
@@ -52,6 +56,9 @@ namespace Graphics::OpenGL
         };
 
         Texture(IOpenGLWrapper& gl, const Params& params);
+
+        Texture(const Texture&) = delete;
+        Texture& operator=(const Texture&) = delete;
 
         void Bind();
 
