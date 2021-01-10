@@ -26,6 +26,16 @@ public:
     MOCK_METHOD(void, UniformMatrix4fv, (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value), (override));
     MOCK_METHOD(void, Uniform3fv, (GLint location, GLsizei count, const GLfloat *value), (override));
     MOCK_METHOD(void, GenVertexArrays, (GLsizei n, GLuint *arrays), (override));
+    MOCK_METHOD(void, DeleteVertexArrays, (GLsizei n, const GLuint *arrays), (override));
+    MOCK_METHOD(void, BindVertexArray, (GLuint array), (override));
+    MOCK_METHOD(void, VertexAttribPointer, (GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void * pointer), (override));
+    MOCK_METHOD(void, EnableVertexAttribArray, (GLuint index), (override));
+    MOCK_METHOD(void, GenBuffers, (GLsizei n, GLuint* buffers), (override));
+    MOCK_METHOD(void, DeleteBuffers, (GLsizei n, const GLuint* buffers), (override));
+    MOCK_METHOD(void, BindBuffer, (GLenum target, GLuint buffer), (override));
+    MOCK_METHOD(void, BufferData, (GLenum target, GLsizeiptr size, const void* data, GLenum usage), (override));
+    MOCK_METHOD(void, DrawArrays, (GLenum mode, GLint first, GLsizei count), (override));
+    MOCK_METHOD(void, DrawElements, (GLenum mode, GLsizei count, GLenum type, const void* indices), (override));
     MOCK_METHOD(void, GenTextures, (GLsizei n, GLuint* textures), (override));
     MOCK_METHOD(void, DeleteTextures, (GLsizei n, const GLuint* textures), (override));
     MOCK_METHOD(void, BindTexture, (GLenum target, GLuint texture), (override));
