@@ -28,6 +28,18 @@ namespace Graphics::OpenGL
         virtual void Uniform3fv(GLint location, GLsizei count, const GLfloat *value) = 0;
 
         virtual void GenVertexArrays(GLsizei n, GLuint* arrays) = 0;
+        virtual void DeleteVertexArrays(GLsizei n, const GLuint *arrays) = 0;
+        virtual void BindVertexArray(GLuint array) = 0;
+        virtual void VertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void * pointer) = 0;
+        virtual void EnableVertexAttribArray(GLuint index) = 0;
+
+        virtual void GenBuffers(GLsizei n, GLuint* buffers) = 0;
+        virtual void DeleteBuffers(GLsizei n, const GLuint* buffers) = 0;
+        virtual void BindBuffer(GLenum target, GLuint buffer) = 0;
+        virtual void BufferData(GLenum target, GLsizeiptr size, const void* data, GLenum usage) = 0;
+
+        virtual void DrawArrays(GLenum mode, GLint first, GLsizei count) = 0;
+        virtual void DrawElements(GLenum mode, GLsizei count, GLenum type, const void* indices) = 0;
 
         virtual void GenTextures(GLsizei n, GLuint* textures) = 0;
         virtual void DeleteTextures(GLsizei n, const GLuint* textures) = 0;

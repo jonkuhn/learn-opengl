@@ -110,9 +110,59 @@ namespace Graphics::OpenGL
             glUniform3fv(location, count, value);
         }
 
-        void GenVertexArrays(GLsizei n, GLuint *arrays) override
+        void GenVertexArrays(GLsizei n, GLuint* arrays) override
         {
             glGenVertexArrays(n, arrays);
+        }
+
+        void DeleteVertexArrays(GLsizei n, const GLuint *arrays) override
+        {
+            glDeleteVertexArrays(n, arrays);
+        }
+
+        void BindVertexArray(GLuint array) override
+        {
+            glBindVertexArray(array);
+        }
+
+        void VertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* pointer) override
+        {
+            glVertexAttribPointer(index, size, type, normalized, stride, pointer);
+        }
+
+        void EnableVertexAttribArray(GLuint index) override
+        {
+            glEnableVertexAttribArray(index);
+        }
+
+        void GenBuffers(GLsizei n, GLuint* buffers) override
+        {
+            glGenBuffers(n, buffers);
+        }
+
+        void DeleteBuffers(GLsizei n, const GLuint* buffers) override
+        {
+            glDeleteBuffers(n, buffers);
+        }
+
+        void BindBuffer(GLenum target, GLuint buffer) override
+        {
+            glBindBuffer(target, buffer);
+        }
+
+        void BufferData(GLenum target, GLsizeiptr size, const void* data, GLenum usage) override
+        {
+            glBufferData(target, size, data, usage);
+        }
+
+        void DrawArrays(GLenum mode, GLint first, GLsizei count) override
+        {
+            glDrawArrays(mode, first, count);
+        }
+
+        void DrawElements(GLenum mode, GLsizei count, GLenum type, const void* indices) override
+        {
+            glDrawElements(mode, count, type, indices);
         }
 
         void GenTextures(GLsizei n, GLuint* textures) override

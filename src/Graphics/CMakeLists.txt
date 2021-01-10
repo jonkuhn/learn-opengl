@@ -11,6 +11,8 @@ target_sources(Graphics
     OpenGL/IGlfwWrapper.h
     OpenGL/GlfwWrapper.h
     OpenGL/GlfwWrapper.cpp
+    OpenGL/OpenGLHelpers.h
+    OpenGL/OpenGLHelpers.cpp
     OpenGL/IOpenGLWrapper.h
     OpenGL/OpenGLWrapper.h
     OpenGL/IShader.h
@@ -21,6 +23,7 @@ target_sources(Graphics
     OpenGL/Texture.h
     OpenGL/Texture.cpp
     OpenGL/UniqueHandle.h
+    OpenGL/VertexArray.h
     OpenGL/IOpenGLWindow.h
     OpenGL/Window.h
     OpenGL/Window.cpp
