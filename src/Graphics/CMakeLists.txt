@@ -20,6 +20,7 @@ target_sources(Graphics
     OpenGL/ShaderProgram.cpp
     OpenGL/Texture.h
     OpenGL/Texture.cpp
+    OpenGL/UniqueHandle.h
     OpenGL/IOpenGLWindow.h
     OpenGL/Window.h
     OpenGL/Window.cpp

@@ -90,10 +90,14 @@ TEST_F(ShaderTests, Constructor_GivenCreateFails_ThrowsRuntimeErrorWithErrorCode
         std::runtime_error);
 }
 
-TEST_F(ShaderTests, Constructor_GivenCompilationFails_ThrowsRuntimeErrorWithInfoLog)
+TEST_F(ShaderTests, Constructor_GivenCompilationFails_ThrowsRuntimeErrorWithInfoLogAndDeletesShader)
 {
     const std::string testInfoLog("fake info log");
     EXPECT_CALL(_mockLib, CreateShader(_)).WillOnce(Return(_testHandle));
+    
+    // Test that shader gets deleted
+    EXPECT_CALL(_mockLib, DeleteShader(_testHandle));
+
     EXPECT_CALL(_mockLib, GetShaderiv(_, GL_COMPILE_STATUS, _)).WillOnce(SetArgPointee<2>(false));
     EXPECT_CALL(_mockLib, GetShaderiv(_, GL_INFO_LOG_LENGTH, _)).WillOnce(SetArgPointee<2>(testInfoLog.size()));
     EXPECT_CALL(_mockLib, GetShaderInfoLog(_, _, _, _))
