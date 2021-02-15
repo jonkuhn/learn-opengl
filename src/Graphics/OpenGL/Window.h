@@ -1,4 +1,6 @@
 #pragma once
+#include <functional>
+#include <memory>
 #include <string>
 
 #include "IGlfwWrapper.h"
@@ -27,6 +29,8 @@ namespace Graphics::OpenGL
         void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
 
         IGlfwWrapper& _glfw;
-        GLFWwindow* _handle;
+
+        typedef std::unique_ptr<GLFWwindow, std::function<void (GLFWwindow*)>> UniqueWindowHandle;
+        UniqueWindowHandle _handle;
     };
 }

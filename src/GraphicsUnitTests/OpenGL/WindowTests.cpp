@@ -61,10 +61,11 @@ TEST_F(WindowTests, Constructor_GivenCreateFails_Throws)
         GlfwException);
 }
 
-TEST_F(WindowTests, Constructor_GivenLoadGlFails_Throws)
+TEST_F(WindowTests, Constructor_GivenLoadGlFails_ThrowsAndDestroysWindow)
 {
     SetupMockCreateToAlwaysSucceed();
     EXPECT_CALL(_mockGlfw, LoadGl()).WillOnce(Return(false));
+    EXPECT_CALL(_mockGlfw, DestroyWindow(_testHandle));
 
     EXPECT_THROW(
         GlfwWindow window(_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle),
