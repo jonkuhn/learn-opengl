@@ -29,13 +29,15 @@ GlfwWindow::GlfwWindow(IGlfwWrapper& glfw, int winWidth, int winHeight, const st
     _glfw.WindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    _handle = _glfw.CreateWindow(winWidth, winHeight, title.c_str(), nullptr, nullptr);
+    _handle = UniqueWindowHandle(
+        _glfw.CreateWindow(winWidth, winHeight, title.c_str(), nullptr, nullptr),
+        [this](GLFWwindow* h){ _glfw.DestroyWindow(h);});
     if (_handle == nullptr)
     {
         throw GlfwException(glfw, "Failed to create GLFW window.");
     }
-    _glfw.MakeContextCurrent(_handle);
-    _glfw.SetFramebufferSizeCallback(_handle, FrameBufferSizeCallbackDispatch);
+    _glfw.MakeContextCurrent(_handle.get());
+    _glfw.SetFramebufferSizeCallback(_handle.get(), FrameBufferSizeCallbackDispatch);
 
     if (!_glfw.LoadGl())
     {
@@ -46,25 +48,25 @@ GlfwWindow::GlfwWindow(IGlfwWrapper& glfw, int winWidth, int winHeight, const st
 
 GlfwWindow::~GlfwWindow()
 {
-    _glfw.DestroyWindow(_handle);
+    _handle.reset();
     s_singleInstance = nullptr;
 }
 
 void GlfwWindow::Close()
 {
-    _glfw.SetWindowShouldClose(_handle, true);
+    _glfw.SetWindowShouldClose(_handle.get(), true);
 }
 
 int GlfwWindow::GetKey(int key)
 {
-    return _glfw.GetKey(_handle, key);
+    return _glfw.GetKey(_handle.get(), key);
 }
 
 bool GlfwWindow::Update()
 {
-    _glfw.SwapBuffers(_handle);
+    _glfw.SwapBuffers(_handle.get());
     _glfw.PollEvents();
-    return !_glfw.WindowShouldClose(_handle);
+    return !_glfw.WindowShouldClose(_handle.get());
 }
 
 void GlfwWindow::FrameBufferSizeCallbackDispatch(GLFWwindow* window, int width, int height)
