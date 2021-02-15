@@ -118,13 +118,18 @@ Texture::Params& Texture::Params::MagFilter(MagFilterMode magFilter_)
 
 Texture::Texture(IOpenGLWrapper& gl, const Texture::Params& params)
     : _gl(gl),
-      _handle(0)
+      _handle(0, [this](GLuint h) { _gl.DeleteTextures(1, &h); })
 {
     // clear errors so get GetError below will be accurate
     _gl.GetError();
 
-    _gl.GenTextures(1, &_handle);
-    if (!_handle)
+    {
+        GLuint tmpHandle;
+        _gl.GenTextures(1, &tmpHandle);
+        _handle.reset(tmpHandle);
+    }
+
+    if (!_handle.get())
     {
         std::stringstream ss;
         ss << "glGenTextures failed with error: " << _gl.GetError();
@@ -149,12 +154,7 @@ Texture::Texture(IOpenGLWrapper& gl, const Texture::Params& params)
     }
 }
 
-Texture::~Texture()
-{
-    _gl.DeleteTextures(1, &_handle);
-}
-
 void Texture::Bind()
 {
-    _gl.BindTexture(GL_TEXTURE_2D, _handle);
+    _gl.BindTexture(GL_TEXTURE_2D, _handle.get());
 }

@@ -215,6 +215,22 @@ TEST_F(TextureTests, Constructor_MinFilterNoMipmap_DoesNotCallGenerateMipmap)
     GetTestTextureWithMinFilter(Texture::MinFilterMode::Linear);
 }
 
+TEST_F(TextureTests, Constructor_TexImage2DThrows_ThrowsAndDeletesTexture)
+{
+    EXPECT_CALL(_mockLib, GenTextures(_, _))
+        .WillOnce(SetArgPointee<1>(_testHandle));
+    EXPECT_CALL(_mockLib, TexImage2D(_, _, _, _, _, _, _, _, _))
+        .WillOnce(Throw(std::logic_error("test exception")));
+    EXPECT_CALL(_mockLib, DeleteTextures(1, Pointee(Eq(_testHandle))));
+
+    FakeImage fakeImage(_testWidth, _testHeight, _testPixelFormat);
+    EXPECT_THROW(
+        {
+            Texture texture(_mockLib, Texture::Params(fakeImage));
+        },
+        std::logic_error);
+}
+
 TEST_F(TextureTests, Constructor_MinFilterWithMipmap_DoesCallGenerateMipmap)
 
 {
@@ -235,7 +251,7 @@ TEST_F(TextureTests, Constructor_MinFilterWithMipmap_DoesCallGenerateMipmap)
     Mock::VerifyAndClear(&_mockLib);
 }
 
-TEST_F(TextureTests, Destructor_MakesCallsToCreateAndConfigureTexture)
+TEST_F(TextureTests, Destructor_MakesCallToDeleteTextures)
 {
     auto texture = GetTestTexture();
 

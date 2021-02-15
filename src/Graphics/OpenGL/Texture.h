@@ -4,6 +4,7 @@
 #include "../IImage.h"
 
 #include "IOpenGLWrapper.h"
+#include "UniqueHandle.h"
 
 namespace Graphics::OpenGL
 {
@@ -51,12 +52,12 @@ namespace Graphics::OpenGL
         };
 
         Texture(IOpenGLWrapper& gl, const Params& params);
-        ~Texture();
 
         void Bind();
 
     private:
         IOpenGLWrapper& _gl;
-        GLuint _handle;
+        typedef UniqueHandle<std::function<void (GLuint)>> UniqueTextureHandle;
+        UniqueTextureHandle _handle;
     };
 }
