@@ -41,29 +41,31 @@ Shader::Shader(IOpenGLWrapper& gl, Type type, std::istream& sourceCodeStream)
 }
 
 Shader::Shader(IOpenGLWrapper& gl, Type type, const std::string& source)
-    : _gl(gl)
+    : _gl(gl),
+      _handle(
+          _gl.CreateShader(typeToShaderEnum(type)),
+          [this](GLuint h){ _gl.DeleteShader(h); })
 {
     const char* sourceCstr = source.c_str();
 
-    _handle = _gl.CreateShader(typeToShaderEnum(type));
-    if (!_handle)
+    if (!_handle.get())
     {
         std::stringstream ss;
         ss << "glCreateShader failed with error: " << _gl.GetError();
         throw std::runtime_error(ss.str().c_str());
     }
 
-    _gl.ShaderSource(_handle, 1, &sourceCstr, nullptr);
-    _gl.CompileShader(_handle);
+    _gl.ShaderSource(_handle.get(), 1, &sourceCstr, nullptr);
+    _gl.CompileShader(_handle.get());
 
     int success;
-    _gl.GetShaderiv(_handle, GL_COMPILE_STATUS, &success);
+    _gl.GetShaderiv(_handle.get(), GL_COMPILE_STATUS, &success);
     if (!success)
     {
         GLint infoLogLength;
-        _gl.GetShaderiv(_handle, GL_INFO_LOG_LENGTH, &infoLogLength);
+        _gl.GetShaderiv(_handle.get(), GL_INFO_LOG_LENGTH, &infoLogLength);
         std::vector<char> infoLog(infoLogLength);
-        _gl.GetShaderInfoLog(_handle, infoLog.size(), NULL, infoLog.data());
+        _gl.GetShaderInfoLog(_handle.get(), infoLog.size(), NULL, infoLog.data());
         std::stringstream ss;
         ss << "Shader Compilation Failed: " << infoLog.data() << "" << std::endl
             << "Shader Source:" << std::endl
@@ -72,12 +74,7 @@ Shader::Shader(IOpenGLWrapper& gl, Type type, const std::string& source)
     }
 }
 
-Shader::~Shader()
-{
-    _gl.DeleteShader(_handle);
-}
-
 GLuint Shader::Handle()
 {
-    return _handle;
+    return _handle.get();
 }

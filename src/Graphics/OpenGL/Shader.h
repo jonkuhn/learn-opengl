@@ -1,7 +1,9 @@
 #pragma once
+#include <functional>
 #include <istream>
 
 #include "IShader.h"
+#include "UniqueHandle.h"
 
 namespace Graphics::OpenGL
 {
@@ -18,13 +20,14 @@ namespace Graphics::OpenGL
 
         Shader(IOpenGLWrapper& gl, Type type, std::istream& sourceStream);
         Shader(IOpenGLWrapper& gl, Type type, const std::string& source);
-        ~Shader();
         Shader(const Shader&) = delete;
 
         GLuint Handle() override;
 
     private:
         IOpenGLWrapper& _gl;
-        GLuint _handle;
+
+        typedef UniqueHandle<std::function<void (GLuint)>> UniqueShaderHandle;
+        UniqueShaderHandle _handle;
     };
 }
