@@ -88,6 +88,10 @@ TEST_F(ShaderProgramTests, Constructor_GivenLinkingFails_ThrowsRuntimeErrorWithI
 {
     const std::string testInfoLog("fake info log");
     EXPECT_CALL(_mockLib, CreateProgram()).WillOnce(Return(_testProgramHandle));
+
+    // Test that shader gets deleted
+    EXPECT_CALL(_mockLib, DeleteProgram(_testProgramHandle));
+
     EXPECT_CALL(_mockLib, GetProgramiv(_, GL_LINK_STATUS, _)).WillOnce(SetArgPointee<2>(false));
     EXPECT_CALL(_mockLib, GetProgramiv(_, GL_INFO_LOG_LENGTH, _)).WillOnce(SetArgPointee<2>(testInfoLog.size()));
     EXPECT_CALL(_mockLib, GetProgramInfoLog(_, _, _, _))
