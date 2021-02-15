@@ -10,6 +10,7 @@
 #pragma clang diagnostic pop
 
 #include "IShader.h"
+#include "UniqueHandle.h"
 
 namespace Graphics::OpenGL
 {
@@ -19,7 +20,6 @@ namespace Graphics::OpenGL
     {
     public:
         ShaderProgram(IOpenGLWrapper& gl, std::initializer_list<IShader*> shaders);
-        ~ShaderProgram();
         ShaderProgram(const ShaderProgram&) = delete;
 
         void Use();
@@ -29,6 +29,8 @@ namespace Graphics::OpenGL
 
     private:
         IOpenGLWrapper& _gl;
-        GLuint _handle;
+
+        typedef UniqueHandle<std::function<void (GLuint)>> UniqueProgramHandle;
+        UniqueProgramHandle _handle;
     };
 }
