@@ -191,9 +191,30 @@ namespace Graphics::OpenGL
             glTexImage2D(target, level, internalformat, width, height,
                 border, format, type, data);
         }
-        virtual void GenerateMipmap(GLenum target) override
+
+        void GenerateMipmap(GLenum target) override
         {
             glGenerateMipmap(target);
+        }
+
+        void ClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha) override
+        {
+            glClearColor(red, green, blue, alpha);
+        }
+
+        void Clear(GLbitfield mask) override
+        {
+            glClear(mask);
+        }
+
+        void ReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void* data) override
+        {
+            glReadPixels(x, y, width, height, format, type, data);
+        }
+
+        void GetIntegerv(GLenum pname, GLint* data) override
+        {
+            glGetIntegerv(pname, data);
         }
 
     private:

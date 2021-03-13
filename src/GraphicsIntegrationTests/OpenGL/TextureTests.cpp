@@ -36,8 +36,12 @@ protected:
     OpenGLWrapper _gl;
 };
 
-TEST_F(TextureTests, CreateBindAndDestroyTexture)
+TEST_F(TextureTests, CreateBindAndDestroyTexture_DoesNotThrow)
 {
+    // This test just simply makes sure the code does not generate errors
+    // when interacting with the real library.  Higher-level tests
+    // will be written elsewhere to draw a textured shape with real shaders and
+    // assert that they are drawn correctly by reading a sampling of pixels.
     EXPECT_NO_THROW(
         PngImage image(_libpng, "TestFiles/test31x47.png");
         Texture texture(

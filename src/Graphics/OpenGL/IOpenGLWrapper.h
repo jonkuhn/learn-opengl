@@ -49,5 +49,12 @@ namespace Graphics::OpenGL
         virtual void TexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width,
             GLsizei height, GLint border, GLenum format, GLenum type, const void * data) = 0;
         virtual void GenerateMipmap(GLenum target) = 0;
+
+        virtual void ClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha) = 0;
+        virtual void Clear(GLbitfield mask) = 0;
+
+        virtual void ReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void* data) = 0;
+
+        virtual void GetIntegerv(GLenum pname, GLint* data) = 0;
     };
 }
