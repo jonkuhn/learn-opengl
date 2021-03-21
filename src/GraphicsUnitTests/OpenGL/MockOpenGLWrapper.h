@@ -38,6 +38,7 @@ public:
     MOCK_METHOD(void, DrawElements, (GLenum mode, GLsizei count, GLenum type, const void* indices), (override));
     MOCK_METHOD(void, GenTextures, (GLsizei n, GLuint* textures), (override));
     MOCK_METHOD(void, DeleteTextures, (GLsizei n, const GLuint* textures), (override));
+    MOCK_METHOD(void, ActiveTexture, (GLenum texture), (override));
     MOCK_METHOD(void, BindTexture, (GLenum target, GLuint texture), (override));
     MOCK_METHOD(void, TexParameteri, (GLenum target, GLenum pname, GLint param), (override));
     MOCK_METHOD(void, TexImage2D, (GLenum target, GLint level, GLint internalformat, GLsizei width,

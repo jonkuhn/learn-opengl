@@ -136,7 +136,7 @@ Texture::Texture(IOpenGLWrapper& gl, const Texture::Params& params)
         throw std::runtime_error(ss.str().c_str());
     }
 
-    Bind();
+    _gl.BindTexture(GL_TEXTURE_2D, _handle.get());
 
     // Set wrapping options
     _gl.TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, getGlWrapMode(params.wrapModeS));	// set texture wrapping to GL_REPEAT (default wrapping method)
@@ -154,7 +154,8 @@ Texture::Texture(IOpenGLWrapper& gl, const Texture::Params& params)
     }
 }
 
-void Texture::Bind()
+void Texture::Bind(GLenum textureUnit)
 {
+    _gl.ActiveTexture(textureUnit);
     _gl.BindTexture(GL_TEXTURE_2D, _handle.get());
 }
