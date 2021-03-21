@@ -175,6 +175,11 @@ namespace Graphics::OpenGL
             glDeleteTextures(n, textures);
         }
 
+        void ActiveTexture(GLenum texture) override
+        {
+            glActiveTexture(texture);
+        }
+
         void BindTexture(GLenum target, GLuint texture) override
         {
             glBindTexture(target, texture);

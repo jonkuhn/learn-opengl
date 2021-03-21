@@ -260,9 +260,10 @@ TEST_F(TextureTests, Destructor_MakesCallToDeleteTextures)
 
 }
 
-TEST_F(TextureTests, Bind_MakesCallsToCreateAndConfigureTexture)
+TEST_F(TextureTests, Bind_MakesCallsToActivateAndBindTexture)
 {
     auto texture = GetTestTexture();
+    EXPECT_CALL(_mockLib, ActiveTexture(GL_TEXTURE10));
     EXPECT_CALL(_mockLib, BindTexture(GL_TEXTURE_2D, Eq(_testHandle)));
-    texture->Bind();
+    texture->Bind(GL_TEXTURE10);
 }

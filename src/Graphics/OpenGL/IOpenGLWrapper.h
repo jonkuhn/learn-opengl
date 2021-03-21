@@ -44,6 +44,7 @@ namespace Graphics::OpenGL
         virtual void GenTextures(GLsizei n, GLuint* textures) = 0;
         virtual void DeleteTextures(GLsizei n, const GLuint* textures) = 0;
 
+        virtual void ActiveTexture(GLenum texture) = 0;
         virtual void BindTexture(GLenum target, GLuint texture) = 0;
         virtual void TexParameteri(GLenum target, GLenum pname, GLint param) = 0;
         virtual void TexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width,
