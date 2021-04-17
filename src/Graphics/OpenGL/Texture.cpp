@@ -136,7 +136,10 @@ Texture::Texture(IOpenGLWrapper& gl, const Texture::Params& params)
         throw std::runtime_error(ss.str().c_str());
     }
 
-    _gl.BindTexture(GL_TEXTURE_2D, _handle.get());
+    // Ensure things are in a consistent state.  Use GL_TEXTURE0 for
+    // the work of setting up this texture.  This will override
+    // the current binding of GL_TEXTURE0
+    Bind(0);
 
     // Set wrapping options
     _gl.TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, getGlWrapMode(params.wrapModeS));	// set texture wrapping to GL_REPEAT (default wrapping method)
@@ -152,10 +155,24 @@ Texture::Texture(IOpenGLWrapper& gl, const Texture::Params& params)
     {
         _gl.GenerateMipmap(GL_TEXTURE_2D);
     }
+
+    // Unbind to avoid any external calls from accidentally affecting
+    // this texture.
+    _gl.BindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::Bind(GLenum textureUnit)
+void Texture::Bind(int textureIndex)
 {
-    _gl.ActiveTexture(textureUnit);
+    const auto MIN_INDEX = 0;
+    const auto MAX_INDEX = GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS - 1;
+
+    if (textureIndex < MIN_INDEX || textureIndex > MAX_INDEX)
+    {
+        std::stringstream ss;
+        ss << "Texture index must be between " << MIN_INDEX << "";
+        ss << " and " << MAX_INDEX << ".  Value was: " << textureIndex << ".";
+        throw std::invalid_argument(ss.str().c_str());
+    }
+    _gl.ActiveTexture(GL_TEXTURE0 + textureIndex);
     _gl.BindTexture(GL_TEXTURE_2D, _handle.get());
 }

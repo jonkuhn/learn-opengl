@@ -119,9 +119,11 @@ TEST_F(TextureTests, Constructor_MakesCallsToCreateAndConfigureTexture)
     // Sequence variables to require that call order is:
     //  - GetError (to clear errors)
     //  - GenTextures
-    //  - Bind
+    // .- ActiveTexture (just to force it to a known state)
+    //  - BindTexture(_handle)
     //  - TexParameteri and TexImage2D in any order
     //  - Generate Mipmap after TexImage2D
+    //  - BindTexture(0) (to attempt to avoid future calls from affecting this texture)
     Sequence s1, s2, s3, s4, s5;
 
     FakeImage fakeImage(_testWidth, _testHeight, _testPixelFormat);
@@ -130,6 +132,7 @@ TEST_F(TextureTests, Constructor_MakesCallsToCreateAndConfigureTexture)
     EXPECT_CALL(_mockLib, GenTextures(Eq(1), _))
         .InSequence(s1)
         .WillOnce(SetArgPointee<1>(_testHandle));
+    EXPECT_CALL(_mockLib, ActiveTexture(GL_TEXTURE0)).InSequence(s1, s2, s3, s4, s5);
     EXPECT_CALL(_mockLib, BindTexture(GL_TEXTURE_2D, Eq(_testHandle))).InSequence(s1, s2, s3, s4, s5);
     EXPECT_CALL(_mockLib, TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)).InSequence(s1);
     EXPECT_CALL(_mockLib, TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER)).InSequence(s2);
@@ -137,6 +140,7 @@ TEST_F(TextureTests, Constructor_MakesCallsToCreateAndConfigureTexture)
     EXPECT_CALL(_mockLib, TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)).InSequence(s4);
     EXPECT_CALL(_mockLib, TexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fakeImage.Width(), fakeImage.Height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, fakeImage.Data())).InSequence(s4);
     EXPECT_CALL(_mockLib, GenerateMipmap(GL_TEXTURE_2D)).InSequence(s4);
+    EXPECT_CALL(_mockLib, BindTexture(GL_TEXTURE_2D, Eq(GLuint(0)))).InSequence(s1, s2, s3, s4, s5);
 
     Texture texture(
         _mockLib,
@@ -265,5 +269,25 @@ TEST_F(TextureTests, Bind_MakesCallsToActivateAndBindTexture)
     auto texture = GetTestTexture();
     EXPECT_CALL(_mockLib, ActiveTexture(GL_TEXTURE10));
     EXPECT_CALL(_mockLib, BindTexture(GL_TEXTURE_2D, Eq(_testHandle)));
-    texture->Bind(GL_TEXTURE10);
+    texture->Bind(10);
+}
+
+TEST_F(TextureTests, Bind_GivenArgumentBelowMinimum_ThrowsInvalidArgument)
+{
+    auto texture = GetTestTexture();
+    EXPECT_THROW(
+        {
+            texture->Bind(-1);
+        },
+        std::invalid_argument);
+}
+
+TEST_F(TextureTests, Bind_GivenArgumentAboveMaximum_ThrowsInvalidArgument)
+{
+    auto texture = GetTestTexture();
+    EXPECT_THROW(
+        {
+            texture->Bind(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS);
+        },
+        std::invalid_argument);
 }
