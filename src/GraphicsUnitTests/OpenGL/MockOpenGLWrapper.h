@@ -25,6 +25,7 @@ public:
     MOCK_METHOD(void, Uniform1i, (GLint location, GLint v0), (override));
     MOCK_METHOD(void, UniformMatrix4fv, (GLint location, GLsizei count, GLboolean transpose, const GLfloat *value), (override));
     MOCK_METHOD(void, Uniform3fv, (GLint location, GLsizei count, const GLfloat *value), (override));
+    MOCK_METHOD(void, Uniform2fv, (GLint location, GLsizei count, const GLfloat *value), (override));
     MOCK_METHOD(void, GenVertexArrays, (GLsizei n, GLuint *arrays), (override));
     MOCK_METHOD(void, DeleteVertexArrays, (GLsizei n, const GLuint *arrays), (override));
     MOCK_METHOD(void, BindVertexArray, (GLuint array), (override));
