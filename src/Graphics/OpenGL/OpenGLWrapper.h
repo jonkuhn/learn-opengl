@@ -110,6 +110,11 @@ namespace Graphics::OpenGL
             glUniform3fv(location, count, value);
         }
 
+        void Uniform2fv(GLint location, GLsizei count, const GLfloat *value) override
+        {
+            glUniform2fv(location, count, value);
+        }
+
         void GenVertexArrays(GLsizei n, GLuint* arrays) override
         {
             glGenVertexArrays(n, arrays);

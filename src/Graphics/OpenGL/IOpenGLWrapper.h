@@ -26,6 +26,7 @@ namespace Graphics::OpenGL
         virtual void Uniform1i(GLint location, GLint v0) = 0;
         virtual void UniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat *value) = 0;
         virtual void Uniform3fv(GLint location, GLsizei count, const GLfloat *value) = 0;
+        virtual void Uniform2fv(GLint location, GLsizei count, const GLfloat *value) = 0;
 
         virtual void GenVertexArrays(GLsizei n, GLuint* arrays) = 0;
         virtual void DeleteVertexArrays(GLsizei n, const GLuint *arrays) = 0;
