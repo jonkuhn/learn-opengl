@@ -57,11 +57,17 @@ void ShaderProgram::Use()
 
 void ShaderProgram::SetUniform(const std::string name, int value)
 {
+    // First, ensure this is the program in use, so the caller doesn't
+    // have to call Use() before calling SetUniform.
+    Use();
     _gl.Uniform1i(_gl.GetUniformLocation(_handle.get(), name.c_str()), value);
 }
 
 void ShaderProgram::SetUniform(const std::string name, const glm::mat4& value)
 {
+    // First, ensure this is the program in use, so the caller doesn't
+    // have to call Use() before calling SetUniform.
+    Use();
     _gl.UniformMatrix4fv(
         _gl.GetUniformLocation(_handle.get(), name.c_str()),
         1,
@@ -71,6 +77,9 @@ void ShaderProgram::SetUniform(const std::string name, const glm::mat4& value)
 
 void ShaderProgram::SetUniform(const std::string name, const glm::vec3& value)
 {
+    // First, ensure this is the program in use, so the caller doesn't
+    // have to call Use() before calling SetUniform.
+    Use();
     _gl.Uniform3fv(
         _gl.GetUniformLocation(_handle.get(), name.c_str()),
         1,

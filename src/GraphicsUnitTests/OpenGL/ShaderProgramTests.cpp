@@ -128,39 +128,42 @@ TEST_F(ShaderProgramTests, Use_CallsUseProgramWithHandle)
     shaderProgram->Use();
 }
 
-TEST_F(ShaderProgramTests, SetUniformWithInt_CallsUniform1i)
+TEST_F(ShaderProgramTests, SetUniformWithInt_CallsUseProgramUniform1i)
 {
     auto shaderProgram = CreateTestShaderProgram();
 
     std::string testUniformName = "testUniformName";
     int testUniformLocation = 12345;
     int testUniformValue = 6789;
+    EXPECT_CALL(_mockLib, UseProgram(_testProgramHandle));
     EXPECT_CALL(_mockLib, GetUniformLocation(_testProgramHandle, StrEq(testUniformName.c_str())))
         .WillOnce(Return(testUniformLocation));
     EXPECT_CALL(_mockLib, Uniform1i(testUniformLocation, testUniformValue));
     shaderProgram->SetUniform(testUniformName, testUniformValue);
 }
 
-TEST_F(ShaderProgramTests, SetUniformWithMat4_CallsUniformMatrix4fv)
+TEST_F(ShaderProgramTests, SetUniformWithMat4_CallsUseProgramAndUniformMatrix4fv)
 {
     auto shaderProgram = CreateTestShaderProgram();
 
     std::string testUniformName = "testUniformName";
     int testUniformLocation = 12345;
     glm::mat4 testUniformValue(2.0f);
+    EXPECT_CALL(_mockLib, UseProgram(_testProgramHandle));
     EXPECT_CALL(_mockLib, GetUniformLocation(_testProgramHandle, StrEq(testUniformName.c_str())))
         .WillOnce(Return(testUniformLocation));
     EXPECT_CALL(_mockLib, UniformMatrix4fv(testUniformLocation, 1, false, glm::value_ptr(testUniformValue)));
     shaderProgram->SetUniform(testUniformName, testUniformValue);
 }
 
-TEST_F(ShaderProgramTests, SetUniformWithVec3_CallsUniform3fv)
+TEST_F(ShaderProgramTests, SetUniformWithVec3_CallsUseProgramAndUniform3fv)
 {
     auto shaderProgram = CreateTestShaderProgram();
 
     std::string testUniformName = "testUniformName";
     int testUniformLocation = 12345;
     glm::vec3 testUniformValue(2.0f);
+    EXPECT_CALL(_mockLib, UseProgram(_testProgramHandle));
     EXPECT_CALL(_mockLib, GetUniformLocation(_testProgramHandle, StrEq(testUniformName.c_str())))
         .WillOnce(Return(testUniformLocation));
     EXPECT_CALL(_mockLib, Uniform3fv(testUniformLocation, 1, glm::value_ptr(testUniformValue)));
