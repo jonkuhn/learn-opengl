@@ -169,3 +169,17 @@ TEST_F(ShaderProgramTests, SetUniformWithVec3_CallsUseProgramAndUniform3fv)
     EXPECT_CALL(_mockLib, Uniform3fv(testUniformLocation, 1, glm::value_ptr(testUniformValue)));
     shaderProgram->SetUniform(testUniformName, testUniformValue);
 }
+
+TEST_F(ShaderProgramTests, SetUniformWithVec2_CallsUseProgramAndUniform2fv)
+{
+    auto shaderProgram = CreateTestShaderProgram();
+
+    std::string testUniformName = "testUniformName";
+    int testUniformLocation = 12345;
+    glm::vec2 testUniformValue(2.0f);
+    EXPECT_CALL(_mockLib, UseProgram(_testProgramHandle));
+    EXPECT_CALL(_mockLib, GetUniformLocation(_testProgramHandle, StrEq(testUniformName.c_str())))
+        .WillOnce(Return(testUniformLocation));
+    EXPECT_CALL(_mockLib, Uniform2fv(testUniformLocation, 1, glm::value_ptr(testUniformValue)));
+    shaderProgram->SetUniform(testUniformName, testUniformValue);
+}
