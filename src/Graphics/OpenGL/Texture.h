@@ -60,7 +60,7 @@ namespace Graphics::OpenGL
         Texture(const Texture&) = delete;
         Texture& operator=(const Texture&) = delete;
 
-        void Bind(GLenum textureUnit);
+        void Bind(int textureIndex);
 
     private:
         IOpenGLWrapper& _gl;

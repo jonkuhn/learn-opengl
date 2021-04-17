@@ -149,7 +149,7 @@ TEST_F(TextureTests, CreateBindAndDestroyTexture_DoesNotThrow)
                 .MinFilter(Texture::MinFilterMode::NearestMipmapNearest)
                 .MagFilter(Texture::MagFilterMode::Linear));
 
-        texture.Bind(GL_TEXTURE0);
+        texture.Bind(0);
     );
 }
 
@@ -171,7 +171,7 @@ TEST_F(TextureTests, DrawTexturedRectangle_ReadAndVerifyPixels)
             .MinFilter(Texture::MinFilterMode::Nearest)
             .MagFilter(Texture::MagFilterMode::Nearest));
 
-    texture.Bind(GL_TEXTURE0);
+    texture.Bind(0);
 
     ClearViewportToPink();
     _shaderProgram->Use();
