@@ -85,3 +85,14 @@ void ShaderProgram::SetUniform(const std::string name, const glm::vec3& value)
         1,
         glm::value_ptr(value));
 }
+
+void ShaderProgram::SetUniform(const std::string name, const glm::vec2& value)
+{
+    // First, ensure this is the program in use, so the caller doesn't
+    // have to call Use() before calling SetUniform.
+    Use();
+    _gl.Uniform2fv(
+        _gl.GetUniformLocation(_handle.get(), name.c_str()),
+        1,
+        glm::value_ptr(value));
+}
