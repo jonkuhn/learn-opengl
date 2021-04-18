@@ -34,18 +34,18 @@ layout (location = 0) in vec3 vertex;
 out vec2 tileMapLocation;
 
 uniform mat4 model;
+uniform mat4 view;
 uniform mat4 projection;
 
 void main()
 {
     tileMapLocation = vertex.xy;
-    gl_Position = projection * model * vec4(vertex.xy, 0.0, 1.0);
+    gl_Position = projection * view * model * vec4(vertex.xy, 0.0, 1.0);
 }
 )##RAW##";
 
 const char *fragmentShaderSource = R"##RAW##(
 #version 330 core
-uniform vec2 tileSizeInPixels;
 uniform vec2 tileMapSizeInTiles;
 uniform sampler2D tileMap;
 uniform sampler2D tileAtlas;
@@ -124,8 +124,8 @@ private:
 int main()
 {
     GlfwWrapper glfw;
-    GlfwWindow window(glfw, SCR_WIDTH, SCR_HEIGHT, "Learn OpenGL");
-    OpenGLWrapper gl(window);
+    GlfwWindow window(&glfw, SCR_WIDTH, SCR_HEIGHT, "Learn OpenGL");
+    OpenGLWrapper gl(&window);
     LibPngWrapper libpng;
 
     Shader vertexShader(&gl, Shader::Type::Vertex, vertexShaderSource);
@@ -159,16 +159,12 @@ int main()
     // - Each tile to be 64 by 64 pixels
     // - So world is 64,000 by 64,000
     // - So view is 640 by 640
-    const float TILE_WIDTH_IN_PIXELS = 64;
-    const float TILE_HEIGHT_IN_PIXELS = 64;
     const float WORLD_WIDTH_IN_TILES = 100;
     const float WORLD_HEIGHT_IN_TILES = 100; 
     const float TILE_SET_WIDTH_IN_TILES = 2;
     const float TILE_SET_HEIGHT_IN_TILES = 2;
-    //const float WORLD_WIDTH = WORLD_WIDTH_IN_TILES * TILE_WIDTH_IN_PIXELS;
-    //const float WORLD_HEIGHT = WORLD_HEIGHT_IN_TILES * TILE_HEIGHT_IN_PIXELS;
-    const float VIEW_WIDTH_IN_TILES = 10;
-    const float VIEW_HEIGHT_IN_TILES = 10;
+    //const float VIEW_WIDTH_IN_TILES = 10;
+    //const float VIEW_HEIGHT_IN_TILES = 10;
 
     VertexArray<Vertex> vertexArray(
         &gl,
@@ -192,23 +188,40 @@ int main()
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));  
     shaderProgram.SetUniform("model", model);
 
-    // With orthographic projection, I don't think a view matrix makes a lot of sense
-    // because the visible area can be set directly in the orthographic projection
-    // matrix
-    //glm::mat4 view = glm::mat4(1.0f);
-    //view = glm::translate(view, glm::vec3(0.0f, 0.0f, 0.0f)); 
+    //auto view = glm::lookAt(
+    //    glm::vec3(5.0f, 5.0f, 0.0f),
+    //    glm::vec3(5.0f, 5.0f, 0.0f),
+    //    glm::vec3(0.0f, 1.0f, 0.0f));
+    //shaderProgram.SetUniform("view", view);
 
-    glEnable(GL_BLEND);
+//    glm::vec3 direction;
+//    float yaw = 150.0f;
+//    float pitch = 0.0f;
+//    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+//    direction.y = sin(glm::radians(pitch));
+//    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+//    glm::vec3 cameraFront = glm::normalize(direction);
+//
+//    glm::vec3 cameraPos   = glm::vec3(5.0f, 5.0f,  3.0f);
+//    //glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+//    glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
+//    auto view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+//    shaderProgram.SetUniform("view", view);
+
+    //auto projection = glm::perspective(glm::radians(100.0f), 800.0f / 600.0f,  -1.0f, 1.0f);
+    //shaderProgram.SetUniform("projection", projection);
+
+    //glEnable(GL_BLEND);
 
     RandomTileMap randomTileMap(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES);
-    Texture tileMap(gl, Texture::Params(randomTileMap)
+    Texture tileMap(&gl, Texture::Params(randomTileMap)
         .WrapModeS(Texture::WrapMode::ClampToBorder)
         .WrapModeT(Texture::WrapMode::ClampToBorder)
         .MinFilter(Texture::MinFilterMode::Nearest)
         .MagFilter(Texture::MagFilterMode::Nearest));
 
-    PngImage tileAtlasImage(libpng, "/Users/jkuhn/scribbletiles.png");
-    Texture tileAtlas(gl, Texture::Params(tileAtlasImage)
+    PngImage tileAtlasImage(&libpng, "TestFiles/scribbletiles.png");
+    Texture tileAtlas(&gl, Texture::Params(tileAtlasImage)
         .WrapModeS(Texture::WrapMode::ClampToBorder)
         .WrapModeT(Texture::WrapMode::ClampToBorder)
         .MinFilter(Texture::MinFilterMode::Nearest)
@@ -221,9 +234,6 @@ int main()
 
     //glm::mat4 projection = glm::ortho(0.0f, 10.0f, 0.0f, 10.0f, -1.0f, 1.0f);
     //shaderProgram.SetUniform("projection", projection);
-
-    glm::vec2 tileSizeInPixels = glm::vec2(TILE_WIDTH_IN_PIXELS, TILE_HEIGHT_IN_PIXELS);
-    shaderProgram.SetUniform("tileSizeInPixels", tileSizeInPixels);
 
     glm::vec2 tileAtlasSizeInTiles = glm::vec2(TILE_SET_WIDTH_IN_TILES, TILE_SET_HEIGHT_IN_TILES);
     shaderProgram.SetUniform("tileAtlasSizeInTiles", tileAtlasSizeInTiles);
@@ -284,35 +294,100 @@ int main()
         //    cameraDY = (cameraDY / cameraDY) * std::sqrt(MOVE_SPEED);
         //}
 
-        if (cameraX <= 0 && cameraDX < 0)
-        {
-            cameraX = 0;
-            cameraDX = 0;
-        }
+        //if (cameraX <= 0 && cameraDX < 0)
+        //{
+        //    cameraX = 0;
+        //    cameraDX = 0;
+        //}
 
-        if (cameraX >= (WORLD_WIDTH_IN_TILES - VIEW_WIDTH_IN_TILES) && cameraDX > 0)
-        {
-            cameraX = WORLD_WIDTH_IN_TILES - VIEW_WIDTH_IN_TILES;
-            cameraDX = -cameraDX;
-        }
+        //if (cameraX >= (WORLD_WIDTH_IN_TILES - VIEW_WIDTH_IN_TILES) && cameraDX > 0)
+        //{
+        //    cameraX = WORLD_WIDTH_IN_TILES - VIEW_WIDTH_IN_TILES;
+        //    cameraDX = -cameraDX;
+        //}
 
-        if (cameraY <= 0 && cameraDY < 0)
-        {
-            cameraY = 0;
-            cameraDY = 0;
-        }
+        //if (cameraY <= 0 && cameraDY < 0)
+        //{
+        //    cameraY = 0;
+        //    cameraDY = 0;
+        //}
 
-        if (cameraY >= (WORLD_HEIGHT_IN_TILES - VIEW_HEIGHT_IN_TILES) && cameraDY > 0)
-        {
-            cameraY = WORLD_HEIGHT_IN_TILES - VIEW_HEIGHT_IN_TILES;
-            cameraDY = 0;
-        }
+        //if (cameraY >= (WORLD_HEIGHT_IN_TILES - VIEW_HEIGHT_IN_TILES) && cameraDY > 0)
+        //{
+        //    cameraY = WORLD_HEIGHT_IN_TILES - VIEW_HEIGHT_IN_TILES;
+        //    cameraDY = 0;
+        //}
 
         cameraX += cameraDX * deltaTime;
         cameraY += cameraDY * deltaTime;
 
-        glm::mat4 projection = glm::ortho(cameraX, cameraX + VIEW_WIDTH_IN_TILES, cameraY, cameraY + VIEW_HEIGHT_IN_TILES,  -1.0f, 1.0f);
+        //auto projection = glm::ortho(cameraX, cameraX + VIEW_WIDTH_IN_TILES, cameraY, cameraY + VIEW_HEIGHT_IN_TILES,  -1.0f, 1.0f);
+        ////projection = glm::rotate(projection, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        //shaderProgram.SetUniform("projection", projection);
+
+        // 2D Camera
+        // Notes:
+        // - Z component of cameraPosition must be such that the objects
+        //   that should be visible are within the range of zNear to zFar
+        //   from the camera.  (where zNear and zFar are the arguments to
+        //   glm::ortho).  If zNear is negative objects behind the camera
+        //   will be rendered.
+        // - In order for the center argument to lookAt (cameraPos + cameraFront)
+        //   to truly be centered in the window, the left and right and
+        //   top and bottom arguments to glm::ortho must be set such that
+        //   0 is the midpoint (i.e. left = -right bottom = -top)
+        // - cameraFront is a normalized vector that represents the direction
+        //   the camera is pointing
+        // - cameraUp is a normalized vector that points to the up direction
+        //   in world space.  glm::lookAt uses this together with "center"
+        //   (the direction the camera is pointing -- cameraPos + cameraFront)
+        //   to get a vector that points to the right in view space.  This is
+        //   done by taking the cross product of the two to get an orthogonal
+        //   vector.  glm::lookAt then takes the cross product of resulting
+        //   "right" vector and the vector representing the direction the
+        //   camera is pointing to get the "up" vector which is a vector
+        //   pointing out of the top of the camera.  The actual matrix
+        //   returned by glm::lookAt is built from the "direction", "right",
+        //   and "up" vectors (note "up" != cameraUp)
+        //   (See https://learnopengl.com/Getting-started/Camera)
+        glm::vec3 cameraPos   = glm::vec3(cameraX, cameraY, 0.5f);
+        glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+        glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
+        auto view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        shaderProgram.SetUniform("view", view);
+        auto projection = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f,  0.0f, 1.0f);
         shaderProgram.SetUniform("projection", projection);
+
+        // 3D Camera
+        // Notes:
+        //
+        //glm::vec3 cameraPos   = glm::vec3(cameraX, cameraY, 3.0f);
+        //glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+        //glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
+        //auto view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        //shaderProgram.SetUniform("view", view);
+        //auto projection = glm::perspective(glm::radians(100.0f), 800.0f / 600.0f,  0.1f, 1.0f);
+        //shaderProgram.SetUniform("projection", projection);
+
+        //glm::vec3 cameraPos   = glm::vec3(cameraX + 5.0f, cameraY + 5.0f,  3.0f);
+        //glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+        //glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
+        //auto view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        //shaderProgram.SetUniform("view", view);
+
+        //glm::vec3 direction;
+        //float yaw = -90.0f;
+        //float pitch = 0.0f;
+        //direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+        //direction.y = sin(glm::radians(pitch));
+        //direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+        //glm::vec3 cameraFront = glm::normalize(direction);
+
+        //glm::vec3 cameraPos   = glm::vec3(cameraX + 5.0f, cameraY + 5.0f,  3.0f);
+        //glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+        //glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
+        //auto view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        //shaderProgram.SetUniform("view", view);
 
         vertexArray.Draw();
     }
