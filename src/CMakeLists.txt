@@ -14,3 +14,5 @@ else()
   target_compile_options(learn-opengl PRIVATE -Wall -Wextra -pedantic -Werror)
 endif()
 target_link_libraries(learn-opengl Graphics ${CONAN_LIBS})
+
+file(COPY ./TestFiles/scribbletiles.png DESTINATION ${CMAKE_BINARY_DIR}/bin/TestFiles)
