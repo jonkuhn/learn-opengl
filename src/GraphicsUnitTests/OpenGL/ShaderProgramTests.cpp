@@ -44,12 +44,15 @@ protected:
 
 TEST_F(ShaderProgramTests, Constructor_MakesCallsToCreateAndLinkProgram)
 {
-    EXPECT_CALL(_mockLib, CreateProgram()).WillOnce(Return(_testProgramHandle));
-    EXPECT_CALL(_mockLib, AttachShader(_testProgramHandle, _testShaderHandleA));
-    EXPECT_CALL(_mockLib, AttachShader(_testProgramHandle, _testShaderHandleB));
-    EXPECT_CALL(_mockLib, LinkProgram(_testProgramHandle));
+    Sequence s1, s2, s3, s4, s5;
+    EXPECT_CALL(_mockLib, CreateProgram()).InSequence(s1, s2).WillOnce(Return(_testProgramHandle));
+    EXPECT_CALL(_mockLib, AttachShader(_testProgramHandle, _testShaderHandleA)).InSequence(s1);
+    EXPECT_CALL(_mockLib, AttachShader(_testProgramHandle, _testShaderHandleB)).InSequence(s2);
+    EXPECT_CALL(_mockLib, LinkProgram(_testProgramHandle)).InSequence(s1, s2);
     EXPECT_CALL(_mockLib, GetProgramiv(_testProgramHandle, GL_LINK_STATUS, _))
-        .WillOnce(SetArgPointee<2>(true));
+        .InSequence(s1, s2).WillOnce(SetArgPointee<2>(true));
+    EXPECT_CALL(_mockLib, DetachShader(_testProgramHandle, _testShaderHandleA)).InSequence(s1);
+    EXPECT_CALL(_mockLib, DetachShader(_testProgramHandle, _testShaderHandleB)).InSequence(s2);
 
     ShaderProgram shaderProgram(_mockLib, {&_mockShaderA, &_mockShaderB});
 }
