@@ -48,6 +48,11 @@ ShaderProgram::ShaderProgram(IOpenGLWrapper& gl, std::initializer_list<IShader*>
         ss << "Shader Program Linking Failed: " << infoLog.data() << "" << std::endl;
         throw std::runtime_error(ss.str().c_str());
     }
+
+    for(auto shader : shaders)
+    {
+        _gl.DetachShader(_handle.get(), shader->Handle());
+    }
 }
 
 void ShaderProgram::Use()
