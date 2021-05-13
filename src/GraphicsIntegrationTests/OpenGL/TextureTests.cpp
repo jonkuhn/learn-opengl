@@ -81,8 +81,8 @@ public:
     TextureTests()
         : _libpng(),
           _glfw(),
-          _window(_glfw, WINDOW_WIDTH, WINDOW_HEIGHT, "DummyIntegrationTestWindow"),
-          _gl(_window),
+          _window(&_glfw, WINDOW_WIDTH, WINDOW_HEIGHT, "DummyIntegrationTestWindow"),
+          _gl(&_window),
           _blackColor(0, 0, 0, 255),
           _redColor(255, 0, 0, 255),
           _greenColor(0, 255, 0, 255),
@@ -105,9 +105,9 @@ public:
         _testTriangleElementsOfRectangle.push_back(3);
         _testTriangleElementsOfRectangle.push_back(0);
 
-        Shader vertexShader(_gl, Shader::Type::Vertex, vertexShaderSource);
-        Shader fragmentShader(_gl, Shader::Type::Fragment, fragmentShaderSource);
-        _shaderProgram.reset(new ShaderProgram(_gl, {&vertexShader, &fragmentShader}));
+        Shader vertexShader(&_gl, Shader::Type::Vertex, vertexShaderSource);
+        Shader fragmentShader(&_gl, Shader::Type::Fragment, fragmentShaderSource);
+        _shaderProgram.reset(new ShaderProgram(&_gl, {&vertexShader, &fragmentShader}));
     }
 protected:
     LibPngWrapper _libpng;
@@ -140,9 +140,9 @@ TEST_F(TextureTests, CreateBindAndDestroyTexture_DoesNotThrow)
     // will be written elsewhere to draw a textured shape with real shaders and
     // assert that they are drawn correctly by reading a sampling of pixels.
     EXPECT_NO_THROW(
-        PngImage image(_libpng, "TestFiles/test31x47.png");
+        PngImage image(&_libpng, "TestFiles/test31x47.png");
         Texture texture(
-            _gl,
+            &_gl,
             Texture::Params(image)
                 .WrapModeS(Texture::WrapMode::Repeat)
                 .WrapModeT(Texture::WrapMode::ClampToBorder)
@@ -156,15 +156,15 @@ TEST_F(TextureTests, CreateBindAndDestroyTexture_DoesNotThrow)
 TEST_F(TextureTests, DrawTexturedRectangle_ReadAndVerifyPixels)
 {
     VertexArray<TestTexturedVertex> vertexArray(
-        _gl,
+        &_gl,
         VertexArray<TestTexturedVertex>::Params(_testRectangleVertices)
         .AddAttribute(3) // position x, y, z
         .AddAttribute(2) // texture s and t
         .TriangleElementIndices(_testTriangleElementsOfRectangle)
     );
-    PngImage image(_libpng, "TestFiles/test31x47.png");
+    PngImage image(&_libpng, "TestFiles/test31x47.png");
     Texture texture(
-        _gl,
+        &_gl,
         Texture::Params(image)
             .WrapModeS(Texture::WrapMode::ClampToBorder)
             .WrapModeT(Texture::WrapMode::ClampToBorder)

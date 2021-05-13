@@ -55,15 +55,17 @@ namespace Graphics::OpenGL
             MagFilterMode magFilter;
         };
 
-        Texture(IOpenGLWrapper& gl, const Params& params);
+        Texture(IOpenGLWrapper* gl, const Params& params);
 
         Texture(const Texture&) = delete;
         Texture& operator=(const Texture&) = delete;
+        Texture(Texture&&) = default;
+        Texture& operator=(Texture&&) = default;
 
         void Bind(int textureIndex);
 
     private:
-        IOpenGLWrapper& _gl;
+        IOpenGLWrapper* _gl;
         typedef UniqueHandle<std::function<void (GLuint)>> UniqueTextureHandle;
         UniqueTextureHandle _handle;
     };

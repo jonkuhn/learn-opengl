@@ -48,7 +48,7 @@ TEST_F(WindowTests, Constructor_MakesRequiredCalls)
     EXPECT_CALL(_mockGlfw, SetFramebufferSizeCallback(_testHandle, _));
     EXPECT_CALL(_mockGlfw, LoadGl()).WillOnce(Return(true));
 
-    GlfwWindow window(_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
+    GlfwWindow window(&_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
 }
 
 TEST_F(WindowTests, Constructor_GivenCreateFails_Throws)
@@ -57,7 +57,7 @@ TEST_F(WindowTests, Constructor_GivenCreateFails_Throws)
         .WillOnce(Return(nullptr));
 
     EXPECT_THROW(
-        GlfwWindow window(_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle),
+        GlfwWindow window(&_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle),
         GlfwException);
 }
 
@@ -68,7 +68,7 @@ TEST_F(WindowTests, Constructor_GivenLoadGlFails_ThrowsAndDestroysWindow)
     EXPECT_CALL(_mockGlfw, DestroyWindow(_testHandle));
 
     EXPECT_THROW(
-        GlfwWindow window(_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle),
+        GlfwWindow window(&_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle),
         std::runtime_error);
 }
 
@@ -81,10 +81,10 @@ TEST_F(WindowTests, GivenConstructAfterPreviousWindowIsDestroyed_Succeeds)
     SetupMockCreateToAlwaysSucceed();
     SetupMockLoadGlToAlwaysSucceed();
     {
-        GlfwWindow window(_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
+        GlfwWindow window(&_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
     }
     {
-        GlfwWindow window(_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
+        GlfwWindow window(&_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
     }
 }
 
@@ -98,8 +98,8 @@ TEST_F(WindowTests, GivenConstructWhileOtherWindowExists_Throws)
     SetupMockLoadGlToAlwaysSucceed();
     EXPECT_THROW(
         {
-            GlfwWindow window1(_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
-            GlfwWindow window2(_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
+            GlfwWindow window1(&_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
+            GlfwWindow window2(&_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
         },
         std::logic_error);
 }
@@ -108,7 +108,7 @@ TEST_F(WindowTests, Close_CallsSetWindowShouldCloseWithTrue)
 {
     SetupMockCreateToAlwaysSucceed();
     SetupMockLoadGlToAlwaysSucceed();
-    GlfwWindow window(_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
+    GlfwWindow window(&_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
 
     EXPECT_CALL(_mockGlfw, SetWindowShouldClose(_testHandle, true));
     window.Close();
@@ -120,7 +120,7 @@ TEST_F(WindowTests, GetKey_PassthroughToGlfwGetKey)
     const int testGetKeyReturn = 2222;
     SetupMockCreateToAlwaysSucceed();
     SetupMockLoadGlToAlwaysSucceed();
-    GlfwWindow window(_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
+    GlfwWindow window(&_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
 
     EXPECT_CALL(_mockGlfw, GetKey(_testHandle, testKey)).WillOnce(Return(testGetKeyReturn));
     EXPECT_EQ(window.GetKey(testKey), testGetKeyReturn);
@@ -130,7 +130,7 @@ TEST_F(WindowTests, Update_MakesExpectedCalls)
 {
     SetupMockCreateToAlwaysSucceed();
     SetupMockLoadGlToAlwaysSucceed();
-    GlfwWindow window(_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
+    GlfwWindow window(&_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
 
     EXPECT_CALL(_mockGlfw, SwapBuffers(_testHandle));
     EXPECT_CALL(_mockGlfw, PollEvents());
@@ -142,7 +142,7 @@ TEST_F(WindowTests, Update_GivenWindowShouldNotClose_ReturnsTrue)
 {
     SetupMockCreateToAlwaysSucceed();
     SetupMockLoadGlToAlwaysSucceed();
-    GlfwWindow window(_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
+    GlfwWindow window(&_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
 
     EXPECT_CALL(_mockGlfw, WindowShouldClose(_testHandle)).WillOnce(Return(false));
     EXPECT_TRUE(window.Update());
@@ -152,7 +152,7 @@ TEST_F(WindowTests, Update_GivenWindowShouldClose_ReturnsFalse)
 {
     SetupMockCreateToAlwaysSucceed();
     SetupMockLoadGlToAlwaysSucceed();
-    GlfwWindow window(_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
+    GlfwWindow window(&_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
 
     EXPECT_CALL(_mockGlfw, WindowShouldClose(_testHandle)).WillOnce(Return(true));
     EXPECT_FALSE(window.Update());
@@ -167,7 +167,7 @@ TEST_F(WindowTests, FramebufferCallback_MakesExpectedCalls)
     GLFWframebuffersizefun savedCallback = nullptr;
     EXPECT_CALL(_mockGlfw, SetFramebufferSizeCallback(_, _))
         .WillOnce(DoAll(SaveArg<1>(&savedCallback), Return(nullptr)));
-    GlfwWindow window(_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
+    GlfwWindow window(&_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
 
     // Setup expectations for what the callback should call
     int newWidth = _testWinWidth / 2;

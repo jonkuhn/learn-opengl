@@ -49,15 +49,15 @@ struct Vertex
 int main()
 {
     GlfwWrapper glfw;
-    GlfwWindow window(glfw, SCR_WIDTH, SCR_HEIGHT, "Learn OpenGL");
-    OpenGLWrapper gl(window);
+    GlfwWindow window(&glfw, SCR_WIDTH, SCR_HEIGHT, "Learn OpenGL");
+    OpenGLWrapper gl(&window);
 
-    Shader vertexShader(gl, Shader::Type::Vertex, vertexShaderSource);
-    Shader fragmentShader(gl, Shader::Type::Fragment, fragmentShaderSource);
-    ShaderProgram shaderProgram(gl, {&vertexShader, &fragmentShader});
+    Shader vertexShader(&gl, Shader::Type::Vertex, vertexShaderSource);
+    Shader fragmentShader(&gl, Shader::Type::Fragment, fragmentShaderSource);
+    ShaderProgram shaderProgram(&gl, {&vertexShader, &fragmentShader});
 
     VertexArray<Vertex> vertexArray(
-        gl,
+        &gl,
         VertexArray<Vertex>::Params(
             std::vector<Vertex>({
                 { 0.5f,  0.5f, 0.0f },  // top right

@@ -11,11 +11,13 @@ namespace Graphics::OpenGL
     class GlfwWindow : public IOpenGLWindow
     {
     public:
-        GlfwWindow(IGlfwWrapper& glfw, int winWidth, int winHeight, const std::string& title);
+        GlfwWindow(IGlfwWrapper* glfw, int winWidth, int winHeight, const std::string& title);
         ~GlfwWindow();
 
         GlfwWindow(const GlfwWindow&) = delete;
         GlfwWindow& operator=(const GlfwWindow&) = delete;
+        GlfwWindow(GlfwWindow&&) = default;
+        GlfwWindow& operator=(GlfwWindow&&) = default;
 
         void Close();
 
@@ -30,7 +32,7 @@ namespace Graphics::OpenGL
         static void FrameBufferSizeCallbackDispatch(GLFWwindow* window, int width, int height);
         void FrameBufferSizeCallback(GLFWwindow* window, int width, int height);
 
-        IGlfwWrapper& _glfw;
+        IGlfwWrapper* _glfw;
 
         typedef std::unique_ptr<GLFWwindow, std::function<void (GLFWwindow*)>> UniqueWindowHandle;
         UniqueWindowHandle _handle;

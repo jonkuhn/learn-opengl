@@ -12,10 +12,12 @@ namespace Graphics
     class PngImage : public IImage
     {
     public:
-        PngImage(ILibPngWrapper& libPng, const std::string& filename);
+        PngImage(ILibPngWrapper* libPng, const std::string& filename);
 
         PngImage(const PngImage&) = delete;
         PngImage& operator=(const PngImage&) = delete;
+        PngImage(PngImage&&) = default;
+        PngImage& operator=(PngImage&&) = default;
 
         const uint8_t* Data() const;
         int Width() const;
@@ -23,7 +25,7 @@ namespace Graphics
         IImage::PixelFormat Format() const;
 
     private:
-        ILibPngWrapper& _libPng;
+        ILibPngWrapper* _libPng;
         std::vector<uint8_t> _data;
         int _width;
         int _height;

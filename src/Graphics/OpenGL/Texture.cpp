@@ -116,23 +116,23 @@ Texture::Params& Texture::Params::MagFilter(MagFilterMode magFilter_)
 }
 
 
-Texture::Texture(IOpenGLWrapper& gl, const Texture::Params& params)
+Texture::Texture(IOpenGLWrapper* gl, const Texture::Params& params)
     : _gl(gl),
-      _handle(0, [this](GLuint h) { _gl.DeleteTextures(1, &h); })
+      _handle(0, [this](GLuint h) { _gl->DeleteTextures(1, &h); })
 {
     // clear errors so get GetError below will be accurate
-    _gl.GetError();
+    _gl->GetError();
 
     {
         GLuint tmpHandle;
-        _gl.GenTextures(1, &tmpHandle);
+        _gl->GenTextures(1, &tmpHandle);
         _handle.reset(tmpHandle);
     }
 
     if (!_handle.get())
     {
         std::stringstream ss;
-        ss << "glGenTextures failed with error: " << _gl.GetError();
+        ss << "glGenTextures failed with error: " << _gl->GetError();
         throw std::runtime_error(ss.str().c_str());
     }
 
@@ -142,23 +142,23 @@ Texture::Texture(IOpenGLWrapper& gl, const Texture::Params& params)
     Bind(0);
 
     // Set wrapping options
-    _gl.TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, getGlWrapMode(params.wrapModeS));	// set texture wrapping to GL_REPEAT (default wrapping method)
-    _gl.TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, getGlWrapMode(params.wrapModeT));
+    _gl->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, getGlWrapMode(params.wrapModeS));	// set texture wrapping to GL_REPEAT (default wrapping method)
+    _gl->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, getGlWrapMode(params.wrapModeT));
 
     // Set magnification and minification options
-    _gl.TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, getGlMinFilter(params.minFilter));
-    _gl.TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, getGlMagFilter(params.magFilter));
-    _gl.TexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, params.image.Width(),
+    _gl->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, getGlMinFilter(params.minFilter));
+    _gl->TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, getGlMagFilter(params.magFilter));
+    _gl->TexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, params.image.Width(),
         params.image.Height(), 0, getGlFormatFromImage(params.image), GL_UNSIGNED_BYTE, params.image.Data());
 
     if (doesMinFilterRequireMipmap(params.minFilter))
     {
-        _gl.GenerateMipmap(GL_TEXTURE_2D);
+        _gl->GenerateMipmap(GL_TEXTURE_2D);
     }
 
     // Unbind to avoid any external calls from accidentally affecting
     // this texture.
-    _gl.BindTexture(GL_TEXTURE_2D, 0);
+    _gl->BindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Texture::Bind(int textureIndex)
@@ -173,6 +173,6 @@ void Texture::Bind(int textureIndex)
         ss << " and " << MAX_INDEX << ".  Value was: " << textureIndex << ".";
         throw std::invalid_argument(ss.str().c_str());
     }
-    _gl.ActiveTexture(GL_TEXTURE0 + textureIndex);
-    _gl.BindTexture(GL_TEXTURE_2D, _handle.get());
+    _gl->ActiveTexture(GL_TEXTURE0 + textureIndex);
+    _gl->BindTexture(GL_TEXTURE_2D, _handle.get());
 }
