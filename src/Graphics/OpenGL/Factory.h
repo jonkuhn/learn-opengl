@@ -65,6 +65,7 @@ namespace Graphics::OpenGL
             Shader vertexShader(gl, Shader::Type::Vertex, vertexShaderSource);
             Shader fragmentShader(gl, Shader::Type::Fragment, fragmentShaderSource);
             ShaderProgram shaderProgram(gl, {&vertexShader, &fragmentShader});
+            TileMapShaderProgram tileMapShaderProgram(shaderProgram);
         }
 
         ITexture& CreateTexture(const IImage& image)
