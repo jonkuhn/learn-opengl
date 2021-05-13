@@ -34,7 +34,7 @@ protected:
         EXPECT_CALL(_mockLib, GenTextures(_, _))
             .WillOnce(SetArgPointee<1>(_testHandle));
         FakeImage fakeImage(_testWidth, _testHeight, _testPixelFormat);
-        return std::make_unique<Texture>(_mockLib, Texture::Params(fakeImage));
+        return std::make_unique<Texture>(&_mockLib, Texture::Params(fakeImage));
     }
 
     std::unique_ptr<Texture> GetTestTextureWithPixelFormat(PixelFormat pixelFormat)
@@ -42,7 +42,7 @@ protected:
         EXPECT_CALL(_mockLib, GenTextures(_, _))
             .WillOnce(SetArgPointee<1>(_testHandle));
         FakeImage fakeImage(_testWidth, _testHeight, pixelFormat);
-        return std::make_unique<Texture>(_mockLib, Texture::Params(fakeImage));
+        return std::make_unique<Texture>(&_mockLib, Texture::Params(fakeImage));
     }
 
     std::unique_ptr<Texture> GetTestTextureWithWrapModeS(Texture::WrapMode wrapModeS)
@@ -50,7 +50,7 @@ protected:
         EXPECT_CALL(_mockLib, GenTextures(_, _))
             .WillOnce(SetArgPointee<1>(_testHandle));
         FakeImage fakeImage(_testWidth, _testHeight, _testPixelFormat);
-        return std::make_unique<Texture>(_mockLib,
+        return std::make_unique<Texture>(&_mockLib,
             Texture::Params(fakeImage).WrapModeS(wrapModeS));
     }
 
@@ -59,7 +59,7 @@ protected:
         EXPECT_CALL(_mockLib, GenTextures(_, _))
             .WillOnce(SetArgPointee<1>(_testHandle));
         FakeImage fakeImage(_testWidth, _testHeight, _testPixelFormat);
-        return std::make_unique<Texture>(_mockLib,
+        return std::make_unique<Texture>(&_mockLib,
             Texture::Params(fakeImage).WrapModeT(wrapModeT));
     }
 
@@ -68,7 +68,7 @@ protected:
         EXPECT_CALL(_mockLib, GenTextures(_, _))
             .WillOnce(SetArgPointee<1>(_testHandle));
         FakeImage fakeImage(_testWidth, _testHeight, _testPixelFormat);
-        return std::make_unique<Texture>(_mockLib,
+        return std::make_unique<Texture>(&_mockLib,
             Texture::Params(fakeImage).MinFilter(minFilter));
     }
 
@@ -77,7 +77,7 @@ protected:
         EXPECT_CALL(_mockLib, GenTextures(_, _))
             .WillOnce(SetArgPointee<1>(_testHandle));
         FakeImage fakeImage(_testWidth, _testHeight, _testPixelFormat);
-        return std::make_unique<Texture>(_mockLib,
+        return std::make_unique<Texture>(&_mockLib,
             Texture::Params(fakeImage).MagFilter(magFilter));
     }
 
@@ -143,7 +143,7 @@ TEST_F(TextureTests, Constructor_MakesCallsToCreateAndConfigureTexture)
     EXPECT_CALL(_mockLib, BindTexture(GL_TEXTURE_2D, Eq(GLuint(0)))).InSequence(s1, s2, s3, s4, s5);
 
     Texture texture(
-        _mockLib,
+        &_mockLib,
         Texture::Params(fakeImage)
         .WrapModeS(Texture::WrapMode::Repeat)
         .WrapModeT(Texture::WrapMode::ClampToBorder)
@@ -230,7 +230,7 @@ TEST_F(TextureTests, Constructor_TexImage2DThrows_ThrowsAndDeletesTexture)
     FakeImage fakeImage(_testWidth, _testHeight, _testPixelFormat);
     EXPECT_THROW(
         {
-            Texture texture(_mockLib, Texture::Params(fakeImage));
+            Texture texture(&_mockLib, Texture::Params(fakeImage));
         },
         std::logic_error);
 }

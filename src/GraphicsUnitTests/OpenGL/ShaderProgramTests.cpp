@@ -38,7 +38,7 @@ protected:
     {
         EXPECT_CALL(_mockLib, CreateProgram()).WillOnce(Return(_testProgramHandle));
         EXPECT_CALL(_mockLib, GetProgramiv(_, GL_LINK_STATUS, _)).WillOnce(SetArgPointee<2>(true));
-        return std::make_unique<ShaderProgram>(_mockLib, std::initializer_list<IShader*>({&_mockShaderA, &_mockShaderB}));
+        return std::make_unique<ShaderProgram>(&_mockLib, std::initializer_list<IShader*>({&_mockShaderA, &_mockShaderB}));
     }
 };
 
@@ -54,13 +54,13 @@ TEST_F(ShaderProgramTests, Constructor_MakesCallsToCreateAndLinkProgram)
     EXPECT_CALL(_mockLib, DetachShader(_testProgramHandle, _testShaderHandleA)).InSequence(s1);
     EXPECT_CALL(_mockLib, DetachShader(_testProgramHandle, _testShaderHandleB)).InSequence(s2);
 
-    ShaderProgram shaderProgram(_mockLib, {&_mockShaderA, &_mockShaderB});
+    ShaderProgram shaderProgram(&_mockLib, {&_mockShaderA, &_mockShaderB});
 }
 
 TEST_F(ShaderProgramTests, Constructor_GivenZeroShaders_ThrowsInvalidArgument)
 {
     EXPECT_THROW(
-        ShaderProgram shaderProgram(_mockLib, {}),
+        ShaderProgram shaderProgram(&_mockLib, {}),
         std::invalid_argument
     );
 }
@@ -73,7 +73,7 @@ TEST_F(ShaderProgramTests, Constructor_GivenCreateFails_ThrowsRuntimeErrorWithEr
     EXPECT_THROW(
         try
         {
-            ShaderProgram shaderProgram(_mockLib, {&_mockShaderA, &_mockShaderB});
+            ShaderProgram shaderProgram(&_mockLib, {&_mockShaderA, &_mockShaderB});
         }
         catch(const std::runtime_error& e)
         {
@@ -102,7 +102,7 @@ TEST_F(ShaderProgramTests, Constructor_GivenLinkingFails_ThrowsRuntimeErrorWithI
     EXPECT_THROW(
         try
         {
-            ShaderProgram shaderProgram(_mockLib, {&_mockShaderA, &_mockShaderB});
+            ShaderProgram shaderProgram(&_mockLib, {&_mockShaderA, &_mockShaderB});
         }
         catch(const std::runtime_error& e)
         {
@@ -120,7 +120,7 @@ TEST_F(ShaderProgramTests, Destructor_CallsDeleteProgram)
     EXPECT_CALL(_mockLib, DeleteProgram(_testProgramHandle));
 
     {
-        ShaderProgram shaderProgram(_mockLib, {&_mockShaderA, &_mockShaderB});
+        ShaderProgram shaderProgram(&_mockLib, {&_mockShaderA, &_mockShaderB});
     }
 }
 

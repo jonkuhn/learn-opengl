@@ -99,15 +99,15 @@ namespace Graphics::OpenGL
             GLenum _usage;
         };
 
-        VertexArray(IOpenGLWrapper& gl, const Params& params)
+        VertexArray(IOpenGLWrapper* gl, const Params& params)
             : _gl(gl),
               _drawElements(false),
-              _vertexArray(0, [this](GLuint h) { _gl.DeleteVertexArrays(1, &h); }),
-              _vertexBuffer(0, [this](GLuint h) { _gl.DeleteBuffers(1, &h); }),
-              _elementBuffer(0, [this](GLuint h) { _gl.DeleteBuffers(1, &h); })
+              _vertexArray(0, [this](GLuint h) { _gl->DeleteVertexArrays(1, &h); }),
+              _vertexBuffer(0, [this](GLuint h) { _gl->DeleteBuffers(1, &h); }),
+              _elementBuffer(0, [this](GLuint h) { _gl->DeleteBuffers(1, &h); })
         {
             // clear errors so get GetError below will be accurate
-            _gl.GetError();
+            _gl->GetError();
 
             SetupVertexArray(params.Vertices());
 
@@ -122,31 +122,33 @@ namespace Graphics::OpenGL
                 SetupForDrawingArrays(params.Vertices().size());
             }
         
-            _gl.BindBuffer(GL_ARRAY_BUFFER, 0); 
-            _gl.BindVertexArray(0); 
+            _gl->BindBuffer(GL_ARRAY_BUFFER, 0); 
+            _gl->BindVertexArray(0); 
 
-            ThrowIfOpenGlError(_gl, "VertexArray Constructor");
+            ThrowIfOpenGlError(*_gl, "VertexArray Constructor");
         }
 
         VertexArray(const VertexArray&) = delete;
         VertexArray& operator=(const VertexArray&) = delete;
+        VertexArray(VertexArray&&) = default;
+        VertexArray& operator=(VertexArray&&) = default;
 
         void Draw()
         {
-            _gl.BindVertexArray(_vertexArray.get());
+            _gl->BindVertexArray(_vertexArray.get());
         
             if (_drawElements)
             {
-                _gl.DrawElements(GL_TRIANGLES, _drawCount, GL_UNSIGNED_INT, 0);
+                _gl->DrawElements(GL_TRIANGLES, _drawCount, GL_UNSIGNED_INT, 0);
             }
             else
             {
-                _gl.DrawArrays(GL_TRIANGLES, 0, _drawCount);
+                _gl->DrawArrays(GL_TRIANGLES, 0, _drawCount);
             }
         }
 
     private:
-        IOpenGLWrapper& _gl;
+        IOpenGLWrapper* _gl;
         bool _drawElements;
         GLsizei _drawCount;
 
@@ -161,20 +163,20 @@ namespace Graphics::OpenGL
         {
             {
                 GLuint tmpHandle = 0;
-                _gl.GenVertexArrays(1, &tmpHandle);
+                _gl->GenVertexArrays(1, &tmpHandle);
                 ThrowIfInvalidHandle(tmpHandle, "GenVertexArrays");
                 _vertexArray.reset(tmpHandle);
 
-                _gl.GenBuffers(1, &tmpHandle);
+                _gl->GenBuffers(1, &tmpHandle);
                 ThrowIfInvalidHandle(tmpHandle, "GenBuffers");
                 _vertexBuffer.reset(tmpHandle);
             }
         
-            _gl.BindVertexArray(_vertexArray.get());
+            _gl->BindVertexArray(_vertexArray.get());
 
-            _gl.BindBuffer(GL_ARRAY_BUFFER, _vertexBuffer.get());
+            _gl->BindBuffer(GL_ARRAY_BUFFER, _vertexBuffer.get());
 
-            _gl.BufferData(
+            _gl->BufferData(
                 GL_ARRAY_BUFFER,
                 vertices.size() * sizeof(TVertex),
                 vertices.data(),
@@ -193,7 +195,7 @@ namespace Graphics::OpenGL
             for (const auto& attr : attributes)
             {
                 bytesPerVertex += attr.Size();
-                _gl.VertexAttribPointer(
+                _gl->VertexAttribPointer(
                     attr.Index(),
                     attr.Size(),
                     GL_FLOAT,
@@ -201,7 +203,7 @@ namespace Graphics::OpenGL
                     sizeof(TVertex),
                     reinterpret_cast<void*>(attr.OffsetBytes()));
 
-                _gl.EnableVertexAttribArray(attr.Index());
+                _gl->EnableVertexAttribArray(attr.Index());
             }
         }
 
@@ -209,15 +211,15 @@ namespace Graphics::OpenGL
         {
             {
                 GLuint tmpHandle = 0;
-                _gl.GenBuffers(1, &tmpHandle);
+                _gl->GenBuffers(1, &tmpHandle);
                 ThrowIfInvalidHandle(tmpHandle, "GenBuffers");
                 _elementBuffer.reset(tmpHandle);
             }
 
             // Setup element indices if they were provided.
-            _gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, _elementBuffer.get());
+            _gl->BindBuffer(GL_ELEMENT_ARRAY_BUFFER, _elementBuffer.get());
 
-            _gl.BufferData(
+            _gl->BufferData(
                 GL_ELEMENT_ARRAY_BUFFER,
                 triangleElementIndices.size() * sizeof(GLuint),
                 triangleElementIndices.data(),
@@ -257,7 +259,7 @@ namespace Graphics::OpenGL
             }
 
             std::stringstream ss;
-            ss << funcName << " failed with error: " << _gl.GetError();
+            ss << funcName << " failed with error: " << _gl->GetError();
             throw std::runtime_error(ss.str().c_str());
         }
     };

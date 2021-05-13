@@ -11,7 +11,7 @@ namespace Graphics::OpenGL
     class OpenGLWrapper : public IOpenGLWrapper
     {
     public:
-        OpenGLWrapper(IOpenGLWindow& window)
+        OpenGLWrapper(IOpenGLWindow* window)
             : _window(window)
         {
 
@@ -19,6 +19,8 @@ namespace Graphics::OpenGL
 
         OpenGLWrapper(const OpenGLWrapper&) = delete;
         OpenGLWrapper& operator=(const OpenGLWrapper&) = delete;
+        OpenGLWrapper(OpenGLWrapper&&) = default;
+        OpenGLWrapper& operator=(OpenGLWrapper&&) = default;
 
         GLenum GetError() override
         {
@@ -236,7 +238,7 @@ namespace Graphics::OpenGL
         // Unused, but exists to document dependence on a window to draw in
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wunused-private-field"
-        IOpenGLWindow& _window;
+        IOpenGLWindow* _window;
         #pragma clang diagnostic pop
     };
 }

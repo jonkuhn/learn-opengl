@@ -23,7 +23,7 @@ protected:
 
 TEST_F(PngImageTests, LoadPngImage_TopOfImageAtBeginningOfBuffer)
 {
-    PngImage image(_libpng, "TestFiles/test31x47.png");
+    PngImage image(&_libpng, "TestFiles/test31x47.png");
 
     EXPECT_EQ(image.Width(), 31);
     EXPECT_EQ(image.Height(), 47);
@@ -89,7 +89,7 @@ TEST_F(PngImageTests, LoadNonexistantFile_ThrowsRuntimeError)
     EXPECT_THROW(
         try
         {
-            PngImage image(_libpng, "TestFiles/DoesNotExist.file");
+            PngImage image(&_libpng, "TestFiles/DoesNotExist.file");
 
         }
         catch (std::runtime_error& e)
@@ -108,7 +108,7 @@ TEST_F(PngImageTests, LoadNonPngImage_ThrowsRuntimeError)
     EXPECT_THROW(
         try
         {
-            PngImage image(_libpng, "TestFiles/test31x47.jpg");
+            PngImage image(&_libpng, "TestFiles/test31x47.jpg");
         }
         catch (std::runtime_error& e)
         {

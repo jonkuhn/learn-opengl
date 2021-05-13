@@ -55,8 +55,8 @@ class VertexArrayTests : public Test
 public:
     VertexArrayTests()
         : _glfw(),
-          _window(_glfw, WINDOW_WIDTH, WINDOW_HEIGHT, "DummyIntegrationTestWindow"),
-          _gl(_window),
+          _window(&_glfw, WINDOW_WIDTH, WINDOW_HEIGHT, "DummyIntegrationTestWindow"),
+          _gl(&_window),
           _shapeColor(255, 0, 0, 255), // matches hardcoded color in fragment shader
           _blackColor(0, 0, 0, 255)
     {
@@ -79,9 +79,9 @@ public:
         _testTriangleElementsOfRectangle.push_back(3);
         _testTriangleElementsOfRectangle.push_back(0);
 
-        Shader vertexShader(_gl, Shader::Type::Vertex, vertexShaderSource);
-        Shader fragmentShader(_gl, Shader::Type::Fragment, fragmentShaderSource);
-        _shaderProgram.reset(new ShaderProgram(_gl, {&vertexShader, &fragmentShader}));
+        Shader vertexShader(&_gl, Shader::Type::Vertex, vertexShaderSource);
+        Shader fragmentShader(&_gl, Shader::Type::Fragment, fragmentShaderSource);
+        _shaderProgram.reset(new ShaderProgram(&_gl, {&vertexShader, &fragmentShader}));
     }
 
 protected:
@@ -113,7 +113,7 @@ TEST_F(VertexArrayTests, CreateAndDrawVertexArray_DoesNotThrow)
     // assert that they are drawn correctly by reading a sampling of pixels.
     EXPECT_NO_THROW(
         VertexArray<TestSimpleVertex> vertexArray(
-            _gl,
+            &_gl,
             VertexArray<TestSimpleVertex>::Params(_testRectangleVertices)
             .AddAttribute(3)
             .TriangleElementIndices(_testTriangleElementsOfRectangle)
@@ -126,7 +126,7 @@ TEST_F(VertexArrayTests, CreateAndDrawVertexArray_DoesNotThrow)
 TEST_F(VertexArrayTests, DrawRectangle_ReadAndVerifyPixels)
 {
     VertexArray<TestSimpleVertex> vertexArray(
-        _gl,
+        &_gl,
         VertexArray<TestSimpleVertex>::Params(_testRectangleVertices)
         .AddAttribute(3)
         .TriangleElementIndices(_testTriangleElementsOfRectangle)
@@ -167,7 +167,7 @@ TEST_F(VertexArrayTests, DrawRectangle_ReadAndVerifyPixels)
 TEST_F(VertexArrayTests, DrawTriangle_ReadAndVerifyPixels)
 {
     VertexArray<TestSimpleVertex> vertexArray(
-        _gl,
+        &_gl,
         VertexArray<TestSimpleVertex>::Params(_testTriangleVertices)
         .AddAttribute(3)
     );

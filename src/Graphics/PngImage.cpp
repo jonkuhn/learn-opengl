@@ -6,7 +6,7 @@
 
 using namespace Graphics;
 
-PngImage::PngImage(ILibPngWrapper& libPng, const std::string& filename)
+PngImage::PngImage(ILibPngWrapper* libPng, const std::string& filename)
     : _libPng(libPng),
       _data(),
       _width(0),
@@ -16,7 +16,7 @@ PngImage::PngImage(ILibPngWrapper& libPng, const std::string& filename)
     png_image image;
     memset(&image, 0, sizeof image);
     image.version = PNG_IMAGE_VERSION;
-    if (!_libPng.png_image_begin_read_from_file(&image, filename.c_str()))
+    if (!_libPng->png_image_begin_read_from_file(&image, filename.c_str()))
     {
         std::stringstream ss;
         ss << "Unable to begin reading png: " << filename
@@ -25,10 +25,10 @@ PngImage::PngImage(ILibPngWrapper& libPng, const std::string& filename)
     }
 
     image.format = PNG_FORMAT_RGBA;
-    _data.resize(_libPng.png_image_size(image));
+    _data.resize(_libPng->png_image_size(image));
 
     // Note: passing 0 for row_stride make libpng calculate it
-    if (!_libPng.png_image_finish_read(&image, nullptr, _data.data(), 0, nullptr))
+    if (!_libPng->png_image_finish_read(&image, nullptr, _data.data(), 0, nullptr))
     {
         std::stringstream ss;
         ss << "Unable to finish reading png: " << filename

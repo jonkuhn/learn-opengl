@@ -19,10 +19,13 @@ namespace Graphics::OpenGL
     class ShaderProgram
     {
     public:
-        ShaderProgram(IOpenGLWrapper& gl, std::initializer_list<IShader*> shaders);
+        ShaderProgram(IOpenGLWrapper* gl, std::initializer_list<IShader*> shaders);
 
         ShaderProgram(const ShaderProgram&) = delete;
         ShaderProgram& operator=(const ShaderProgram&) = delete;
+        ShaderProgram(ShaderProgram&&) = default;
+        ShaderProgram& operator=(ShaderProgram&& ) = default;
+
 
         void Use();
         void SetUniform(const std::string name, int value);
@@ -31,7 +34,7 @@ namespace Graphics::OpenGL
         void SetUniform(const std::string name, const glm::vec2& value);
 
     private:
-        IOpenGLWrapper& _gl;
+        IOpenGLWrapper* _gl;
 
         typedef UniqueHandle<std::function<void (GLuint)>> UniqueProgramHandle;
         UniqueProgramHandle _handle;

@@ -61,7 +61,7 @@ TEST_F(PngImageTests, Constructor_MakesCallsToLoadPng)
     EXPECT_CALL(_mockLib, png_image_finish_read(_, Eq(nullptr), Ne(nullptr), Eq(0), Eq(nullptr)))
         .WillOnce(DoAll(SaveArg<0>(&capturedImagePtr3), Return(true)));
 
-    PngImage image(_mockLib, _testFilename);
+    PngImage image(&_mockLib, _testFilename);
 
     EXPECT_EQ(capturedImagePtr1, capturedImagePtr2);
     EXPECT_EQ(capturedImagePtr1, capturedImagePtr3);
@@ -76,7 +76,7 @@ TEST_F(PngImageTests, Constructor_SetsWidthHeightAndPixelFormat)
     EXPECT_CALL(_mockLib, png_image_finish_read(_, Eq(nullptr), Ne(nullptr), Eq(0), Eq(nullptr)))
         .WillOnce(DoAll(SetWidthAndHeightOnPngImageArg<0>(_testWidth, _testHeight), Return(true)));
 
-    PngImage image(_mockLib, _testFilename);
+    PngImage image(&_mockLib, _testFilename);
 
     EXPECT_EQ(image.Width(), _testWidth);
     EXPECT_EQ(image.Height(), _testHeight);
@@ -92,7 +92,7 @@ TEST_F(PngImageTests, Constructor_BeginReadFails_ThrowsRuntimeErrorContainingMes
     EXPECT_THROW(
         try
         {
-            PngImage image(_mockLib, _testFilename);
+            PngImage image(&_mockLib, _testFilename);
         }
         catch(const std::runtime_error& e)
         {
@@ -112,7 +112,7 @@ TEST_F(PngImageTests, Constructor_FinishReadFails_ThrowsRuntimeErrorContainingMe
     EXPECT_THROW(
         try
         {
-            PngImage image(_mockLib, _testFilename);
+            PngImage image(&_mockLib, _testFilename);
         }
         catch(const std::runtime_error& e)
         {
