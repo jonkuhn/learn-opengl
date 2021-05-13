@@ -43,8 +43,9 @@ Shader::Shader(IOpenGLWrapper* gl, Type type, std::istream& sourceCodeStream)
 Shader::Shader(IOpenGLWrapper* gl, Type type, const std::string& source)
     : _gl(gl),
       _handle(
+          _gl,
           _gl->CreateShader(typeToShaderEnum(type)),
-          [this](GLuint h){ _gl->DeleteShader(h); })
+          [](IOpenGLWrapper* gl, GLuint h){ gl->DeleteShader(h); })
 {
     const char* sourceCstr = source.c_str();
 
