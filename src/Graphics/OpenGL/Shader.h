@@ -31,7 +31,7 @@ namespace Graphics::OpenGL
     private:
         IOpenGLWrapper* _gl;
 
-        typedef UniqueHandle<std::function<void (GLuint)>> UniqueShaderHandle;
+        typedef UniqueHandle<std::function<void (IOpenGLWrapper*, GLuint)>> UniqueShaderHandle;
         UniqueShaderHandle _handle;
     };
 }

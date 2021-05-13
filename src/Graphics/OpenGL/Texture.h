@@ -66,7 +66,7 @@ namespace Graphics::OpenGL
 
     private:
         IOpenGLWrapper* _gl;
-        typedef UniqueHandle<std::function<void (GLuint)>> UniqueTextureHandle;
+        typedef UniqueHandle<std::function<void (IOpenGLWrapper*, GLuint)>> UniqueTextureHandle;
         UniqueTextureHandle _handle;
     };
 }

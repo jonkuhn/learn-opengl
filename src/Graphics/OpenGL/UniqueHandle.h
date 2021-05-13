@@ -1,16 +1,18 @@
 #pragma once
 #include <glad/glad.h>
 
+#include "IOpenGLWrapper.h"
+
 namespace Graphics::OpenGL
 {
     template<typename TDeleter>
     class UniqueHandle
     {
     public:
-        typedef void (*Deleter)(GLuint);
+        typedef void (*Deleter)(IOpenGLWrapper*, GLuint);
 
-        UniqueHandle(GLuint handle, TDeleter deleter)
-          : _handle(handle), _deleter(deleter)
+        UniqueHandle(IOpenGLWrapper* gl, GLuint handle, TDeleter deleter)
+          : _gl(gl), _handle(handle), _deleter(deleter)
         {
 
         }
@@ -25,6 +27,7 @@ namespace Graphics::OpenGL
 
         UniqueHandle(UniqueHandle<TDeleter>&& other)
         {
+            _gl = other._gl;
             _handle = other._handle;
             other._handle = 0;
             _deleter = other._deleter;
@@ -37,6 +40,7 @@ namespace Graphics::OpenGL
                 return *this;
             }
 
+            _gl = other._gl;
             reset(other._handle);
             other._handle = 0;
             _deleter = other._deleter;
@@ -51,14 +55,15 @@ namespace Graphics::OpenGL
 
         void reset(GLuint h = 0)
         {
-            if (_handle != 0)
+            if (_gl != nullptr && _handle != 0 && _deleter != nullptr)
             {
-                _deleter(_handle);
+                _deleter(_gl, _handle);
             }
             _handle = h;
         }
 
     private:
+        IOpenGLWrapper* _gl;
         GLuint _handle;
         TDeleter _deleter;
     };
