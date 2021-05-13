@@ -11,4 +11,9 @@ conan install .. --build=missing
 cmake ..
 
 # build the project
-cmake --build .
+cmake --build . --config Release -j 6
+
+cd bin
+
+./GraphicsUnitTests && ./GraphicsIntegrationTests
+
