@@ -20,5 +20,11 @@ namespace Graphics
             const glm::vec2 &mapSizeInTiles,
             IImage &tileAtlas,
             const glm::vec2 &atlasSizeInTiles);
+
+    protected:
+        // This interface is not intended to expose ownership of the
+        // concrete object implementing it.  Therefore, do not allow
+        // deletion via interface pointers.
+        ~IFactory() = default;
     };
 }
