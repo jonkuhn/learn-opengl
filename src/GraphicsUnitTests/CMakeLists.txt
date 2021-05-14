@@ -7,8 +7,8 @@ endif()
 target_sources(GraphicsUnitTests
   PRIVATE
     main_test.cpp
-    ImageTests.cpp
     FakeImage.h
+    PngImageTests.cpp
     TestHelpers.h
     OpenGL/MockGlfwWrapper.h
     OpenGL/MockOpenGLWrapper.h
