@@ -9,7 +9,7 @@ namespace Graphics::OpenGL
 {
     class IOpenGLWrapper;
 
-    class Shader : public IShader
+    class Shader final : public IShader
     {
     public:
         enum class Type
