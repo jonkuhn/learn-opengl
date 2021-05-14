@@ -1,3 +1,4 @@
+#include <memory>
 #include <string>
 #include <sstream>
 
@@ -102,6 +103,36 @@ TEST_F(WindowTests, GivenConstructWhileOtherWindowExists_Throws)
             GlfwWindow window2(&_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
         },
         std::logic_error);
+}
+
+TEST_F(WindowTests, Destructor_CallsDestroyWindow)
+{
+    SetupMockCreateToAlwaysSucceed();
+    SetupMockLoadGlToAlwaysSucceed();
+
+    EXPECT_CALL(_mockGlfw, DestroyWindow(_testHandle)).Times(1);
+    {
+        GlfwWindow window(&_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
+    }
+}
+
+TEST_F(WindowTests, MoveConstruct_TargetCallsDestroyWindow)
+{
+    SetupMockCreateToAlwaysSucceed();
+    SetupMockLoadGlToAlwaysSucceed();
+
+    std::unique_ptr<GlfwWindow> target;
+    {
+        GlfwWindow source(&_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
+        target = std::make_unique<GlfwWindow>(std::move(source));
+    }
+
+    // Clear mock so we can specifically assert that the target destructor
+    // calls DeleteTexture
+    Mock::VerifyAndClear(&_mockGlfw);
+
+    EXPECT_CALL(_mockGlfw, DestroyWindow(_testHandle)).Times(1);
+    target.reset();
 }
 
 TEST_F(WindowTests, Close_CallsSetWindowShouldCloseWithTrue)
