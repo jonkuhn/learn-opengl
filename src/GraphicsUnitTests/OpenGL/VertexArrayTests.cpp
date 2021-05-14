@@ -45,6 +45,7 @@ public:
         _testTriangleElementsOfFourSimpleVertices.push_back(4);
     }
 
+protected:
     void SetupGenVertexArraysToAlwaysReturnDummyHandle()
     {
         EXPECT_CALL(_mockLib, GenVertexArrays(_, _))
@@ -84,7 +85,39 @@ public:
             }, std::runtime_error);
     }
 
-protected:
+    std::tuple<std::unique_ptr<VertexArray<TestSimpleVertex>>,
+        std::unique_ptr<VertexArray<TestSimpleVertex>>> GetTwoVertexArraysWithHandles(
+            GLuint vaoA, GLuint vboA, GLuint eboA,
+            GLuint vaoB, GLuint vboB, GLuint eboB)
+    {
+        // Setup GenVertexArrays to return _testVAOHandle so we can test clean up
+        SetupGenVertexArraysToAlwaysReturnGivenHandle(_testVAOHandle);
+
+        Sequence seq; // used to help gmock differentiate the calls
+        EXPECT_CALL(_mockLib, GenVertexArrays(_, _)).InSequence(seq).WillOnce(SetArgPointee<1>(vaoA));
+        EXPECT_CALL(_mockLib, GenBuffers(_, _)).InSequence(seq).WillOnce(SetArgPointee<1>(vboA));
+        EXPECT_CALL(_mockLib, GenBuffers(_, _)).InSequence(seq).WillOnce(SetArgPointee<1>(eboA));
+        EXPECT_CALL(_mockLib, GenVertexArrays(_, _)).InSequence(seq).WillOnce(SetArgPointee<1>(vaoB));
+        EXPECT_CALL(_mockLib, GenBuffers(_, _)).InSequence(seq).WillOnce(SetArgPointee<1>(vboB));
+        EXPECT_CALL(_mockLib, GenBuffers(_, _)).InSequence(seq).WillOnce(SetArgPointee<1>(eboB));
+
+        auto vertexArrayA = std::make_unique<VertexArray<TestSimpleVertex>>(
+            &_mockLib,
+            VertexArray<TestSimpleVertex>::Params(_testFourSimpleVertices)
+                .AddAttribute(_testSimpleVertexSize)
+                .TriangleElementIndices(_testTriangleElementsOfFourSimpleVertices));
+
+        auto vertexArrayB = std::make_unique<VertexArray<TestSimpleVertex>>(
+            &_mockLib,
+            VertexArray<TestSimpleVertex>::Params(_testFourSimpleVertices)
+                .AddAttribute(_testSimpleVertexSize)
+                .TriangleElementIndices(_testTriangleElementsOfFourSimpleVertices));
+
+        Mock::VerifyAndClear(&_mockLib);
+
+        return std::tuple(std::move(vertexArrayA), std::move(vertexArrayB));
+    }
+
     NiceMock<MockOpenGLWrapper> _mockLib;
     const GLuint _testVAOHandle = 123;
     const GLuint _testVBOHandle = 456;
@@ -493,18 +526,15 @@ TEST_F(VertexArrayTests, Constructor_GivenErrorSetAtEndOfCostruction_ThrowsRunti
 
 TEST_F(VertexArrayTests, Destructor_CleansUpVertexArrayAndBuffers)
 {
-    SetupGenVertexArraysToAlwaysReturnGivenHandle(_testVAOHandle);
-    SetupGenBuffersToAlwaysReturnDummyHandle();
-
     // Setup GenVertexArrays to return _testVAOHandle so we can test clean up
     SetupGenVertexArraysToAlwaysReturnGivenHandle(_testVAOHandle);
 
     // GenBuffers returns test VBO handle, then test EBO so we can test cleanup
-    Sequence s2; // used to help gmock differentiate GenBuffers calls
+    Sequence seq; // used to help gmock differentiate GenBuffers calls
     EXPECT_CALL(_mockLib, GenBuffers(_, _))
-        .InSequence(s2).WillOnce(SetArgPointee<1>(_testVBOHandle));
+        .InSequence(seq).WillOnce(SetArgPointee<1>(_testVBOHandle));
     EXPECT_CALL(_mockLib, GenBuffers(_, _))
-        .InSequence(s2).WillOnce(SetArgPointee<1>(_testEBOHandle));
+        .InSequence(seq).WillOnce(SetArgPointee<1>(_testEBOHandle));
 
     // Expect VAO to be cleaned up
     EXPECT_CALL(_mockLib, DeleteVertexArrays(1, Pointee(Eq(_testVAOHandle))));
@@ -521,6 +551,126 @@ TEST_F(VertexArrayTests, Destructor_CleansUpVertexArrayAndBuffers)
                 .AddAttribute(_testSimpleVertexSize)
                 .TriangleElementIndices(_testTriangleElementsOfFourSimpleVertices));
     }
+}
+
+TEST_F(VertexArrayTests, MoveConstruct_TargetCallsDeleteVertexArrayAndBuffers)
+{
+    // Setup GenVertexArrays to return _testVAOHandle so we can test clean up
+    SetupGenVertexArraysToAlwaysReturnGivenHandle(_testVAOHandle);
+
+    // GenBuffers returns test VBO handle, then test EBO so we can test cleanup
+    Sequence seq; // used to help gmock differentiate GenBuffers calls
+    EXPECT_CALL(_mockLib, GenBuffers(_, _))
+        .InSequence(seq).WillOnce(SetArgPointee<1>(_testVBOHandle));
+    EXPECT_CALL(_mockLib, GenBuffers(_, _))
+        .InSequence(seq).WillOnce(SetArgPointee<1>(_testEBOHandle));
+
+    std::unique_ptr<VertexArray<TestSimpleVertex>> target;
+    {
+        VertexArray<TestSimpleVertex> source(
+            &_mockLib,
+            VertexArray<TestSimpleVertex>::Params(_testFourSimpleVertices)
+                .AddAttribute(_testSimpleVertexSize)
+                .TriangleElementIndices(_testTriangleElementsOfFourSimpleVertices));
+        target = std::make_unique<VertexArray<TestSimpleVertex>>(std::move(source));
+    }
+
+    // Clear mock so we can specifically assert that the target destructor
+    // calls DeleteTexture
+    Mock::VerifyAndClear(&_mockLib);
+
+    // Expect VAO  and both VBOs to be cleaned up
+    EXPECT_CALL(_mockLib, DeleteVertexArrays(1, Pointee(Eq(_testVAOHandle))));
+    EXPECT_CALL(_mockLib, DeleteBuffers(1, Pointee(Eq(_testVBOHandle))));
+    EXPECT_CALL(_mockLib, DeleteBuffers(1, Pointee(Eq(_testEBOHandle))));
+    target.reset();
+}
+
+TEST_F(VertexArrayTests, MoveAssign_MoveDeletesTargetsOriginalHandles)
+{
+    const GLuint originalSourceVao = 111;
+    const GLuint originalSourceVbo = 222;
+    const GLuint originalSourceEbo = 333;
+    const GLuint originalTargetVao = 444;
+    const GLuint originalTargetVbo = 555;
+    const GLuint originalTargetEbo = 666;
+
+    std::unique_ptr<VertexArray<TestSimpleVertex>> source, target;
+    std::tie(source, target) = GetTwoVertexArraysWithHandles(
+        originalSourceVao, originalSourceVbo, originalSourceEbo,
+        originalTargetVao, originalTargetVbo, originalTargetEbo);
+
+    // Assert that target's original vertex array's buffers are deleted when
+    // the move occurs
+    EXPECT_CALL(_mockLib, DeleteVertexArrays(1, Pointee(Eq(originalTargetVao))));
+    EXPECT_CALL(_mockLib, DeleteBuffers(1, Pointee(Eq(originalTargetVbo))));
+    EXPECT_CALL(_mockLib, DeleteBuffers(1, Pointee(Eq(originalTargetEbo))));
+    *target = std::move(*source);
+
+    // Explicitly check expectations so that other destructors do not get
+    // called before verification.
+    Mock::VerifyAndClear(&_mockLib);
+}
+
+TEST_F(VertexArrayTests, MoveAssign_SourceDestructorDeletesNothing)
+{
+    const GLuint originalSourceVao = 111;
+    const GLuint originalSourceVbo = 222;
+    const GLuint originalSourceEbo = 333;
+    const GLuint originalTargetVao = 444;
+    const GLuint originalTargetVbo = 555;
+    const GLuint originalTargetEbo = 666;
+
+    std::unique_ptr<VertexArray<TestSimpleVertex>> source, target;
+    std::tie(source, target) = GetTwoVertexArraysWithHandles(
+        originalSourceVao, originalSourceVbo, originalSourceEbo,
+        originalTargetVao, originalTargetVbo, originalTargetEbo);
+
+    *target = std::move(*source);
+
+    // clear expectations so no previous calls affect our real assertion below
+    Mock::VerifyAndClear(&_mockLib);
+
+    // Assert that deleting the source does nothing
+    EXPECT_CALL(_mockLib, DeleteVertexArrays(_, _)).Times(0);
+    EXPECT_CALL(_mockLib, DeleteBuffers(_, _)).Times(0);
+    EXPECT_CALL(_mockLib, DeleteBuffers(_, _)).Times(0);
+    source.reset();
+
+    // Explicitly check expectations so that other destructors do not get
+    // called before verification.
+    Mock::VerifyAndClear(&_mockLib);
+}
+
+TEST_F(VertexArrayTests, MoveAssign_TargetDestructorDeletesSourceTexture)
+{
+    const GLuint originalSourceVao = 111;
+    const GLuint originalSourceVbo = 222;
+    const GLuint originalSourceEbo = 333;
+    const GLuint originalTargetVao = 444;
+    const GLuint originalTargetVbo = 555;
+    const GLuint originalTargetEbo = 666;
+
+    std::unique_ptr<VertexArray<TestSimpleVertex>> source, target;
+    std::tie(source, target) = GetTwoVertexArraysWithHandles(
+        originalSourceVao, originalSourceVbo, originalSourceEbo,
+        originalTargetVao, originalTargetVbo, originalTargetEbo);
+
+    *target = std::move(*source);
+
+    // clear expectations so no previous calls affect our real assertion below
+    Mock::VerifyAndClear(&_mockLib);
+
+    // Assert that the source's buffers (now in target) is deleted
+    // when target is destroyed
+    EXPECT_CALL(_mockLib, DeleteVertexArrays(1, Pointee(Eq(originalSourceVao))));
+    EXPECT_CALL(_mockLib, DeleteBuffers(1, Pointee(Eq(originalSourceVbo))));
+    EXPECT_CALL(_mockLib, DeleteBuffers(1, Pointee(Eq(originalSourceEbo))));
+    target.reset();
+
+    // Explicitly check expectations so that other destructors do not get
+    // called before verification.
+    Mock::VerifyAndClear(&_mockLib);
 }
 
 TEST_F(VertexArrayTests, Draw_GivenTriangleElementIndices_BindsVertexArrayAndDrawsElements)
