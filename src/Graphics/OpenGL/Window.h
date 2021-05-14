@@ -17,7 +17,10 @@ namespace Graphics::OpenGL
         GlfwWindow(const GlfwWindow&) = delete;
         GlfwWindow& operator=(const GlfwWindow&) = delete;
         GlfwWindow(GlfwWindow&&) = default;
-        GlfwWindow& operator=(GlfwWindow&&) = default;
+
+        // Move assignment doesn't make sense since we only allow a
+        // single instance at a time right now.
+        GlfwWindow& operator=(GlfwWindow&&) = delete;
 
         void Close();
 
