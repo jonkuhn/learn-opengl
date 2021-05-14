@@ -1,0 +1,24 @@
+#pragma once
+
+#include <memory>
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-volatile"
+#include <glm/vec3.hpp>
+#pragma clang diagnostic pop
+
+#include "IImage.h"
+#include "ITileMap.h"
+
+namespace Graphics
+{
+    class IFactory
+    {
+    public:
+        virtual std::unique_ptr<ITileMap> CreateTileMap(
+            IImage &tileMap,
+            const glm::vec2 &mapSizeInTiles,
+            IImage &tileAtlas,
+            const glm::vec2 &atlasSizeInTiles);
+    };
+}

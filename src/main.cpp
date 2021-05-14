@@ -20,6 +20,8 @@
 #include "Graphics/OpenGL/Window.h"
 #include "Graphics/PngImage.h"
 
+//#include "Graphics/OpenGL/Factory.h"
+
 using namespace Graphics;
 using namespace Graphics::OpenGL;
 
@@ -131,6 +133,19 @@ int main()
     Shader vertexShader(&gl, Shader::Type::Vertex, vertexShaderSource);
     Shader fragmentShader(&gl, Shader::Type::Fragment, fragmentShaderSource);
     ShaderProgram shaderProgram(&gl, {&vertexShader, &fragmentShader});
+
+    std::cout << reinterpret_cast<uintptr_t>(&glfw) << std::endl;
+    std::cout << reinterpret_cast<uintptr_t>(&window) << std::endl;
+    std::cout << reinterpret_cast<uintptr_t>(&gl) << std::endl;
+    std::cout << reinterpret_cast<uintptr_t>(&libpng) << std::endl;
+    std::cout << reinterpret_cast<uintptr_t>(&fragmentShader) << std::endl;
+    std::cout << reinterpret_cast<uintptr_t>(&shaderProgram) << std::endl;
+    std::cout << *(reinterpret_cast<uintptr_t*>(&glfw)) << std::endl;
+    std::cout << *(reinterpret_cast<uintptr_t*>(&window)) << std::endl;
+    std::cout << *(reinterpret_cast<uintptr_t*>(&gl)) << std::endl;
+    std::cout << *(reinterpret_cast<uintptr_t*>(&libpng)) << std::endl;
+    std::cout << *(reinterpret_cast<uintptr_t*>(&fragmentShader)) << std::endl;
+    std::cout << *(reinterpret_cast<uintptr_t*>(&shaderProgram)) << std::endl;
 
     //VertexArray<Vertex> vertexArray(
     //    gl,

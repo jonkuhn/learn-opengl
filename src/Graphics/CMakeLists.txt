@@ -18,19 +18,27 @@ target_sources(Graphics
     OpenGL/IShader.h
     OpenGL/Shader.h
     OpenGL/Shader.cpp
+    OpenGL/IShaderProgram.h
     OpenGL/ShaderProgram.h
     OpenGL/ShaderProgram.cpp
+    OpenGL/ITexture.h
     OpenGL/Texture.h
     OpenGL/Texture.cpp
+    OpenGL/TileMap.h
+    OpenGL/ITileMapShaderProgram.h
+    OpenGL/TileMapShaderProgram.h
+    OpenGL/TileMapShaderProgram.cpp
     OpenGL/UniqueHandle.h
     OpenGL/VertexArray.h
     OpenGL/IOpenGLWindow.h
     OpenGL/Window.h
     OpenGL/Window.cpp
+    IFactory.h
     IImage.h
     PngImage.h
     PngImage.cpp
     ILibPngWrapper.h
     LibPngWrapper.h
+    ITileMap.h
 )
 target_link_libraries(Graphics ${CONAN_LIBS})
