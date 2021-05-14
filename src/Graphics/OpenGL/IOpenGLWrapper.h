@@ -59,5 +59,11 @@ namespace Graphics::OpenGL
         virtual void ReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void* data) = 0;
 
         virtual void GetIntegerv(GLenum pname, GLint* data) = 0;
+
+    protected:
+        // This interface is not intended to expose ownership of the
+        // concrete object implementing it.  Therefore, do not allow
+        // deletion via interface pointers.
+        ~IOpenGLWrapper() = default;
     };
 }

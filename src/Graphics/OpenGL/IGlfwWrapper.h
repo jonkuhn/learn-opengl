@@ -25,5 +25,11 @@ namespace Graphics::OpenGL
         // GlfwWindow class depends on it and having it here keeps things
         // simpler.
         virtual void SetGlViewport(GLint x, GLint y, GLsizei width, GLsizei height) = 0;
+
+    protected:
+        // This interface is not intended to expose ownership of the
+        // concrete object implementing it.  Therefore, do not allow
+        // deletion via interface pointers.
+        ~IGlfwWrapper() = default;
     };
 }
