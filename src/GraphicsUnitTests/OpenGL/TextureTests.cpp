@@ -112,6 +112,21 @@ protected:
         GetTestTextureWithMagFilter(magFilter);
         Mock::VerifyAndClear(&_mockLib);
     }
+
+    std::tuple<std::unique_ptr<Texture>,
+        std::unique_ptr<Texture>> GetTwoTexturesWithHandles(GLuint handleA, GLuint handleB)
+    {
+        Sequence seq;
+        EXPECT_CALL(_mockLib, GenTextures(_, _)).InSequence(seq).WillOnce(SetArgPointee<1>(handleA));
+        EXPECT_CALL(_mockLib, GenTextures(_, _)).InSequence(seq).WillOnce(SetArgPointee<1>(handleB));
+        FakeImage fakeImage(_testWidth, _testHeight, _testPixelFormat);
+        auto textureA = std::make_unique<Texture>(&_mockLib, Texture::Params(fakeImage));
+        auto textureB  = std::make_unique<Texture>(&_mockLib, Texture::Params(fakeImage));
+
+        Mock::VerifyAndClear(&_mockLib);
+
+        return std::tuple(std::move(textureA), std::move(textureB));
+    }
 };
 
 TEST_F(TextureTests, Constructor_MakesCallsToCreateAndConfigureTexture)
@@ -262,6 +277,87 @@ TEST_F(TextureTests, Destructor_MakesCallToDeleteTextures)
     EXPECT_CALL(_mockLib, DeleteTextures(1, Pointee(Eq(_testHandle))));
     texture.reset();
 
+}
+
+TEST_F(TextureTests, MoveConstruct_TargetCallsDeleteTexture)
+{
+    EXPECT_CALL(_mockLib, GenTextures(_, _)).WillOnce(SetArgPointee<1>(_testHandle));
+    FakeImage fakeImage(_testWidth, _testHeight, _testPixelFormat);
+
+    std::unique_ptr<Texture> target;
+    {
+        Texture source(&_mockLib, Texture::Params(fakeImage));
+        target = std::make_unique<Texture>(std::move(source));
+    }
+
+    // Clear mock so we can specifically assert that the target destructor
+    // calls DeleteTexture
+    Mock::VerifyAndClear(&_mockLib);
+
+    EXPECT_CALL(_mockLib, DeleteTextures(1, Pointee(Eq(_testHandle)))).Times(1);
+    target.reset();
+}
+
+TEST_F(TextureTests, MoveAssign_MoveDeletesTargetsOriginalTexture)
+{
+    const GLuint originalSourceHandle = 888;
+    const GLuint originalTargetHandle = 999;
+
+    std::unique_ptr<Texture> source, target;
+    std::tie(source, target) = GetTwoTexturesWithHandles(originalSourceHandle, originalTargetHandle);
+
+    // Assert that target's original texture is deleted when the move occurs
+    EXPECT_CALL(_mockLib, DeleteTextures(1, Pointee(Eq(originalTargetHandle)))).Times(1);
+    *target = std::move(*source);
+
+    // Explicitly check expectations so that other destructors do not get
+    // called before verification.
+    Mock::VerifyAndClear(&_mockLib);
+}
+
+TEST_F(TextureTests, MoveAssign_SourceDestructorDeletesNothing)
+{
+    const GLuint originalSourceHandle = 888;
+    const GLuint originalTargetHandle = 999;
+
+    std::unique_ptr<Texture> source, target;
+    std::tie(source, target) = GetTwoTexturesWithHandles(originalSourceHandle, originalTargetHandle);
+
+    *target = std::move(*source);
+
+    // clear expectations so no previous calls affect our real assertion below
+    Mock::VerifyAndClear(&_mockLib);
+
+    // Assert that deleting the source does nothing
+    EXPECT_CALL(_mockLib, DeleteTextures(_, _)).Times(0);
+    source.reset();
+
+    // Explicitly check expectations so that other destructors do not get
+    // called before verification.
+    Mock::VerifyAndClear(&_mockLib);
+}
+
+TEST_F(TextureTests, MoveAssign_TargetDestructorDeletesSourceTexture)
+{
+    const GLuint originalSourceHandle = 888;
+    const GLuint originalTargetHandle = 999;
+
+    std::unique_ptr<Texture> source, target;
+    std::tie(source, target) = GetTwoTexturesWithHandles(originalSourceHandle, originalTargetHandle);
+
+    *target = std::move(*source);
+
+    // clear expectations so no previous calls affect our real assertion below
+    Mock::VerifyAndClear(&_mockLib);
+
+    // Assert that the source's texture (now in target) is deleted
+    // when target is destroyed
+    EXPECT_CALL(_mockLib, DeleteTextures(1, Pointee(Eq(originalSourceHandle)))).Times(1);
+    target.reset();
+
+    // Explicitly check expectations so that other destructors do not get
+    // called before verification.
+    Mock::VerifyAndClear(&_mockLib);
 }
 
 TEST_F(TextureTests, Bind_MakesCallsToActivateAndBindTexture)
