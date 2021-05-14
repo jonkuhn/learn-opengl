@@ -65,6 +65,11 @@ namespace Graphics::OpenGL
             glAttachShader(program, shader);
         }
 
+        void DetachShader(GLuint program, GLuint shader) override
+        {
+            glDetachShader(program, shader);
+        }
+
         void LinkProgram(GLuint program) override
         {
             glLinkProgram(program);

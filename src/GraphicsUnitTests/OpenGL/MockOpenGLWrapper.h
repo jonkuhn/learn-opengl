@@ -16,6 +16,7 @@ public:
     MOCK_METHOD(void, DeleteShader, (GLuint shader), (override));
     MOCK_METHOD(GLuint, CreateProgram, (), (override));
     MOCK_METHOD(void, AttachShader, (GLuint program, GLuint shader), (override));
+    MOCK_METHOD(void, DetachShader, (GLuint program, GLuint shader), (override));
     MOCK_METHOD(void, LinkProgram, (GLuint program), (override));
     MOCK_METHOD(void, GetProgramiv, (GLuint program, GLenum pname, GLint *params), (override));
     MOCK_METHOD(void, GetProgramInfoLog, (GLuint program, GLsizei maxLength, GLsizei* length, GLchar* infoLog), (override));

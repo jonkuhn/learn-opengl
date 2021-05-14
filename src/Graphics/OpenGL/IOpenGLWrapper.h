@@ -17,6 +17,7 @@ namespace Graphics::OpenGL
 
         virtual GLuint CreateProgram() = 0;
         virtual void AttachShader(GLuint program, GLuint shader) = 0;
+        virtual void DetachShader(GLuint program, GLuint shader) = 0;
         virtual void LinkProgram(GLuint program) = 0;
         virtual void GetProgramiv(GLuint program, GLenum pname, GLint *params) = 0;
         virtual void GetProgramInfoLog(GLuint program, GLsizei maxLength, GLsizei* length, GLchar* infoLog) = 0;
