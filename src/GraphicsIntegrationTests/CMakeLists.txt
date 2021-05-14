@@ -7,7 +7,7 @@ endif()
 target_sources(GraphicsIntegrationTests
   PRIVATE
     main_test.cpp
-    ImageTests.cpp
+    PngImageTests.cpp
     OpenGL/Pixel.h
     OpenGL/Pixel.cpp
     OpenGL/TestHelpers.h
