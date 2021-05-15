@@ -8,7 +8,7 @@
 
 namespace Graphics::OpenGL
 {
-    class GlfwWindow : public IOpenGLWindow
+    class GlfwWindow final : public IOpenGLWindow
     {
     public:
         GlfwWindow(IGlfwWrapper* glfw, int winWidth, int winHeight, const std::string& title);

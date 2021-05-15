@@ -3,7 +3,7 @@
 
 namespace Graphics
 {
-    class LibPngWrapper : public ILibPngWrapper
+    class LibPngWrapper final : public ILibPngWrapper
     {
     public:
         LibPngWrapper() {}

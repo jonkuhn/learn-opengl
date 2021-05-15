@@ -8,7 +8,7 @@
 
 namespace Graphics::OpenGL
 {
-    class Texture
+    class Texture final
     {
     public:
         enum class WrapMode

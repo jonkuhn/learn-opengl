@@ -6,7 +6,7 @@
 
 namespace Graphics::OpenGL
 {
-    class GlfwWrapper : public IGlfwWrapper
+    class GlfwWrapper final : public IGlfwWrapper
     {
     public:
         GlfwWrapper();

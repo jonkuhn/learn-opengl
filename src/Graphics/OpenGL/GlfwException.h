@@ -7,7 +7,7 @@
 
 namespace Graphics::OpenGL
 {
-    class GlfwException : public std::runtime_error
+    class GlfwException final : public std::runtime_error
     {
     public:
         GlfwException(IGlfwWrapper& glfw, const std::string& prefix);
