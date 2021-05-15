@@ -16,7 +16,7 @@ namespace Graphics::OpenGL
 {
     class IOpenGLWrapper;
 
-    class ShaderProgram
+    class ShaderProgram final
     {
     public:
         ShaderProgram(IOpenGLWrapper* gl, std::initializer_list<IShader*> shaders);

@@ -12,7 +12,7 @@
 namespace Graphics::OpenGL
 {
     template<typename TVertex>
-    class VertexArray
+    class VertexArray final
     {
     private:
         class Attribute

@@ -8,7 +8,7 @@ namespace Graphics::OpenGL
 {
     class IOpenGLWindow;
 
-    class OpenGLWrapper : public IOpenGLWrapper
+    class OpenGLWrapper final : public IOpenGLWrapper
     {
     public:
         OpenGLWrapper(IOpenGLWindow* window)
