@@ -43,6 +43,44 @@ protected:
     const int _testWidth = 777;
     const int _testHeight = 888;
     std::string _testErrorMessage;
+
+    std::tuple<std::unique_ptr<PngImage>,
+        std::unique_ptr<PngImage>> GetTwoDifferentImages()
+    {
+        const int bytesPerPixel = 4;
+        const int widthA = 111;
+        const int heightA = 222;
+        const int sizeInBytesA = widthA * heightA * bytesPerPixel;
+        std::vector<char> dataA(sizeInBytesA);
+        std::fill(dataA.begin(), dataA.end(), 'A');
+
+        const int widthB = 333;
+        const int heightB = 444;
+        const int sizeInBytesB = widthB * heightB * bytesPerPixel;
+        std::vector<char> dataB(sizeInBytesB);
+        std::fill(dataA.begin(), dataA.end(), 'B');
+
+        Sequence seq;
+        EXPECT_CALL(_mockLib, png_image_begin_read_from_file(_, _)).InSequence(seq).WillOnce(Return(true));
+        EXPECT_CALL(_mockLib, png_image_size(_)).InSequence(seq).WillOnce(Return(sizeInBytesA));
+        EXPECT_CALL(_mockLib, png_image_finish_read(_, _, _, _, _)).InSequence(seq)
+            .WillOnce(DoAll(
+                SetWidthAndHeightOnPngImageArg<0>(widthA, heightA),
+                FillArgPointeeBuffer<2>(dataA.data(), sizeInBytesA),
+                Return(true)));
+        EXPECT_CALL(_mockLib, png_image_begin_read_from_file(_, _)).InSequence(seq).WillOnce(Return(true));
+        EXPECT_CALL(_mockLib, png_image_size(_)).InSequence(seq).WillOnce(Return(sizeInBytesB));
+        EXPECT_CALL(_mockLib, png_image_finish_read(_, _, _, _, _)).InSequence(seq)
+            .WillOnce(DoAll(
+                SetWidthAndHeightOnPngImageArg<0>(widthB, heightB),
+                FillArgPointeeBuffer<2>(dataB.data(), sizeInBytesB),
+                Return(true)));
+
+        auto imageA = std::make_unique<PngImage>(&_mockLib, "imageA.png");
+        auto imageB = std::make_unique<PngImage>(&_mockLib, "imageB.png");
+
+        return std::tuple(std::move(imageA), std::move(imageB));
+    }
 };
 
 TEST_F(PngImageTests, Constructor_MakesCallsToLoadPng)
@@ -67,7 +105,7 @@ TEST_F(PngImageTests, Constructor_MakesCallsToLoadPng)
     EXPECT_EQ(capturedImagePtr1, capturedImagePtr3);
 }
 
-TEST_F(PngImageTests, Constructor_SetsWidthHeightAndPixelFormat)
+TEST_F(PngImageTests, Constructor_SetsWidthHeightPixelFormatAndSize)
 {
     EXPECT_CALL(_mockLib, png_image_begin_read_from_file(_, StrEq(_testFilename.c_str())))
         .WillOnce(Return(true));
@@ -121,4 +159,102 @@ TEST_F(PngImageTests, Constructor_FinishReadFails_ThrowsRuntimeErrorContainingMe
             throw;
         },
         std::runtime_error);
+}
+
+TEST_F(PngImageTests, CopyConstructor_CreatesIdenticalCopy)
+{
+    EXPECT_CALL(_mockLib, png_image_begin_read_from_file(_, StrEq(_testFilename.c_str())))
+        .WillOnce(Return(true));
+    EXPECT_CALL(_mockLib, png_image_size(_))
+        .WillOnce(Return(_testImageSize));
+    EXPECT_CALL(_mockLib, png_image_finish_read(_, Eq(nullptr), Ne(nullptr), Eq(0), Eq(nullptr)))
+        .WillOnce(DoAll(SetWidthAndHeightOnPngImageArg<0>(_testWidth, _testHeight), Return(true)));
+
+    PngImage original(&_mockLib, _testFilename);
+    PngImage copy(original);
+
+    // Attributes must be equal
+    EXPECT_EQ(original.Width(), copy.Width());
+    EXPECT_EQ(original.Height(), copy.Height());
+    EXPECT_EQ(original.Format(), copy.Format());
+
+    // Buffer must be copied not shared
+    EXPECT_NE(original.Data(), copy.Data());
+
+    // Buffer content must be the same
+    ASSERT_EQ(original.SizeInBytes(), copy.SizeInBytes());
+    EXPECT_TRUE(std::memcmp(original.Data(), copy.Data(), original.SizeInBytes()) == 0);
+}
+
+TEST_F(PngImageTests, CopyAssignment_CreatesIdenticalCopy)
+{
+    std::unique_ptr<PngImage> original;
+    std::unique_ptr<PngImage> copy;
+    std::tie(original, copy) = GetTwoDifferentImages();
+
+    *original = *copy;
+
+    // Attributes must be equal
+    EXPECT_EQ(original->Width(), copy->Width());
+    EXPECT_EQ(original->Height(), copy->Height());
+    EXPECT_EQ(original->Format(), copy->Format());
+
+    // Buffer must be copied not shared
+    EXPECT_NE(original->Data(), copy->Data());
+
+    // Buffer content must be the same
+    ASSERT_EQ(original->SizeInBytes(), copy->SizeInBytes());
+    EXPECT_TRUE(std::memcmp(original->Data(), copy->Data(), original->SizeInBytes()) == 0);
+}
+
+TEST_F(PngImageTests, MoveConstructor_TargetTakesOwnershipOfBufferAndPropertiesMatch)
+{
+    EXPECT_CALL(_mockLib, png_image_begin_read_from_file(_, StrEq(_testFilename.c_str())))
+        .WillOnce(Return(true));
+    EXPECT_CALL(_mockLib, png_image_size(_))
+        .WillOnce(Return(_testImageSize));
+    EXPECT_CALL(_mockLib, png_image_finish_read(_, Eq(nullptr), Ne(nullptr), Eq(0), Eq(nullptr)))
+        .WillOnce(DoAll(SetWidthAndHeightOnPngImageArg<0>(_testWidth, _testHeight), Return(true)));
+
+    PngImage source(&_mockLib, _testFilename);
+    auto sourceOriginalWidth = source.Width();
+    auto sourceOriginalHeight = source.Height();
+    auto sourceOriginalFormat = source.Format();
+    auto sourceOriginalData = source.Data();
+    auto sourceOriginalSizeInBytes = source.SizeInBytes();
+
+    PngImage target(std::move(source));
+
+    // Attributes match those of the original source
+    EXPECT_EQ(target.Width(), sourceOriginalWidth);
+    EXPECT_EQ(target.Height(), sourceOriginalHeight);
+    EXPECT_EQ(target.Format(), sourceOriginalFormat);
+    EXPECT_EQ(target.SizeInBytes(), sourceOriginalSizeInBytes);
+
+    // Target should directly take ownerhsip of exact source buffer
+    EXPECT_EQ(target.Data(), sourceOriginalData);
+}
+
+TEST_F(PngImageTests, MoveAssignment_TargetTakesOwnershipOfBufferAndPropertiesMatch)
+{
+    std::unique_ptr<PngImage> source;
+    std::unique_ptr<PngImage> target;
+    std::tie(source, target) = GetTwoDifferentImages();
+
+    auto sourceOriginalWidth = source->Width();
+    auto sourceOriginalHeight = source->Height();
+    auto sourceOriginalFormat = source->Format();
+    auto sourceOriginalData = source->Data();
+    auto sourceOriginalSizeInBytes = source->SizeInBytes();
+
+    *target = std::move(*source);
+
+    // Attributes match those of the original source
+    EXPECT_EQ(target->Width(), sourceOriginalWidth);
+    EXPECT_EQ(target->Height(), sourceOriginalHeight);
+    EXPECT_EQ(target->Format(), sourceOriginalFormat);
+    EXPECT_EQ(target->SizeInBytes(), sourceOriginalSizeInBytes);
+
+    // Target should directly take ownerhsip of exact source buffer
+    EXPECT_EQ(target->Data(), sourceOriginalData);
 }
