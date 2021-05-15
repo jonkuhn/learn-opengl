@@ -17,8 +17,7 @@ class ShaderTests : public Test
 public:
     ShaderTests()
         : _glfw(),
-          _window(&_glfw, 800, 600, "DummyIntegrationTestWindow"),
-          _gl(&_window)
+          _window(&_glfw, 800, 600, "DummyIntegrationTestWindow")
     {
 
     }
@@ -32,8 +31,8 @@ TEST_F(ShaderTests, CreateVertexShaderSuccess)
 {
     EXPECT_NO_THROW(
         Shader shader(
-            &_gl,
-            Shader::Type::Vertex,
+            _gl,
+            ShaderType::Vertex,
             GetValidVertexShaderCode());
         EXPECT_NE(shader.Handle(), (GLuint)0);
     );
@@ -43,8 +42,8 @@ TEST_F(ShaderTests, CreateFragmentShaderSuccess)
 {
     EXPECT_NO_THROW(
         Shader shader(
-            &_gl,
-            Shader::Type::Fragment,
+            _gl,
+            ShaderType::Fragment,
             GetValidFragmentShaderCode());
         EXPECT_NE(shader.Handle(), (GLuint)0);
     );
@@ -54,8 +53,8 @@ TEST_F(ShaderTests, CreateVertexShaderThrows)
 {
     EXPECT_THROW(
         Shader shader(
-            &_gl,
-            Shader::Type::Vertex,
+            _gl,
+            ShaderType::Vertex,
             "this is not valid code"),
         std::runtime_error
     );
@@ -65,8 +64,8 @@ TEST_F(ShaderTests, CreateFragmentShaderThrows)
 {
     EXPECT_THROW(
         Shader shader(
-            &_gl,
-            Shader::Type::Fragment,
+            _gl,
+            ShaderType::Fragment,
             "this is not valid code"),
         std::runtime_error
     );

@@ -30,15 +30,15 @@ protected:
         EXPECT_CALL(_mockLib, GetShaderiv(_, GL_COMPILE_STATUS, _)).WillRepeatedly(SetArgPointee<2>(true));
     }
 
-    std::tuple<std::unique_ptr<Shader>,
-        std::unique_ptr<Shader>> GetTwoShadersWithHandles(GLuint handleA, GLuint handleB)
+    std::tuple<std::unique_ptr<Shader<OpenGLWrapper>>,
+        std::unique_ptr<Shader<OpenGLWrapper>>> GetTwoShadersWithHandles(GLuint handleA, GLuint handleB)
     {
         Sequence seq;
         EXPECT_CALL(_mockLib, CreateShader(_)).InSequence(seq).WillOnce(Return(handleA));
         EXPECT_CALL(_mockLib, CreateShader(_)).InSequence(seq).WillOnce(Return(handleB));
 
-        auto shaderA = std::make_unique<Shader>(&_mockLib, Shader::Type::Vertex, _testSource);
-        auto shaderB = std::make_unique<Shader>(&_mockLib, Shader::Type::Vertex, _testSource);
+        auto shaderA = std::make_unique<Shader<OpenGLWrapper>>(&_mockLib, ShaderType::Vertex, _testSource);
+        auto shaderB = std::make_unique<Shader<OpenGLWrapper>>(&_mockLib, ShaderType::Vertex, _testSource);
 
         Mock::VerifyAndClear(&_mockLib);
 
@@ -58,7 +58,7 @@ TEST_F(ShaderTests, Constructor_MakesCallsToCreateAndCompileShader)
     EXPECT_CALL(_mockLib, GetShaderiv(_testHandle, GL_COMPILE_STATUS, _))
         .WillOnce(SetArgPointee<2>(true));
 
-    Shader shader(&_mockLib, Shader::Type::Vertex, _testSource);
+    Shader shader(std::move(_mockLib), ShaderType::Vertex, _testSource);
 }
 
 TEST_F(ShaderTests, Constructor_CallsCreateShaderWithExpectedType)
@@ -66,10 +66,10 @@ TEST_F(ShaderTests, Constructor_CallsCreateShaderWithExpectedType)
     SetupMockCompileToAlwaysSucceed();
 
     EXPECT_CALL(_mockLib, CreateShader(GL_VERTEX_SHADER)).WillOnce(Return(_testHandle));
-    Shader vertexShader(&_mockLib, Shader::Type::Vertex, _testSource);
+    Shader vertexShader(&_mockLib, ShaderType::Vertex, _testSource);
 
     EXPECT_CALL(_mockLib, CreateShader(GL_FRAGMENT_SHADER)).WillOnce(Return(_testHandle));
-    Shader fragmentShader(&_mockLib, Shader::Type::Fragment, _testSource);
+    Shader fragmentShader(&_mockLib, ShaderType::Fragment, _testSource);
 }
 
 TEST_F(ShaderTests, ConstructFromStream_PassesSourceCorrectly)
@@ -80,7 +80,7 @@ TEST_F(ShaderTests, ConstructFromStream_PassesSourceCorrectly)
     EXPECT_CALL(_mockLib, ShaderSource(_, 1, DoublePtrStrEq(_testSource), nullptr));
 
     std::stringstream sourceStream(_testSource);
-    Shader shader(&_mockLib, Shader::Type::Vertex, sourceStream);
+    Shader shader(&_mockLib, ShaderType::Vertex, sourceStream);
 }
 
 TEST_F(ShaderTests, Constructor_GivenCreateFails_ThrowsRuntimeErrorWithErrorCode)
@@ -91,7 +91,7 @@ TEST_F(ShaderTests, Constructor_GivenCreateFails_ThrowsRuntimeErrorWithErrorCode
     EXPECT_THROW(
         try
         {
-            Shader shader(&_mockLib, Shader::Type::Vertex, _testSource);
+            Shader shader(&_mockLib, ShaderType::Vertex, _testSource);
         }
         catch(const std::runtime_error& e)
         {
@@ -120,7 +120,7 @@ TEST_F(ShaderTests, Constructor_GivenCompilationFails_ThrowsRuntimeErrorWithInfo
     EXPECT_THROW(
         try
         {
-            Shader shader(&_mockLib, Shader::Type::Vertex, _testSource);
+            Shader shader(&_mockLib, ShaderType::Vertex, _testSource);
         }
         catch(const std::runtime_error& e)
         {
@@ -139,7 +139,7 @@ TEST_F(ShaderTests, Destructor_CallsDeleteShader)
     EXPECT_CALL(_mockLib, DeleteShader(_testHandle));
 
     {
-        Shader shader(&_mockLib, Shader::Type::Vertex, _testSource);
+        Shader shader(&_mockLib, ShaderType::Vertex, _testSource);
     }
 }
 
@@ -149,7 +149,7 @@ TEST_F(ShaderTests, MoveConstruct_TargetCallsDeleteShader)
 
     std::unique_ptr<Shader> target;
     {
-        Shader source(&_mockLib, Shader::Type::Vertex, _testSource);
+        Shader source(&_mockLib, ShaderType::Vertex, _testSource);
         target = std::make_unique<Shader>(std::move(source));
     }
 
@@ -228,6 +228,6 @@ TEST_F(ShaderTests, Handle_ReturnsShaderHandle)
     SetupMockCreateToAlwaysSucceed();
     SetupMockCompileToAlwaysSucceed();
 
-    Shader shader(&_mockLib, Shader::Type::Vertex, _testSource);
+    Shader shader(&_mockLib, ShaderType::Vertex, _testSource);
     EXPECT_EQ(shader.Handle(), _testHandle);
 }

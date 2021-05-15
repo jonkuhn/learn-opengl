@@ -20,7 +20,7 @@ public:
     ShaderProgramTests()
         : _glfw(),
           _window(&_glfw, 800, 600, "DummyIntegrationTestWindow"),
-          _gl(&_window)
+          _gl()
     {
         // clear errors
         _gl.GetError();
@@ -43,8 +43,8 @@ TEST_F(ShaderProgramTests, CreateShaderProgramSuccess)
 {
     OpenGLWrapper gl(&_window);
 
-    Shader vertexShader(&gl, Shader::Type::Vertex, GetValidVertexShaderCode());
-    Shader fragmentShader(&gl, Shader::Type::Fragment, GetValidFragmentShaderCode());
+    Shader vertexShader(gl, ShaderType::Vertex, GetValidVertexShaderCode());
+    Shader fragmentShader(gl, ShaderType::Fragment, GetValidFragmentShaderCode());
     EXPECT_NO_THROW(
         ShaderProgram shaderProgram(&gl, {&vertexShader, &fragmentShader});
         shaderProgram.Use();
@@ -55,8 +55,8 @@ TEST_F(ShaderProgramTests, SetVertexShaderUniforms)
 {
     OpenGLWrapper gl(&_window);
 
-    Shader vertexShader(&gl, Shader::Type::Vertex, GetVertexShaderCodeWithUniforms());
-    Shader fragmentShader(&gl, Shader::Type::Fragment, GetValidFragmentShaderCode());
+    Shader vertexShader(gl, ShaderType::Vertex, GetVertexShaderCodeWithUniforms());
+    Shader fragmentShader(gl, ShaderType::Fragment, GetValidFragmentShaderCode());
     ShaderProgram shaderProgram(&gl, {&vertexShader, &fragmentShader});
 
     AssertNoOpenGLErrors(gl);
@@ -75,8 +75,8 @@ TEST_F(ShaderProgramTests, SetFragmentShaderUniforms)
 {
     OpenGLWrapper gl(&_window);
 
-    Shader vertexShader(&gl, Shader::Type::Vertex, GetValidVertexShaderCode());
-    Shader fragmentShader(&gl, Shader::Type::Fragment, GetFragmentShaderCodeWithUniforms());
+    Shader vertexShader(gl, ShaderType::Vertex, GetValidVertexShaderCode());
+    Shader fragmentShader(gl, ShaderType::Fragment, GetFragmentShaderCodeWithUniforms());
     ShaderProgram shaderProgram(&gl, {&vertexShader, &fragmentShader});
 
     AssertNoOpenGLErrors(gl);

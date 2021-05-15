@@ -50,10 +50,10 @@ int main()
 {
     GlfwWrapper glfw;
     GlfwWindow window(&glfw, SCR_WIDTH, SCR_HEIGHT, "Learn OpenGL");
-    OpenGLWrapper gl(&window);
+    OpenGLWrapper gl;
 
-    Shader vertexShader(&gl, Shader::Type::Vertex, vertexShaderSource);
-    Shader fragmentShader(&gl, Shader::Type::Fragment, fragmentShaderSource);
+    Shader vertexShader(gl, ShaderType::Vertex, vertexShaderSource);
+    Shader fragmentShader(gl, ShaderType::Fragment, fragmentShaderSource);
     ShaderProgram shaderProgram(&gl, {&vertexShader, &fragmentShader});
 
     VertexArray<Vertex> vertexArray(

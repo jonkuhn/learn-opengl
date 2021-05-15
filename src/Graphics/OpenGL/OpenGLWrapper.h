@@ -11,14 +11,18 @@ namespace Graphics::OpenGL
     class OpenGLWrapper final : public IOpenGLWrapper
     {
     public:
-        OpenGLWrapper(IOpenGLWindow* window)
-            : _window(window)
+        OpenGLWrapper(IOpenGLWindow*)
         {
 
         }
 
-        OpenGLWrapper(const OpenGLWrapper&) = delete;
-        OpenGLWrapper& operator=(const OpenGLWrapper&) = delete;
+        OpenGLWrapper()
+        {
+
+        }
+
+        OpenGLWrapper(const OpenGLWrapper&) = default;
+        OpenGLWrapper& operator=(const OpenGLWrapper&) = default;
         OpenGLWrapper(OpenGLWrapper&&) = default;
         OpenGLWrapper& operator=(OpenGLWrapper&&) = default;
 
@@ -233,12 +237,5 @@ namespace Graphics::OpenGL
         {
             glGetIntegerv(pname, data);
         }
-
-    private:
-        // Unused, but exists to document dependence on a window to draw in
-        #pragma clang diagnostic push
-        #pragma clang diagnostic ignored "-Wunused-private-field"
-        IOpenGLWindow* _window;
-        #pragma clang diagnostic pop
     };
 }

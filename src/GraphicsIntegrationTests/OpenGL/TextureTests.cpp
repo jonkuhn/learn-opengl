@@ -105,8 +105,8 @@ public:
         _testTriangleElementsOfRectangle.push_back(3);
         _testTriangleElementsOfRectangle.push_back(0);
 
-        Shader vertexShader(&_gl, Shader::Type::Vertex, vertexShaderSource);
-        Shader fragmentShader(&_gl, Shader::Type::Fragment, fragmentShaderSource);
+        Shader vertexShader(_gl, ShaderType::Vertex, vertexShaderSource);
+        Shader fragmentShader(_gl, ShaderType::Fragment, fragmentShaderSource);
         _shaderProgram.reset(new ShaderProgram(&_gl, {&vertexShader, &fragmentShader}));
     }
 protected:
