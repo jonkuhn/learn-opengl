@@ -62,3 +62,8 @@ IImage::PixelFormat PngImage::Format() const
 {
     return _pixelFormat;
 }
+
+size_t PngImage::SizeInBytes() const
+{
+    return _data.size();
+}
