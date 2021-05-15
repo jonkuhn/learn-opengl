@@ -39,4 +39,3 @@ void TileMapShaderProgram::Atlas(int textureIndex, const glm::vec2& atlasSizeInT
     _shaderProgram->SetUniform("tileAtlas", textureIndex);
     _shaderProgram->SetUniform("tileAtlasSizeInTiles", atlasSizeInTiles);
 }
-

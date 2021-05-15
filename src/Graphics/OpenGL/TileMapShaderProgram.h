@@ -1,6 +1,7 @@
 #pragma once
+#include <memory>
 
-#include "IShaderProgram.h"
+#include "ShaderProgram.h"
 #include "ITileMapShaderProgram.h"
 
 namespace Graphics::OpenGL

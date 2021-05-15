@@ -19,10 +19,9 @@ namespace Graphics::OpenGL
         void SetUniform(const std::string &name, const glm::vec3& value);
         void SetUniform(const std::string &name, const glm::vec2& value);
 
-    protected:
-        // This interface is not intended to expose ownership of the
-        // concrete object implementing it.  Therefore, do not allow
-        // deletion via interface pointers.
-        ~IShaderProgram() = default;
+        // This interface allows for deletion so that ownership can be
+        // held via this interface.  This enables unit testing of use
+        // cases such as TileMapShaderProgram
+        virtual ~IShaderProgram() = default;
     };
 }

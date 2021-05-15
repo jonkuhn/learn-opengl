@@ -20,7 +20,7 @@
 #include "Graphics/OpenGL/Window.h"
 #include "Graphics/PngImage.h"
 
-//#include "Graphics/OpenGL/Factory.h"
+#include "Graphics/OpenGL/Factory.h"
 
 using namespace Graphics;
 using namespace Graphics::OpenGL;

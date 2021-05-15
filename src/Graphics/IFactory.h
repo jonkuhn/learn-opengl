@@ -17,9 +17,9 @@ namespace Graphics
     public:
         virtual std::unique_ptr<ITileMap> CreateTileMap(
             IImage &tileMap,
-            const glm::vec2 &mapSizeInTiles,
+            const glm::vec2& mapSizeInTiles,
             IImage &tileAtlas,
-            const glm::vec2 &atlasSizeInTiles);
+            const glm::vec2& atlasSizeInTiles);
 
     protected:
         // This interface is not intended to expose ownership of the
