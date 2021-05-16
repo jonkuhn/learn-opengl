@@ -30,6 +30,9 @@ target_sources(Graphics
     OpenGL/TileMapShaderProgram.h
     OpenGL/TileMapShaderProgram.cpp
     OpenGL/UniqueHandle.h
+    OpenGL/IUnitQuadVertexArray.h
+    OpenGL/UnitQuadVertexArray.h
+    OpenGL/IVertexArray.h
     OpenGL/VertexArray.h
     OpenGL/IOpenGLWindow.h
     OpenGL/Window.h

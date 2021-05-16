@@ -4,11 +4,13 @@ using namespace Graphics::OpenGL;
 
 TileMap::TileMap(
     ITileMapShaderProgram* tileMapShaderProgram,
+    IUnitQuadVertexArray* unitQuadVertexArray,
     ITexture* mapTexture,
     glm::vec2 mapSizeInTiles,
     ITexture* atlasTexture,
     glm::vec2 atlasSizeInTiles)
     : _tileMapShaderProgram(tileMapShaderProgram),
+      _unitQuadVertexArray(unitQuadVertexArray),
       _mapTexture(mapTexture),
       _mapSizeInTiles(std::move(mapSizeInTiles)),
       _atlasTexture(atlasTexture),
@@ -25,4 +27,5 @@ void TileMap::Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat
     _tileMapShaderProgram->ModelMatrix(model);
     _tileMapShaderProgram->ViewMatrix(view);
     _tileMapShaderProgram->ProjectionMatrix(projection);
+    _unitQuadVertexArray->Draw();
 }

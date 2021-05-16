@@ -6,13 +6,14 @@
 #include <vector>
 
 #include "IOpenGLWrapper.h"
+#include "IVertexArray.h"
 #include "OpenGLHelpers.h"
 #include "UniqueHandle.h"
 
 namespace Graphics::OpenGL
 {
     template<typename TVertex>
-    class VertexArray final
+    class VertexArray final : public IVertexArray
     {
     private:
         class Attribute

@@ -9,6 +9,7 @@
 
 #include "ITexture.h"
 #include "ITileMapShaderProgram.h"
+#include "IUnitQuadVertexArray.h"
 
 namespace Graphics::OpenGL
 {
@@ -17,6 +18,7 @@ namespace Graphics::OpenGL
     public:
         TileMap(
             ITileMapShaderProgram* tileMapShaderProgram,
+            IUnitQuadVertexArray* unitQuadVertexArray,
             ITexture* mapTexture,
             glm::vec2 mapSizeInTiles,
             ITexture* atlasTexture,
@@ -32,6 +34,7 @@ namespace Graphics::OpenGL
 
     private:
         ITileMapShaderProgram* _tileMapShaderProgram;
+        IUnitQuadVertexArray* _unitQuadVertexArray;
         ITexture* _mapTexture;
         glm::vec2 _mapSizeInTiles;
         ITexture* _atlasTexture;

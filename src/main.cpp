@@ -16,7 +16,7 @@
 #include "Graphics/OpenGL/Texture.h"
 #include "Graphics/OpenGL/TileMap.h"
 #include "Graphics/OpenGL/TileMapShaderProgram.h"
-#include "Graphics/OpenGL/VertexArray.h"
+#include "Graphics/OpenGL/UnitQuadVertexArray.h"
 #include "Graphics/OpenGL/Window.h"
 #include "Graphics/PngImage.h"
 
@@ -96,89 +96,24 @@ int main()
     LibPngWrapper libpng;
 
     TileMapShaderProgram tileMapShaderProgram(&gl);
-
-    //VertexArray<Vertex> vertexArray(
-    //    gl,
-    //    VertexArray<Vertex>::Params(
-    //        std::vector<Vertex>({
-    //            { 0.5f,  0.5f, 0.0f },  // top right
-    //            { 0.5f, -0.5f, 0.0f },  // bottom right
-    //            {-0.5f, -0.5f, 0.0f },  // bottom left
-    //            {-0.5f,  0.5f, 0.0f }   // top left 
-    //        }))
-    //        .AddAttribute(3)
-    //        .TriangleElementIndices(
-    //            std::vector<GLuint>({
-    //                0, 1, 3,  // first Triangle
-    //                1, 2, 3   // second Triangle
-    //            }))
-    //    );
-
-
-    // Draw in wireframe polygons.
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    UnitQuadVertexArray UnitQuadVertexArray(&gl);
 
     // Want:
-    // - World to be 1000 tiles by 1000 tiles
+    // - World to be 100 tiles by 100 tiles represented by one tile map
     // - View to be 10 tiles by 10 tiles
     // - Each tile to be 64 by 64 pixels
     // - So world is 64,000 by 64,000
     // - So view is 640 by 640
     const float WORLD_WIDTH_IN_TILES = 100;
     const float WORLD_HEIGHT_IN_TILES = 100; 
-    const float TILE_SET_WIDTH_IN_TILES = 2;
-    const float TILE_SET_HEIGHT_IN_TILES = 2;
-    //const float VIEW_WIDTH_IN_TILES = 10;
-    //const float VIEW_HEIGHT_IN_TILES = 10;
 
-    VertexArray<Vertex> vertexArray(
-        &gl,
-        VertexArray<Vertex>::Params(
-            std::vector<Vertex>({
-                { 1.0f, 1.0f, 0.0f },  // top right
-                { 1.0f, 0.0f, 0.0f },  // bottom right
-                { 0.0f,  0.0f, 0.0f },  // bottom left
-                { 0.0f, 1.0f, 0.0f }   // top left 
-            }))
-            .AddAttribute(3)
-            .TriangleElementIndices(
-                std::vector<GLuint>({
-                    0, 1, 3,  // first Triangle
-                    1, 2, 3   // second Triangle
-                }))
-        );
-
-
+    // Define a model matrix that scale's up from a unit quad
+    // to world width by world height
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));  
+    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
     model = glm::scale(model, glm::vec3(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES, 0.0f));  
-    //tileMapShaderProgram.ModelMatrix(model);
 
-    //auto view = glm::lookAt(
-    //    glm::vec3(5.0f, 5.0f, 0.0f),
-    //    glm::vec3(5.0f, 5.0f, 0.0f),
-    //    glm::vec3(0.0f, 1.0f, 0.0f));
-    //tileMapShaderProgram.ViewMatrix(view);
-
-//    glm::vec3 direction;
-//    float yaw = 150.0f;
-//    float pitch = 0.0f;
-//    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-//    direction.y = sin(glm::radians(pitch));
-//    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-//    glm::vec3 cameraFront = glm::normalize(direction);
-//
-//    glm::vec3 cameraPos   = glm::vec3(5.0f, 5.0f,  3.0f);
-//    //glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-//    glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
-//    auto view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-//    tileMapShaderProgram.ViewMatrix(view);
-
-    //auto projection = glm::perspective(glm::radians(100.0f), 800.0f / 600.0f,  -1.0f, 1.0f);
-    //tileMapShaderProgram.ProjectionMatrix(projection);
-
-    //glEnable(GL_BLEND);
-
+    // Generate a random tile map texture using a helper class
     RandomTileMap randomTileMap(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES);
     Texture tileMapTexture(&gl, Texture::Params(randomTileMap)
         .WrapModeS(Texture::WrapMode::ClampToBorder)
@@ -186,6 +121,9 @@ int main()
         .MinFilter(Texture::MinFilterMode::Nearest)
         .MagFilter(Texture::MagFilterMode::Nearest));
 
+    // use a small 2x2 tile atlas for testing purposes
+    const float TILE_ATLAS_WIDTH_IN_TILES = 2;
+    const float TILE_ATLAS_HEIGHT_IN_TILES = 2;
     PngImage tileAtlasImage(&libpng, "TestFiles/scribbletiles.png");
     Texture tileAtlasTexture(&gl, Texture::Params(tileAtlasImage)
         .WrapModeS(Texture::WrapMode::ClampToBorder)
@@ -195,13 +133,11 @@ int main()
 
     TileMap tileMap(
         &tileMapShaderProgram,
+        &UnitQuadVertexArray,
         &tileMapTexture,
         glm::vec2(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES),
         &tileAtlasTexture,
-        glm::vec2(TILE_SET_WIDTH_IN_TILES, TILE_SET_HEIGHT_IN_TILES));
-
-    //glm::mat4 projection = glm::ortho(0.0f, 10.0f, 0.0f, 10.0f, -1.0f, 1.0f);
-    //tileMapShaderProgram.ProjectionMatrix(projection);
+        glm::vec2(TILE_ATLAS_WIDTH_IN_TILES, TILE_ATLAS_HEIGHT_IN_TILES));
 
     const float MOVE_SPEED = 5.0f;
 
@@ -283,10 +219,6 @@ int main()
         cameraX += cameraDX * deltaTime;
         cameraY += cameraDY * deltaTime;
 
-        //auto projection = glm::ortho(cameraX, cameraX + VIEW_WIDTH_IN_TILES, cameraY, cameraY + VIEW_HEIGHT_IN_TILES,  -1.0f, 1.0f);
-        ////projection = glm::rotate(projection, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        //tileMapShaderProgram.ProjectionMatrix(projection);
-
         // 2D Camera
         // Notes:
         // - Z component of cameraPosition must be such that the objects
@@ -352,7 +284,6 @@ int main()
         //tileMapShaderProgram.ViewMatrix(view);
 
         tileMap.Draw(model, view, projection);
-        vertexArray.Draw();
     }
 
     return 0;
