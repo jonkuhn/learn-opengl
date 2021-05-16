@@ -1,7 +1,18 @@
 # Learn OpenGL
 
 ## Summary
-Project for me to write (probably messy) OpenGL code for learning modern OpenGL graphics programming.  I am initially following the tutorial here: https://learnopengl.com
+Project for me to write a simple 2D graphics engine for learning modern OpenGL graphics programming.  I am initially following the tutorial here: https://learnopengl.com.  I may eventually expand it from just graphics into a game engine and potentially expand the graphics to support 3D at some point as well.  However, I have very limited time to spend on this so progress is going to be very slow.
+
+## Project Goals
+1. The number one goal is to have fun learning about graphics programming and to keep my C++ skills fresh.
+2. Have a high level of automated test coverage with unit and integration tests.
+3. Prefer to focus on simplicity, testability, readability, and maintainability over performance optimizations.
+   - When writing in C++ I can get distracted by reading and learning about things that _can_ be done to optimize code, but likely don't really matter for the goals of this project.  I am _interested_ in learning about these ideas and playing with them, but I'd like to avoid letting unnecessary optimizations from creeping into this project.
+   - To the extent that I do read up on these types of optimizations my goal should just be to understand them enough to not design myself into a corner that would make it difficult to optimize later.
+   - Basically: avoid premature optimization!  Unless there is a real reason to do otherwise:
+     - Don't worry about having lots of interfaces with virtual functions to enable testing.
+     - Don't worry too much about memory locality and just allocate individual object on the heap to get things going.  Consider trying to abstract object creation and scene loading concerns behind an interface so that I could optimize in in the future if needed.
+     - Defer (but try to leave room in the design for) work around culling objects before making draw calls.  It seems very likely that any GPU can handle me throwing a whole 2D game level's worth of 2D rectangles at it even if most of them are off screen.  If I am proven wrong I will adjust and learn from it.
 
 ## Prerequisites
 1. CMake (using 3.19.0) (`brew install cmake`)
