@@ -1,5 +1,10 @@
 #pragma once
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-volatile"
+#include <glm/vec3.hpp>
+#pragma clang diagnostic pop
+
 #include "../ITileMap.h"
 
 #include "ITexture.h"
@@ -7,15 +12,15 @@
 
 namespace Graphics::OpenGL
 {
-    class TileMap : public ITileMap
+    class TileMap final : public ITileMap
     {
     public:
         TileMap(
             ITileMapShaderProgram* tileMapShaderProgram,
             ITexture* mapTexture,
-            const glm::vec2& mapSizeInTiles,
+            glm::vec2 mapSizeInTiles,
             ITexture* atlasTexture,
-            const glm::vec2& atlasSizeInTiles);
+            glm::vec2 atlasSizeInTiles);
 
         TileMap(TileMap&& other) = default;
         TileMap& operator=(TileMap&& other) = default;
@@ -24,5 +29,12 @@ namespace Graphics::OpenGL
         TileMap& operator=(const TileMap& other) = delete;
         
         void Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection);
+
+    private:
+        ITileMapShaderProgram* _tileMapShaderProgram;
+        ITexture* _mapTexture;
+        glm::vec2 _mapSizeInTiles;
+        ITexture* _atlasTexture;
+        glm::vec2 _atlasSizeInTiles;
     };
 }

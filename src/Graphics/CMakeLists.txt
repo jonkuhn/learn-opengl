@@ -25,6 +25,7 @@ target_sources(Graphics
     OpenGL/Texture.h
     OpenGL/Texture.cpp
     OpenGL/TileMap.h
+    OpenGL/TileMap.cpp
     OpenGL/ITileMapShaderProgram.h
     OpenGL/TileMapShaderProgram.h
     OpenGL/TileMapShaderProgram.cpp

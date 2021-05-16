@@ -1,15 +1,17 @@
 #pragma once
 #include <memory>
 
-#include "ShaderProgram.h"
+#include "IOpenGLWrapper.h"
+#include "ITexture.h"
 #include "ITileMapShaderProgram.h"
+#include "ShaderProgram.h"
 
 namespace Graphics::OpenGL
 {
-    class TileMapShaderProgram : public ITileMapShaderProgram
+    class TileMapShaderProgram final : public ITileMapShaderProgram
     {
     public:
-        TileMapShaderProgram(IShaderProgram* shaderProgram);
+        TileMapShaderProgram(IOpenGLWrapper* gl);
 
         TileMapShaderProgram(TileMapShaderProgram&& other) = default;
         TileMapShaderProgram& operator=(TileMapShaderProgram&& other) = default;
@@ -21,10 +23,12 @@ namespace Graphics::OpenGL
         void ModelMatrix(const glm::mat4& model) override;
         void ViewMatrix(const glm::mat4& view) override;
         void ProjectionMatrix(const glm::mat4& projection) override;
-        void Map(int textureIndex, const glm::vec2  &mapSizeInTiles) override;
-        void Atlas(int textureIndex, const glm::vec2& atlasSizeInTiles) override;
+        void Map(ITexture& mapTexture, const glm::vec2  &mapSizeInTiles) override;
+        void Atlas(ITexture& mapTexture, const glm::vec2& atlasSizeInTiles) override;
 
     private:
-        IShaderProgram* _shaderProgram;
+        // Take a hard dependency on ShaderProgram here because this class's
+        // behavior will be easy enough to test by mocking IOpenGLWrapper
+        ShaderProgram _shaderProgram;
     };
 }

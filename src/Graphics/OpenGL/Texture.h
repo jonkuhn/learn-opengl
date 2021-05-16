@@ -4,11 +4,12 @@
 #include "../IImage.h"
 
 #include "IOpenGLWrapper.h"
+#include "ITexture.h"
 #include "UniqueHandle.h"
 
 namespace Graphics::OpenGL
 {
-    class Texture final
+    class Texture final : public ITexture
     {
     public:
         enum class WrapMode
@@ -62,7 +63,7 @@ namespace Graphics::OpenGL
         Texture(Texture&&) = default;
         Texture& operator=(Texture&&) = default;
 
-        void Bind(int textureIndex);
+        void Bind(int textureIndex) override;
 
     private:
         IOpenGLWrapper* _gl;

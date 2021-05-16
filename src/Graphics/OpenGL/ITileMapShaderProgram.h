@@ -11,12 +11,12 @@ namespace Graphics::OpenGL
     class ITileMapShaderProgram
     {
     public:
-        virtual void Use();
-        virtual void ModelMatrix(const glm::mat4& model);
-        virtual void ViewMatrix(const glm::mat4& view);
-        virtual void ProjectionMatrix(const glm::mat4& projection);
-        virtual void Map(int textureIndex, const glm::vec2& mapSizeInTiles);
-        virtual void Atlas(int textureIndex, const glm::vec2& atlasSizeInTiles);
+        virtual void Use() = 0;
+        virtual void ModelMatrix(const glm::mat4& model) = 0;
+        virtual void ViewMatrix(const glm::mat4& view) = 0;
+        virtual void ProjectionMatrix(const glm::mat4& projection) = 0;
+        virtual void Map(ITexture& mapTexture, const glm::vec2  &mapSizeInTiles) = 0;
+        virtual void Atlas(ITexture& mapTexture, const glm::vec2& atlasSizeInTiles) = 0;
 
     protected:
         // This interface is not intended to expose ownership of the

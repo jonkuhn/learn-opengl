@@ -5,7 +5,7 @@ namespace Graphics::OpenGL
     class ITexture
     {
     public:
-        void Bind(int textureIndex);
+        virtual void Bind(int textureIndex) = 0;
 
     protected:
         // This interface is not intended to expose ownership of the

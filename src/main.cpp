@@ -13,14 +13,14 @@
 #include "Graphics/LibPngWrapper.h"
 #include "Graphics/OpenGL/GlfwWrapper.h"
 #include "Graphics/OpenGL/OpenGLWrapper.h"
-#include "Graphics/OpenGL/Shader.h"
-#include "Graphics/OpenGL/ShaderProgram.h"
 #include "Graphics/OpenGL/Texture.h"
+#include "Graphics/OpenGL/TileMap.h"
+#include "Graphics/OpenGL/TileMapShaderProgram.h"
 #include "Graphics/OpenGL/VertexArray.h"
 #include "Graphics/OpenGL/Window.h"
 #include "Graphics/PngImage.h"
 
-#include "Graphics/OpenGL/Factory.h"
+//#include "Graphics/OpenGL/Factory.h"
 
 using namespace Graphics;
 using namespace Graphics::OpenGL;
@@ -28,41 +28,6 @@ using namespace Graphics::OpenGL;
 // settings
 constexpr unsigned int SCR_WIDTH = 800;
 constexpr unsigned int SCR_HEIGHT = 600;
-
-const char *vertexShaderSource = R"##RAW##(
-#version 330 core
-layout (location = 0) in vec3 vertex;
-
-out vec2 tileMapLocation;
-
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-
-void main()
-{
-    tileMapLocation = vertex.xy;
-    gl_Position = projection * view * model * vec4(vertex.xy, 0.0, 1.0);
-}
-)##RAW##";
-
-const char *fragmentShaderSource = R"##RAW##(
-#version 330 core
-uniform vec2 tileMapSizeInTiles;
-uniform sampler2D tileMap;
-uniform sampler2D tileAtlas;
-uniform vec2 tileAtlasSizeInTiles;
-
-in vec2 tileMapLocation;
-
-out vec4 FragColor;
-
-void main()
-{
-    vec2 tileAtlasLocation = texture(tileMap, tileMapLocation / tileMapSizeInTiles).xy * 255;
-    FragColor = texture(tileAtlas, (tileAtlasLocation + fract(tileMapLocation)) / tileAtlasSizeInTiles);
-}
-)##RAW##";
 
 void processInput(GlfwWindow& window)
 {
@@ -130,22 +95,7 @@ int main()
     OpenGLWrapper gl(&window);
     LibPngWrapper libpng;
 
-    Shader vertexShader(&gl, Shader::Type::Vertex, vertexShaderSource);
-    Shader fragmentShader(&gl, Shader::Type::Fragment, fragmentShaderSource);
-    ShaderProgram shaderProgram(&gl, {&vertexShader, &fragmentShader});
-
-    std::cout << reinterpret_cast<uintptr_t>(&glfw) << std::endl;
-    std::cout << reinterpret_cast<uintptr_t>(&window) << std::endl;
-    std::cout << reinterpret_cast<uintptr_t>(&gl) << std::endl;
-    std::cout << reinterpret_cast<uintptr_t>(&libpng) << std::endl;
-    std::cout << reinterpret_cast<uintptr_t>(&fragmentShader) << std::endl;
-    std::cout << reinterpret_cast<uintptr_t>(&shaderProgram) << std::endl;
-    std::cout << *(reinterpret_cast<uintptr_t*>(&glfw)) << std::endl;
-    std::cout << *(reinterpret_cast<uintptr_t*>(&window)) << std::endl;
-    std::cout << *(reinterpret_cast<uintptr_t*>(&gl)) << std::endl;
-    std::cout << *(reinterpret_cast<uintptr_t*>(&libpng)) << std::endl;
-    std::cout << *(reinterpret_cast<uintptr_t*>(&fragmentShader)) << std::endl;
-    std::cout << *(reinterpret_cast<uintptr_t*>(&shaderProgram)) << std::endl;
+    TileMapShaderProgram tileMapShaderProgram(&gl);
 
     //VertexArray<Vertex> vertexArray(
     //    gl,
@@ -201,13 +151,13 @@ int main()
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));  
-    shaderProgram.SetUniform("model", model);
+    //tileMapShaderProgram.ModelMatrix(model);
 
     //auto view = glm::lookAt(
     //    glm::vec3(5.0f, 5.0f, 0.0f),
     //    glm::vec3(5.0f, 5.0f, 0.0f),
     //    glm::vec3(0.0f, 1.0f, 0.0f));
-    //shaderProgram.SetUniform("view", view);
+    //tileMapShaderProgram.ViewMatrix(view);
 
 //    glm::vec3 direction;
 //    float yaw = 150.0f;
@@ -221,40 +171,36 @@ int main()
 //    //glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 //    glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
 //    auto view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-//    shaderProgram.SetUniform("view", view);
+//    tileMapShaderProgram.ViewMatrix(view);
 
     //auto projection = glm::perspective(glm::radians(100.0f), 800.0f / 600.0f,  -1.0f, 1.0f);
-    //shaderProgram.SetUniform("projection", projection);
+    //tileMapShaderProgram.ProjectionMatrix(projection);
 
     //glEnable(GL_BLEND);
 
     RandomTileMap randomTileMap(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES);
-    Texture tileMap(&gl, Texture::Params(randomTileMap)
+    Texture tileMapTexture(&gl, Texture::Params(randomTileMap)
         .WrapModeS(Texture::WrapMode::ClampToBorder)
         .WrapModeT(Texture::WrapMode::ClampToBorder)
         .MinFilter(Texture::MinFilterMode::Nearest)
         .MagFilter(Texture::MagFilterMode::Nearest));
 
     PngImage tileAtlasImage(&libpng, "TestFiles/scribbletiles.png");
-    Texture tileAtlas(&gl, Texture::Params(tileAtlasImage)
+    Texture tileAtlasTexture(&gl, Texture::Params(tileAtlasImage)
         .WrapModeS(Texture::WrapMode::ClampToBorder)
         .WrapModeT(Texture::WrapMode::ClampToBorder)
         .MinFilter(Texture::MinFilterMode::Nearest)
         .MagFilter(Texture::MagFilterMode::Nearest));
 
-    tileMap.Bind(0);
-    shaderProgram.SetUniform("tileMap", 0);
-    tileAtlas.Bind(1);
-    shaderProgram.SetUniform("tileAtlas", 1);
+    TileMap tileMap(
+        &tileMapShaderProgram,
+        &tileMapTexture,
+        glm::vec2(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES),
+        &tileAtlasTexture,
+        glm::vec2(TILE_SET_WIDTH_IN_TILES, TILE_SET_HEIGHT_IN_TILES));
 
     //glm::mat4 projection = glm::ortho(0.0f, 10.0f, 0.0f, 10.0f, -1.0f, 1.0f);
-    //shaderProgram.SetUniform("projection", projection);
-
-    glm::vec2 tileAtlasSizeInTiles = glm::vec2(TILE_SET_WIDTH_IN_TILES, TILE_SET_HEIGHT_IN_TILES);
-    shaderProgram.SetUniform("tileAtlasSizeInTiles", tileAtlasSizeInTiles);
-
-    glm::vec2 tileMapSizeInTiles = glm::vec2(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES);
-    shaderProgram.SetUniform("tileMapSizeInTiles", tileMapSizeInTiles);
+    //tileMapShaderProgram.ProjectionMatrix(projection);
 
     const float MOVE_SPEED = 5.0f;
 
@@ -271,7 +217,7 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        shaderProgram.Use();
+        //tileMapShaderProgram.Use();
         
         double currentTime = glfwGetTime();
         double deltaTime = currentTime - previousTime;
@@ -338,7 +284,7 @@ int main()
 
         //auto projection = glm::ortho(cameraX, cameraX + VIEW_WIDTH_IN_TILES, cameraY, cameraY + VIEW_HEIGHT_IN_TILES,  -1.0f, 1.0f);
         ////projection = glm::rotate(projection, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-        //shaderProgram.SetUniform("projection", projection);
+        //tileMapShaderProgram.ProjectionMatrix(projection);
 
         // 2D Camera
         // Notes:
@@ -369,9 +315,9 @@ int main()
         glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
         glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
         auto view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-        shaderProgram.SetUniform("view", view);
+        //tileMapShaderProgram.ViewMatrix(view);
         auto projection = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f,  0.0f, 1.0f);
-        shaderProgram.SetUniform("projection", projection);
+        //tileMapShaderProgram.ProjectionMatrix(projection);
 
         // 3D Camera
         // Notes:
@@ -380,15 +326,15 @@ int main()
         //glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
         //glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
         //auto view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-        //shaderProgram.SetUniform("view", view);
+        //tileMapShaderProgram.ViewMatrix(view);
         //auto projection = glm::perspective(glm::radians(100.0f), 800.0f / 600.0f,  0.1f, 1.0f);
-        //shaderProgram.SetUniform("projection", projection);
+        //tileMapShaderProgram.ProjectionMatrix(projection);
 
         //glm::vec3 cameraPos   = glm::vec3(cameraX + 5.0f, cameraY + 5.0f,  3.0f);
         //glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
         //glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
         //auto view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-        //shaderProgram.SetUniform("view", view);
+        //tileMapShaderProgram.ViewMatrix(view);
 
         //glm::vec3 direction;
         //float yaw = -90.0f;
@@ -402,8 +348,9 @@ int main()
         //glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
         //glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
         //auto view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-        //shaderProgram.SetUniform("view", view);
+        //tileMapShaderProgram.ViewMatrix(view);
 
+        tileMap.Draw(model, view, projection);
         vertexArray.Draw();
     }
 
