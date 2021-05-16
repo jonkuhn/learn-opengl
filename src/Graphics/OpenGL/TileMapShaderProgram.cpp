@@ -20,8 +20,9 @@ namespace
 
         void main()
         {
-            tileMapLocation = vertex.xy;
-            gl_Position = projection * view * model * vec4(vertex.xy, 0.0, 1.0);
+            vec4 tileMapLocationVec4 = (model * vec4(vertex.xy, 0.0, 1.0));
+            tileMapLocation = tileMapLocationVec4.xy;
+            gl_Position = projection * view * tileMapLocationVec4;
         }
         )##RAW##";
         Shader vertexShader(gl, Shader::Type::Vertex, vertexShaderSource);

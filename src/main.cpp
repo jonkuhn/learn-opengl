@@ -135,10 +135,10 @@ int main()
         &gl,
         VertexArray<Vertex>::Params(
             std::vector<Vertex>({
-                { WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES, 0.0f },  // top right
-                { WORLD_WIDTH_IN_TILES, 0.0f, 0.0f },  // bottom right
+                { 1.0f, 1.0f, 0.0f },  // top right
+                { 1.0f, 0.0f, 0.0f },  // bottom right
                 { 0.0f,  0.0f, 0.0f },  // bottom left
-                { 0.0f, WORLD_HEIGHT_IN_TILES, 0.0f }   // top left 
+                { 0.0f, 1.0f, 0.0f }   // top left 
             }))
             .AddAttribute(3)
             .TriangleElementIndices(
@@ -151,6 +151,7 @@ int main()
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));  
+    model = glm::scale(model, glm::vec3(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES, 0.0f));  
     //tileMapShaderProgram.ModelMatrix(model);
 
     //auto view = glm::lookAt(
