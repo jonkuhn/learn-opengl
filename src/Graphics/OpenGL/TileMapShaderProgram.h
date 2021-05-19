@@ -4,14 +4,14 @@
 #include "IOpenGLWrapper.h"
 #include "ITexture.h"
 #include "ITileMapShaderProgram.h"
-#include "ShaderProgram.h"
+#include "IShaderProgram.h"
 
 namespace Graphics::OpenGL
 {
     class TileMapShaderProgram final : public ITileMapShaderProgram
     {
     public:
-        TileMapShaderProgram(IOpenGLWrapper* gl);
+        TileMapShaderProgram(IShaderProgram* shaderProgram);
 
         TileMapShaderProgram(TileMapShaderProgram&& other) = default;
         TileMapShaderProgram& operator=(TileMapShaderProgram&& other) = default;
@@ -29,6 +29,6 @@ namespace Graphics::OpenGL
     private:
         // Take a hard dependency on ShaderProgram here because this class's
         // behavior will be easy enough to test by mocking IOpenGLWrapper
-        ShaderProgram _shaderProgram;
+        IShaderProgram* _shaderProgram;
     };
 }

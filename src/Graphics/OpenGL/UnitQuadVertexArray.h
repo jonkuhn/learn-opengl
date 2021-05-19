@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IUnitQuadVertexArray.h"
-#include "VertexArray.h"
+#include "IVertexArray.h"
 
 namespace Graphics::OpenGL
 {
@@ -9,39 +9,18 @@ namespace Graphics::OpenGL
     class UnitQuadVertexArray final : public IUnitQuadVertexArray
     {
     public:
-        UnitQuadVertexArray(IOpenGLWrapper* gl)
-            : _vertexArray(
-                gl,
-                VertexArray<Vertex>::Params(
-                    std::vector<Vertex>({
-                        { 1.0f, 1.0f, 0.0f },  // top right
-                        { 1.0f, 0.0f, 0.0f },  // bottom right
-                        { 0.0f,  0.0f, 0.0f },  // bottom left
-                        { 0.0f, 1.0f, 0.0f }   // top left 
-                    }))
-                    .AddAttribute(3)
-                    .TriangleElementIndices(
-                        std::vector<GLuint>({
-                            0, 1, 3,  // first Triangle
-                            1, 2, 3   // second Triangle
-                        }))
-            )
+        UnitQuadVertexArray(IVertexArray* vertexArray)
+            : _vertexArray(vertexArray)
         {
 
         }
 
         void Draw() override
         {
-            _vertexArray.Draw();
+            _vertexArray->Draw();
         };
 
     private:
-        struct Vertex
-        {
-            float x;
-            float y;
-            float z;
-        };
-        VertexArray<Vertex> _vertexArray;
+        IVertexArray* _vertexArray;
     };
 }

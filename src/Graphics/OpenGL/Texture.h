@@ -69,5 +69,7 @@ namespace Graphics::OpenGL
         IOpenGLWrapper* _gl;
         typedef UniqueHandle<std::function<void (IOpenGLWrapper*, GLuint)>> UniqueTextureHandle;
         UniqueTextureHandle _handle;
+
+        Texture* CreateTexture(IOpenGLWrapper* gl, const Texture::Params &params);
     };
 }

@@ -15,11 +15,11 @@ namespace Graphics
     class IFactory
     {
     public:
-        virtual std::unique_ptr<ITileMap> CreateTileMap(
+        virtual ITileMap* CreateTileMap(
             IImage &tileMap,
             const glm::vec2& mapSizeInTiles,
             IImage &tileAtlas,
-            const glm::vec2& atlasSizeInTiles);
+            const glm::vec2& atlasSizeInTiles) = 0;
 
     protected:
         // This interface is not intended to expose ownership of the

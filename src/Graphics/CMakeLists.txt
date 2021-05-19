@@ -6,6 +6,8 @@ else()
 endif()
 target_sources(Graphics
   PRIVATE
+    OpenGL/Factory.h
+    OpenGL/Factory.cpp
     OpenGL/GlfwException.h
     OpenGL/GlfwException.cpp
     OpenGL/IGlfwWrapper.h
