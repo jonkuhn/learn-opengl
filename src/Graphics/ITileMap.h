@@ -10,7 +10,7 @@ namespace Graphics
     class ITileMap
     {
     public:
-        void Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection);
+        virtual void Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) = 0;
 
     protected:
         // This interface is not intended to expose ownership of the

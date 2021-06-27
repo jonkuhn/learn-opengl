@@ -20,7 +20,7 @@ using namespace Graphics::OpenGL;
 class TileMapShaderProgramTests : public Test
 {
 public:
-    ShaderProgramTests()
+    TileMapShaderProgramTests()
     {
         EXPECT_CALL(_mockShaderA, Handle()).WillRepeatedly(Return(_testShaderHandleA));
         EXPECT_CALL(_mockShaderB, Handle()).WillRepeatedly(Return(_testShaderHandleB));

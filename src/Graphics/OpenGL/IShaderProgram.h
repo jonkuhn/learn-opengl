@@ -13,11 +13,11 @@ namespace Graphics::OpenGL
     class IShaderProgram
     {
     public:
-        void Use();
-        void SetUniform(const std::string &name, int value);
-        void SetUniform(const std::string &name, const glm::mat4& value);
-        void SetUniform(const std::string &name, const glm::vec3& value);
-        void SetUniform(const std::string &name, const glm::vec2& value);
+        virtual void Use() = 0;
+        virtual void SetUniform(const std::string &name, int value) = 0;
+        virtual void SetUniform(const std::string &name, const glm::mat4& value) = 0;
+        virtual void SetUniform(const std::string &name, const glm::vec3& value) = 0;
+        virtual void SetUniform(const std::string &name, const glm::vec2& value) = 0;
 
         // This interface allows for deletion so that ownership can be
         // held via this interface.  This enables unit testing of use
