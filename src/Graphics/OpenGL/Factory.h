@@ -18,14 +18,15 @@ namespace Graphics::OpenGL
     public:
         Factory(int winWidth, int winHeight, const std::string& title);
 
-        GlfwWindow& GetWindow();
-
-        TextureHandle CreateTexture(IImage& image) override;
+        GlfwWindow& GetWindow()
+        {
+            return _window;
+        }
 
         Graphics::ITileMap* CreateTileMap(
-            TextureHandle tileMap,
+            IImage& tileMap,
             const glm::vec2& mapSizeInTiles,
-            TextureHandle tileAtlas,
+            IImage& tileAtlas,
             const glm::vec2& atlasSizeInTiles) override;
 
     private:
@@ -38,5 +39,6 @@ namespace Graphics::OpenGL
         std::vector<std::unique_ptr<Texture>> _textures;
         std::vector<std::unique_ptr<TileMap>> _tileMaps;
 
+        Texture* CreateTexture(const Texture::Params &params);
     };
 }

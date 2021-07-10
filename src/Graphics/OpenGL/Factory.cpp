@@ -13,40 +13,36 @@ Factory::Factory(int winWidth, int winHeight, const std::string& title)
 
 }
 
-GlfwWindow& Factory::GetWindow()
-{
-    return _window;
-}
-
-
 Graphics::ITileMap* Factory::CreateTileMap(
-    TextureHandle tileMapTexture,
+    IImage& tileMapImage,
     const glm::vec2& mapSizeInTiles,
-    TextureHandle tileAtlasTexture,
+    IImage& tileAtlasImage,
     const glm::vec2& atlasSizeInTiles)
 {
     auto tileMapUniquePtr = std::make_unique<TileMap>(
         &_tileMapShaderProgram,
         &_unitQuadVertexArray,
-        static_cast<ITexture*>(tileMapTexture.p),
+        CreateTexture(Texture::Params(tileMapImage)
+            .WrapModeS(Texture::WrapMode::ClampToBorder)
+            .WrapModeT(Texture::WrapMode::ClampToBorder)
+            .MinFilter(Texture::MinFilterMode::Nearest)
+            .MagFilter(Texture::MagFilterMode::Nearest)),
         mapSizeInTiles,
-        static_cast<ITexture*>(tileAtlasTexture.p),
+        CreateTexture(Texture::Params(tileAtlasImage)
+            .WrapModeS(Texture::WrapMode::ClampToBorder)
+            .WrapModeT(Texture::WrapMode::ClampToBorder)
+            .MinFilter(Texture::MinFilterMode::Nearest)
+            .MagFilter(Texture::MagFilterMode::Nearest)),
         atlasSizeInTiles);
     auto* tileMap = tileMapUniquePtr.get();
     _tileMaps.push_back(std::move(tileMapUniquePtr));
     return tileMap;
 }
 
-Graphics::TextureHandle Factory::CreateTexture(IImage& image)
+Texture* Factory::CreateTexture(const Texture::Params &params)
 {
-    auto textureUniquePtr = std::make_unique<Texture>(
-        &_gl,
-        Texture::Params(image)
-            .WrapModeS(Texture::WrapMode::ClampToBorder)
-            .WrapModeT(Texture::WrapMode::ClampToBorder)
-            .MinFilter(Texture::MinFilterMode::Nearest)
-            .MagFilter(Texture::MagFilterMode::Nearest));
-    TextureHandle handle(textureUniquePtr.get());
+    auto textureUniquePtr = std::make_unique<Texture>(&_gl, params);
+    auto* texture = textureUniquePtr.get();
     _textures.push_back(std::move(textureUniquePtr));
-    return handle;
+    return texture;
 }
