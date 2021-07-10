@@ -16,7 +16,6 @@ target_sources(GraphicsUnitTests
     OpenGL/ShaderProgramTests.cpp
     OpenGL/ShaderTests.cpp
     OpenGL/TextureTests.cpp
-    OpenGL/TileMapShaderProgramTests.cpp
     OpenGL/VertexArrayTests.cpp
     OpenGL/WindowTests.cpp
     MockLibPngWrapper.h

@@ -34,6 +34,7 @@ target_sources(Graphics
     OpenGL/UniqueHandle.h
     OpenGL/IUnitQuadVertexArray.h
     OpenGL/UnitQuadVertexArray.h
+    OpenGL/UnitQuadVertexArray.cpp
     OpenGL/IVertexArray.h
     OpenGL/VertexArray.h
     OpenGL/IOpenGLWindow.h

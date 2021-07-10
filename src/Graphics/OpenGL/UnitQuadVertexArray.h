@@ -1,7 +1,9 @@
 #pragma once
 
+#include "IOpenGLWrapper.h"
 #include "IUnitQuadVertexArray.h"
-#include "IVertexArray.h"
+#include "Simple3dVertex.h"
+#include "VertexArray.h"
 
 namespace Graphics::OpenGL
 {
@@ -9,18 +11,16 @@ namespace Graphics::OpenGL
     class UnitQuadVertexArray final : public IUnitQuadVertexArray
     {
     public:
-        UnitQuadVertexArray(IVertexArray* vertexArray)
-            : _vertexArray(vertexArray)
-        {
-
-        }
-
-        void Draw() override
-        {
-            _vertexArray->Draw();
-        };
+        UnitQuadVertexArray(IOpenGLWrapper* gl);
+        void Draw() override;
 
     private:
-        IVertexArray* _vertexArray;
+        // Take a hard dependency on Vertex here because this class's
+        // behavior is so simple that unit testing not very beneficial.
+        // Also this class is only really a UnitQuadVertexArray if a very
+        // specific VertexArray is loaded into it, so forcing that to
+        // be built elsewhere and dependency injected in the name of unit
+        // testing this very simple class seems like the wrong trade-off.
+        VertexArray<Simple3dVertex> _vertexArray;
     };
 }

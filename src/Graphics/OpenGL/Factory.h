@@ -30,19 +30,10 @@ namespace Graphics::OpenGL
             const glm::vec2& atlasSizeInTiles) override;
 
     private:
-        struct SimpleVertex
-        {
-            float x;
-            float y;
-            float z;
-        };
-
         GlfwWrapper _glfw;
         GlfwWindow _window;
         OpenGLWrapper _gl;
-        ShaderProgram _shaderProgramForTileMap;
         TileMapShaderProgram _tileMapShaderProgram;
-        VertexArray<SimpleVertex> _vertexArrayForUnitQuad;
         UnitQuadVertexArray _unitQuadVertexArray;
 
         std::vector<std::unique_ptr<Texture>> _textures;
