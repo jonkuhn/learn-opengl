@@ -29,13 +29,6 @@ void processInput(GlfwWindow& window)
         window.Close();
 }
 
-struct Vertex
-{
-    float x;
-    float y;
-    float z;
-};
-
 class RandomTileMap : public IImage
 {
 public:
@@ -104,26 +97,17 @@ int main()
 
     // Generate a random tile map texture using a helper class
     RandomTileMap randomTileMap(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES);
-    //Texture tileMapTexture(&gl, Texture::Params(randomTileMap)
-    //    .WrapModeS(Texture::WrapMode::ClampToBorder)
-    //    .WrapModeT(Texture::WrapMode::ClampToBorder)
-    //    .MinFilter(Texture::MinFilterMode::Nearest)
-    //    .MagFilter(Texture::MagFilterMode::Nearest));
+    auto randomTileMapTexture = factory.CreateTexture(randomTileMap);
 
     // use a small 2x2 tile atlas for testing purposes
     const float TILE_ATLAS_WIDTH_IN_TILES = 2;
     const float TILE_ATLAS_HEIGHT_IN_TILES = 2;
     PngImage tileAtlasImage(&libpng, "TestFiles/scribbletiles.png");
-    //Texture tileAtlasTexture(&gl, Texture::Params(tileAtlasImage)
-    //    .WrapModeS(Texture::WrapMode::ClampToBorder)
-    //    .WrapModeT(Texture::WrapMode::ClampToBorder)
-    //    .MinFilter(Texture::MinFilterMode::Nearest)
-    //    .MagFilter(Texture::MagFilterMode::Nearest));
-
+    auto tileAtlasTexture = factory.CreateTexture(tileAtlasImage);
     auto tileMap = factory.CreateTileMap(
-        randomTileMap,
+        randomTileMapTexture,
         glm::vec2(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES),
-        tileAtlasImage,
+        tileAtlasTexture,
         glm::vec2(TILE_ATLAS_WIDTH_IN_TILES, TILE_ATLAS_HEIGHT_IN_TILES)
     );
 

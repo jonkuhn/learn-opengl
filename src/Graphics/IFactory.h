@@ -9,16 +9,18 @@
 
 #include "IImage.h"
 #include "ITileMap.h"
+#include "TextureHandle.h"
 
 namespace Graphics
 {
     class IFactory
     {
     public:
+        virtual TextureHandle CreateTexture(IImage& image) = 0;
         virtual ITileMap* CreateTileMap(
-            IImage &tileMap,
+            TextureHandle tileMap,
             const glm::vec2& mapSizeInTiles,
-            IImage &tileAtlas,
+            TextureHandle tileAtlas,
             const glm::vec2& atlasSizeInTiles) = 0;
 
     protected:
