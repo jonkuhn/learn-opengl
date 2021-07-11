@@ -6,6 +6,15 @@ else()
 endif()
 target_sources(Graphics
   PRIVATE
+    Camera2d.h
+    IFactory.h
+    IImage.h
+    ILibPngWrapper.h
+    LibPngWrapper.h
+    ObjectInstance2d.h
+    PngImage.h
+    PngImage.cpp
+    ITileMap.h
     OpenGL/Factory.h
     OpenGL/Factory.cpp
     OpenGL/GlfwException.h
@@ -40,12 +49,5 @@ target_sources(Graphics
     OpenGL/IOpenGLWindow.h
     OpenGL/Window.h
     OpenGL/Window.cpp
-    IFactory.h
-    IImage.h
-    PngImage.h
-    PngImage.cpp
-    ILibPngWrapper.h
-    LibPngWrapper.h
-    ITileMap.h
 )
 target_link_libraries(Graphics ${CONAN_LIBS})

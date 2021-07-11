@@ -8,6 +8,7 @@ target_sources(GraphicsUnitTests
   PRIVATE
     main_test.cpp
     FakeImage.h
+    ObjectInstance2dTests.cpp
     PngImageTests.cpp
     TestHelpers.h
     OpenGL/MockGlfwWrapper.h
