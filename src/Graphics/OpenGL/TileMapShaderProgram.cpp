@@ -18,10 +18,18 @@ namespace
         uniform mat4 view;
         uniform mat4 projection;
 
+        uniform vec2 tileMapSizeInTiles;
+
         void main()
         {
+            // tileMapLocation must be multiplied up in the vertex shader and then
+            // divided back down in the fragment shader in order for interpolation
+            // and rounding to work right to pick the right indices from the tile
+            // map.  It cannot be calculated from tileMapLocationVec4 because
+            // that is in world coordinates and we want the world coordinate
+            // position of it to not affect the content of the tile mapped object.
+            tileMapLocation = vertex.xy * tileMapSizeInTiles;
             vec4 tileMapLocationVec4 = (model * vec4(vertex.xy, 0.0, 1.0));
-            tileMapLocation = tileMapLocationVec4.xy;
             gl_Position = projection * view * tileMapLocationVec4;
         }
         )##RAW##";
