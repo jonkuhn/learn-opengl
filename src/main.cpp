@@ -6,8 +6,8 @@
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-volatile"
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #pragma clang diagnostic pop
 
 #include "Graphics/LibPngWrapper.h"
@@ -99,7 +99,8 @@ int main()
     // Define a model matrix that scale's up from a unit quad
     // to world width by world height
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+    model = glm::translate(model, glm::vec3(-2.0f, -2.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(12.5f), glm::vec3(0.0f, 0.0f, -1.0f));
     model = glm::scale(model, glm::vec3(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES, 0.0f));  
 
     // Generate a random tile map texture using a helper class
@@ -237,7 +238,15 @@ int main()
         glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
         glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
         auto view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-        auto projection = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f,  0.0f, 1.0f);
+        auto aspectRatio = (float)SCR_WIDTH / (float)SCR_HEIGHT;
+        //auto fovWidthInWorldCoordinates = 5.0f;
+        auto projection = glm::ortho(
+            -2.5f * aspectRatio,
+            2.5f * aspectRatio,
+            -2.5f,
+            2.5f,
+            0.0f,
+            1.0f);
 
         tileMap->Draw(model, view, projection);
     }
