@@ -39,6 +39,17 @@ Graphics::ITileMap* Factory::CreateTileMap(
     return tileMap;
 }
 
+Camera2d* Factory::GetCamera2d()
+{
+    return &_camera2d;
+}
+
+void Factory::Render()
+{
+    //auto view = _camera2d.ViewMatrix();
+    //auto projection = _camera2d.ProjectionMatrix();
+}
+
 Texture* Factory::CreateTexture(const Texture::Params &params)
 {
     auto textureUniquePtr = std::make_unique<Texture>(&_gl, params);

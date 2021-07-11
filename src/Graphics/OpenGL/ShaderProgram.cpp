@@ -2,6 +2,7 @@
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-volatile"
+#include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #pragma clang diagnostic pop
 

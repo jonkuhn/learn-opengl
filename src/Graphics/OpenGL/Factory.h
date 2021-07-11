@@ -29,12 +29,16 @@ namespace Graphics::OpenGL
             IImage& tileAtlas,
             const glm::vec2& atlasSizeInTiles) override;
 
+        Camera2d* GetCamera2d() override;
+        void Render() override;
+
     private:
         GlfwWrapper _glfw;
         GlfwWindow _window;
         OpenGLWrapper _gl;
         TileMapShaderProgram _tileMapShaderProgram;
         UnitQuadVertexArray _unitQuadVertexArray;
+        Camera2d _camera2d;
 
         std::vector<std::unique_ptr<Texture>> _textures;
         std::vector<std::unique_ptr<TileMap>> _tileMaps;
