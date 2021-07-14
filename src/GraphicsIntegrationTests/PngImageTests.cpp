@@ -2,7 +2,6 @@
 #include <sstream>
 
 #include <gtest/gtest.h>
-#include <gmock/gmock.h>
 
 #include "Graphics/PngImage.h"
 #include "Graphics/LibPngWrapper.h"

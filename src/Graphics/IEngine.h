@@ -15,14 +15,12 @@ namespace Graphics
     class IEngine
     {
     public:
+        ~IEngine() = default;
+
         virtual std::unique_ptr<ITileAtlas> CreateTileAtlas(
             IImage &tileAtlas,
             const glm::vec2& atlasSizeInTiles) = 0;
 
     protected:
-        // This interface is not intended to expose ownership of the
-        // concrete object implementing it.  Therefore, do not allow
-        // deletion via interface pointers.
-        ~IEngine() = default;
     };
 }

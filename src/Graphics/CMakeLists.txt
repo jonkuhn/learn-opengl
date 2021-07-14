@@ -6,6 +6,7 @@ else()
 endif()
 target_sources(Graphics
   PRIVATE
+    Graphics.h
     IEngine.h
     IImage.h
     PngImage.h

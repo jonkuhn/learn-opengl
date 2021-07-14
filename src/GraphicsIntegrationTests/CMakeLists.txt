@@ -8,6 +8,7 @@ target_sources(GraphicsIntegrationTests
   PRIVATE
     main_test.cpp
     PngImageTests.cpp
+    TileMapTests.cpp
     OpenGL/Pixel.h
     OpenGL/Pixel.cpp
     OpenGL/TestHelpers.h
